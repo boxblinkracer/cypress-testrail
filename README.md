@@ -4,6 +4,9 @@
 <h1 align="center">Cypress TestRail Integration</h1>
 
 
+![NPM Downloads](https://img.shields.io/npm/dw/cypress-testrail) ![NPM License](https://img.shields.io/npm/l/cypress-testrail)
+
+
 This integration helps you to automatically send test results to TestRail.
 
 Simply add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
