@@ -1,4 +1,3 @@
-
 <p align="center">
    <img width="200px" src="/assets/cypress.jpg">
 </p>
@@ -13,20 +12,19 @@ This is a `TestRail-driven` workflow, so your QA team will always be in charge o
 
 Define new test cases in TestRail, and add automation to it, when you are ready.
 
-
-
 ### 1. Installation
 
 ### 2. Setup TestRail credentials
 
+### 3. Register Plugin
 
+import '../../vendor/cypress-testrail';
 
+### 4. Map Test Cases
 
-### 4. Start Cypress
-
-Start the Cypress Test Suite and wait until your tests are finished.
-
-
+That's it.
+You can now start Cypress (restart after config changes), and all your results should be sent to TestRail as soon as your mapped tests pass or faiil!
 
 ### Copying / License
+
 This repository is distributed under the MIT License (MIT). You can find the whole license text in the [LICENSE](LICENSE) file.
