@@ -1,4 +1,3 @@
-const Reporter = require("./src/Reporter");
+import Reporter from "./src/Reporter";
 
-const reporter = new Reporter();
-reporter.register();
+new Reporter().register();
