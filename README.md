@@ -15,6 +15,7 @@ Define new test cases in TestRail, and add automation to it, when you are ready.
 ### 1. Installation
 
 ```ruby 
+npm i cypress-testrail
 ```
 
 
@@ -44,7 +45,7 @@ Just place this line in your `support/index.js` file.
 There's nothing more that is required to register the TestRail reporter.
 
 ```javascript 
-import '../../vendor/cypress-testrail';
+import 'cypress-testrail';
 ```
 
 
