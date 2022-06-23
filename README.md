@@ -1,4 +1,8 @@
-# Cypress TestRail Integration
+
+<p align="center">
+   <img width="200px" src="/assets/cypress.jpg">
+</p>
+<h1 align="center">Cypress TestRail Integration</h1>
 
 
 This integration helps you to automatically send test results to TestRail.
