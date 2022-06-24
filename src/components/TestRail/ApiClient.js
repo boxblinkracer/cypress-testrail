@@ -23,13 +23,15 @@ export default class ApiClient {
      */
     sendResult(runID, result) {
 
-        const postData = [
-            {
-                "case_id": result.getCaseId(),
-                "status_id": result.getStatusId(),
-                "comment": result.getComment()
-            }
-        ];
+        const postData = {
+            "results": [
+                {
+                    "case_id": result.getCaseId(),
+                    "status_id": result.getStatusId(),
+                    "comment": result.getComment()
+                }
+            ]
+        };
 
         axios(
             {
