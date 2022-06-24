@@ -1,15 +1,16 @@
 <p align="center">
    <img width="200px" src="/assets/cypress.jpg">
 </p>
-<h1 align="center">Cypress TestRail Integration</h1>
+<h1 align="center">(Super Easy) Cypress TestRail Integration</h1>
 
 
-![NPM Downloads](https://img.shields.io/npm/dw/cypress-testrail) ![NPM License](https://img.shields.io/npm/l/cypress-testrail)
+![NPM Downloads](https://badgen.net/npm/dt/cypress-testrail) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/boxblinkracer/cypress-testrail) ![NPM License](https://img.shields.io/npm/l/cypress-testrail)
 
 
-This integration helps you to automatically send test results to TestRail.
 
-Simply add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
+This integration helps you to automatically send test results to TestRail. And yes, super easy and simple!
+
+Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
 This is a `TestRail-driven` workflow, so your QA team will always be in charge of the TestRail documentation and Cypress will only work as a testing client and does **not modify** anything in your test cases anymore.
 
@@ -18,7 +19,7 @@ Define new test cases in TestRail, and add automation to it, when you are ready.
 ### 1. Installation
 
 ```ruby 
-npm i cypress-testrail
+npm i cypress-testrail --save-dev
 ```
 
 
