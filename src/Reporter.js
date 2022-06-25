@@ -1,6 +1,6 @@
 import ApiClient from './components/TestRail/ApiClient';
 import TestCaseParser from './services/TestCaseParser';
-import Result from "./components/TestRail/Result";
+import Result from './components/TestRail/Result';
 
 
 export default class Reporter {
@@ -14,6 +14,7 @@ export default class Reporter {
         this.FAILED = 5;
 
         this.testCaseParser = new TestCaseParser();
+        /* eslint-disable no-undef */
         this.config = Cypress.env('testrail');
     }
 
@@ -22,6 +23,7 @@ export default class Reporter {
      */
     register() {
 
+        /* eslint-disable no-undef */
         Cypress.on('test:after:run', (testData) => {
 
             if (this.config === null || this.config === undefined) {

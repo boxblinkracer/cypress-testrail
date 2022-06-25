@@ -9,7 +9,7 @@ export default class TestCaseParser {
         const trimmedTitle = title.trim();
 
         if (trimmedTitle.includes(':', 0) && trimmedTitle.startsWith('C')) {
-            return trimmedTitle.substring(1, trimmedTitle.indexOf(":"));
+            return trimmedTitle.substring(1, trimmedTitle.indexOf(':'));
         }
 
         return '';

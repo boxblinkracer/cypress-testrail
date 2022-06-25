@@ -1,5 +1,3 @@
-import Result from './Result';
-
 const axios = require('axios');
 
 
@@ -24,13 +22,13 @@ export default class ApiClient {
     sendResult(runID, result) {
 
         const postData = {
-            "results": [
+            'results': [
                 {
-                    "case_id": result.getCaseId(),
-                    "status_id": result.getStatusId(),
-                    "comment": result.getComment()
-                }
-            ]
+                    'case_id': result.getCaseId(),
+                    'status_id': result.getStatusId(),
+                    'comment': result.getComment(),
+                },
+            ],
         };
 
         axios(
@@ -44,8 +42,9 @@ export default class ApiClient {
                 },
                 data: JSON.stringify(postData),
             })
-            .then(response => {
-                console.log("Sent TestRail result for TestCase " + result.getCaseId());
+            .then(() => {
+                /* eslint-disable no-console */
+                console.log('Sent TestRail result for TestCase ' + result.getCaseId());
             })
             .catch(error => {
                 console.error(error)

@@ -12,3 +12,6 @@ install: ## Installs all dependencies
 
 jest: ## Runs JS Unit Tests
 	@./node_modules/.bin/jest --config=./.jest.config.js --runInBand --detectOpenHandles --forceExit
+
+eslint: ## Starts the ESLinter
+	./node_modules/.bin/eslint --config ./.eslintrc.json ./src
