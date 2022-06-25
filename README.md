@@ -4,15 +4,14 @@
 <h1 align="center">(Super Easy) Cypress TestRail Integration</h1>
 
 
-![NPM Downloads](https://badgen.net/npm/dt/cypress-testrail) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/boxblinkracer/cypress-testrail) ![NPM License](https://img.shields.io/npm/l/cypress-testrail)
-
+![Build Status](https://github.com/boxblinkracer/cypress-testrail/actions/workflows/ci_pipe.yml/badge.svg) ![NPM Downloads](https://badgen.net/npm/dt/cypress-testrail) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/boxblinkracer/cypress-testrail) ![NPM License](https://img.shields.io/npm/l/cypress-testrail)
 
 
 This integration helps you to automatically send test results to TestRail. And yes, super easy and simple!
 
 Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
-This is a `TestRail-driven` workflow, so your QA team will always be in charge of the TestRail documentation and Cypress will only work as a testing client and does **not modify** anything in your test cases anymore.
+This is a `TestRail-driven` workflow, so your QA team will always be in charge of the TestRail documentation and Cypress will only work as a testing client and does **not modify** anything in your test cases.
 
 Define new test cases in TestRail, and add automation to it, when you are ready.
 
@@ -72,7 +71,7 @@ it('C123: My Test for TestRail XYZ', () => {
 
 ## That's it!
 
-You can now start Cypress (restart after config changes), and all your results should be sent to TestRail as soon as your mapped tests pass or faiil!
+You can now start Cypress (restart after config changes), and all your results should be sent to TestRail as soon as your mapped tests pass or fail!
 
 
 ### Copying / License
