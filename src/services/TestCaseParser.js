@@ -6,8 +6,10 @@ export default class TestCaseParser {
      * @returns {string}
      */
     searchCaseId(title) {
-        if (title.includes(':', 0) && title.startsWith('C')) {
-            return title.substring(1, title.indexOf(":"));
+        const trimmedTitle = title.trim();
+
+        if (trimmedTitle.includes(':', 0) && trimmedTitle.startsWith('C')) {
+            return trimmedTitle.substring(1, trimmedTitle.indexOf(":"));
         }
 
         return '';
