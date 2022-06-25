@@ -1,0 +1,24 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+    branches:
+      - master
+
+jobs:
+
+  jest:
+    name: Jest Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: make install -B
+
+      - name: Run Jest
+        run: make jest -B
