@@ -10,3 +10,5 @@ help:
 install: ## Installs all dependencies
 	npm install 
 
+jest: ## Runs JS Unit Tests
+	@./node_modules/.bin/jest --config=./.jest.config.js --runInBand --detectOpenHandles --forceExit
