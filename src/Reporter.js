@@ -52,7 +52,7 @@ export default class Reporter {
             const result = new Result(
                 caseId,
                 status,
-                'Tested by Cypress',
+                'Tested by Cypress. ' + testData.getError(),
                 testData.getDurationMS()
             );
 

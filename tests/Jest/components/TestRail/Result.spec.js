@@ -1,4 +1,4 @@
-import Result from "../../../src/components/TestRail/Result";
+import Result from "../../../../src/components/TestRail/Result";
 
 
 test('caseId is correctly assigned', () => {

@@ -9,6 +9,8 @@ export default class TestData {
         this._title = data.title;
         this._state = data.state;
         this._durationMS = data.duration;
+
+        this._error = (data.err !== undefined) ? data.err.message : '';
     }
 
     /**
@@ -17,6 +19,14 @@ export default class TestData {
      */
     getTitle() {
         return this._title;
+    }
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    isPassed() {
+        return (this._error === '');
     }
 
     /**
@@ -33,6 +43,14 @@ export default class TestData {
      */
     getDurationMS() {
         return this._durationMS;
+    }
+
+    /**
+     *
+     * @returns {string}
+     */
+    getError() {
+        return this._error;
     }
 
 }
