@@ -56,8 +56,9 @@ import 'cypress-testrail';
 
 We're almost done.
 You can now map TestRail test cases to your Cypress tests.
-Please use the TestRail case ID as a prefix inside the Cypress tests.
+Please use the TestRail case ID as a prefix inside the Cypress test title.
 The plugin will automatically extract it, and send the results to your test run in TestRail.
+The case ID needs to be at the beginning and separated with an `:` from the rest of the title.
 
 ```javascript 
 it('C123: My Test for TestRail XYZ', () => {
