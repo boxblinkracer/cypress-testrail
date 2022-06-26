@@ -2,6 +2,7 @@ import ApiClient from './components/TestRail/ApiClient';
 import TestCaseParser from './services/TestCaseParser';
 import Result from './components/TestRail/Result';
 import ConfigService from './services/ConfigService';
+import TestData from './components/Cypress/TestData';
 
 
 export default class Reporter {
@@ -21,17 +22,15 @@ export default class Reporter {
     register() {
 
         /* eslint-disable no-undef */
-        Cypress.on('test:after:run', (testData) => {
+        Cypress.on('test:after:run', (test) => {
 
-            if (this.config === null || this.config === undefined) {
+            const testData = new TestData(test);
+
+            if (!this.config.isValid()) {
                 return;
             }
 
-            if (this.config.getDomain() === '' || this.config.getRunId() === '') {
-                return;
-            }
-
-            const caseId = this.testCaseParser.searchCaseId(testData.title);
+            const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
 
             if (caseId === '') {
                 return;
@@ -40,7 +39,7 @@ export default class Reporter {
 
             let status = this.config.getStatusPassed();
 
-            if (testData.state !== 'passed') {
+            if (testData.getState() !== 'passed') {
                 status = this.config.getStatusFailed();
             }
 
@@ -50,7 +49,12 @@ export default class Reporter {
                 this.config.getPassword()
             );
 
-            const result = new Result(caseId, status, 'Tested by Cypress');
+            const result = new Result(
+                caseId,
+                status,
+                'Tested by Cypress',
+                testData.getDurationMS()
+            );
 
             api.sendResult(this.config.getRunId(), result);
         })

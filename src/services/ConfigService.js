@@ -14,6 +14,22 @@ export default class ConfigService {
 
     /**
      *
+     * @returns {boolean}
+     */
+    isValid() {
+        if (this.getDomain() === '') {
+            return false;
+        }
+
+        if (this.getRunId() === '') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *
      * @returns {*|string|string|string}
      */
     getDomain() {

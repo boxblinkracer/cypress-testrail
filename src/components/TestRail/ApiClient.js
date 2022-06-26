@@ -27,6 +27,7 @@ export default class ApiClient {
                     'case_id': result.getCaseId(),
                     'status_id': result.getStatusId(),
                     'comment': result.getComment(),
+                    'elapsed': result.getElapsed(),
                 },
             ],
         };

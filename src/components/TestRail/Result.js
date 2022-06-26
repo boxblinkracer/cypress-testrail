@@ -5,11 +5,13 @@ export default class Result {
      * @param caseId
      * @param statusId
      * @param comment
+     * @param duration
      */
-    constructor(caseId, statusId, comment) {
+    constructor(caseId, statusId, comment, duration) {
         this._caseId = caseId;
         this._statusId = statusId;
         this._comment = comment;
+        this._durationMS = duration;
     }
 
     /**
@@ -31,6 +33,14 @@ export default class Result {
      */
     getComment() {
         return this._comment;
+    }
+
+    /**
+     *
+     * @returns {*}
+     */
+    getElapsed() {
+        return Math.round(this._durationMS / 1000) + 's';
     }
 
 }
