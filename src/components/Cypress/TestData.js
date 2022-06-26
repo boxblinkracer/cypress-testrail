@@ -5,7 +5,6 @@ export default class TestData {
      * @param data
      */
     constructor(data) {
-        console.log(data);
         this._title = data.title;
         this._state = data.state;
         this._durationMS = data.duration;
