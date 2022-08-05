@@ -1,15 +1,23 @@
-export default class TestData {
+class TestData {
 
     /**
      *
      * @param data
      */
     constructor(data) {
-        this._title = data.title;
-        this._state = data.state;
-        this._durationMS = data.duration;
 
-        this._error = (data.err !== undefined) ? data.err.message : '';
+        this._title = (data.title !== undefined && data.title.length > 0) ? data.title[data.title.length - 1] : 'Title not found';
+        this._state = data.state;
+
+        this._error = (data.displayError !== undefined) ? data.displayError : '';
+
+        this._durationMS = 0;
+
+        if (data.attempts !== undefined) {
+            data.attempts.forEach(attempt => {
+                this._durationMS += attempt.wallClockDuration;
+            })
+        }
     }
 
     /**
@@ -53,3 +61,5 @@ export default class TestData {
     }
 
 }
+
+module.exports = TestData;

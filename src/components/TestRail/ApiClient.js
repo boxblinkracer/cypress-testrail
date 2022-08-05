@@ -1,7 +1,6 @@
 const axios = require('axios');
 
-
-export default class ApiClient {
+class ApiClient {
 
     /**
      * @param domain
@@ -45,7 +44,7 @@ export default class ApiClient {
             })
             .then(() => {
                 /* eslint-disable no-console */
-                console.log('Sent TestRail result for TestCase ' + result.getCaseId());
+                console.log('  TestRail result sent for TestCase ' + result.getCaseId());
             })
             .catch(error => {
                 console.error(error)
@@ -53,3 +52,5 @@ export default class ApiClient {
     }
 
 }
+
+module.exports = ApiClient;

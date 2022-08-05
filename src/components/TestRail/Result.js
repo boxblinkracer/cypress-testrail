@@ -1,4 +1,4 @@
-export default class Result {
+class Result {
 
     /**
      *
@@ -44,3 +44,5 @@ export default class Result {
     }
 
 }
+
+module.exports = Result;

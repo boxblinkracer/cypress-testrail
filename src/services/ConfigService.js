@@ -1,4 +1,4 @@
-export default class ConfigService {
+class ConfigService {
 
     /**
      *
@@ -118,3 +118,5 @@ export default class ConfigService {
     }
 
 }
+
+module.exports = ConfigService;

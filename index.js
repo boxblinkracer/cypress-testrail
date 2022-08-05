@@ -1,3 +1,5 @@
-import Reporter from "./src/Reporter";
+const Reporter = require("./src/Reporter");
 
-new Reporter().register();
+module.exports = Reporter;
+
+

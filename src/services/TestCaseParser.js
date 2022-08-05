@@ -1,4 +1,4 @@
-export default class TestCaseParser {
+class TestCaseParser {
 
     /**
      *
@@ -16,3 +16,5 @@ export default class TestCaseParser {
     }
 
 }
+
+module.exports = TestCaseParser;

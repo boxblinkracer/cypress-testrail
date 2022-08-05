@@ -1,19 +1,23 @@
-import ApiClient from './components/TestRail/ApiClient';
-import TestCaseParser from './services/TestCaseParser';
-import Result from './components/TestRail/Result';
-import ConfigService from './services/ConfigService';
-import TestData from './components/Cypress/TestData';
+const ApiClient = require('./components/TestRail/ApiClient');
+const TestCaseParser = require('./services/TestCaseParser');
+const Result = require('./components/TestRail/Result');
+const ConfigService = require('./services/ConfigService');
+const TestData = require('./components/Cypress/TestData');
 
 
-export default class Reporter {
+class Reporter {
 
     /**
      *
+     * @param on
+     * @param config
      */
-    constructor() {
+    constructor(on, config) {
+        this.on = on;
+
         this.testCaseParser = new TestCaseParser();
         /* eslint-disable no-undef */
-        this.config = new ConfigService(Cypress.env('testrail'));
+        this.config = new ConfigService(config.env.testrail);
     }
 
     /**
@@ -21,27 +25,23 @@ export default class Reporter {
      */
     register() {
 
-        /* eslint-disable no-undef */
-        Cypress.on('test:after:run', (test) => {
+        this.on('before:run', (details) => {
+            this.cypressVersion = details.cypressVersion;
+            this.browser = details.browser.displayName + ' (' + details.browser.version + ')';
+            this.system = details.system.osName + ' (' + details.system.osVersion + ')';
+            this.baseURL = details.config.baseUrl;
 
-            const testData = new TestData(test);
+            console.log('  Starting TestRail Integration');
+            console.log('  ....................................................');
+            console.log('  Cypress: ' + this.cypressVersion);
+            console.log('  Browser: ' + this.browser);
+            console.log('  System: ' + this.system);
+            console.log('  Base URL: ' + this.baseURL);
+        })
 
-            if (!this.config.isValid()) {
-                return;
-            }
+        this.on('after:spec', (spec, results) => {
 
-            const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
-
-            if (caseId === '') {
-                return;
-            }
-
-
-            let status = this.config.getStatusPassed();
-
-            if (testData.getState() !== 'passed') {
-                status = this.config.getStatusFailed();
-            }
+            const specFile = spec.name;
 
             const api = new ApiClient(
                 this.config.getDomain(),
@@ -49,15 +49,41 @@ export default class Reporter {
                 this.config.getPassword()
             );
 
-            const result = new Result(
-                caseId,
-                status,
-                'Tested by Cypress. ' + testData.getError(),
-                testData.getDurationMS()
-            );
+            results.tests.forEach(test => {
 
-            api.sendResult(this.config.getRunId(), result);
+                const testData = new TestData(test);
+
+                if (!this.config.isValid()) {
+                    return;
+                }
+
+                const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
+
+                if (caseId === '') {
+                    return;
+                }
+
+                let status = this.config.getStatusPassed();
+
+                if (testData.getState() !== 'passed') {
+                    status = this.config.getStatusFailed();
+                }
+
+                const comment = 'Tested by Cypress ' + this.cypressVersion + '\n' +
+                    'Browser: ' + this.browser + '\n' +
+                    'Base URL: ' + this.baseURL + '\n' +
+                    'System: ' + this.system + '\n' +
+                    'Spec: ' + specFile + '\n' +
+                    testData.getError();
+
+                console.log('...sending results to TestRail for ' + caseId);
+                const result = new Result(caseId, status, comment, testData.getDurationMS());
+                api.sendResult(this.config.getRunId(), result);
+            });
+
         })
     }
 
 }
+
+module.exports = Reporter;

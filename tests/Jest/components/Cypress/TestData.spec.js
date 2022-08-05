@@ -8,9 +8,7 @@ test('Test is passing if no error exists', () => {
 
 test('Test is not passing if error exists', () => {
     const result = new TestData({
-        'err': {
-            'message': 'Error Message ABC',
-        }
+        'displayError': 'Error Message ABC',
     });
     expect(result.isPassed()).toBe(false);
 });
@@ -18,9 +16,7 @@ test('Test is not passing if error exists', () => {
 
 test('Error Message is correctly read', () => {
     const result = new TestData({
-        'err': {
-            'message': 'Error Message ABC',
-        }
+        'displayError': 'Error Message ABC',
     });
     expect(result.getError()).toBe('Error Message ABC');
 });
@@ -29,3 +25,46 @@ test('Error message is empty if test is passing', () => {
     const result = new TestData({});
     expect(result.getError()).toBe('');
 });
+
+test('Last Title is correctly read', () => {
+    const result = new TestData({
+        'title': [
+            'first',
+            'second',
+            'third',
+        ]
+    });
+    expect(result.getTitle()).toBe('third');
+});
+
+test('Default title should exist if not found', () => {
+    const result = new TestData({});
+    expect(result.getTitle()).toBe('Title not found');
+});
+
+test('Duration is correctly summed up from attempts', () => {
+    const result = new TestData({
+        'attempts': [
+            {
+                'wallClockDuration': 5,
+            },
+            {
+                'wallClockDuration': 10,
+            }
+        ]
+    });
+    expect(result.getDurationMS()).toBe(15);
+});
+
+test('Missing attempts lead to a duration of 0', () => {
+    const result = new TestData({});
+    expect(result.getDurationMS()).toBe(0);
+});
+
+test('State is correctly read', () => {
+    const result = new TestData({
+        'state': 'passed'
+    });
+    expect(result.getState()).toBe('passed');
+});
+
