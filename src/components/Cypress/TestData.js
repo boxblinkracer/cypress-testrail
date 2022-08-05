@@ -9,7 +9,7 @@ class TestData {
         this._title = (data.title !== undefined && data.title.length > 0) ? data.title[data.title.length - 1] : 'Title not found';
         this._state = data.state;
 
-        this._error = (data.displayError !== undefined) ? data.displayError : '';
+        this._error = (data.displayError !== undefined && data.displayError !== null) ? data.displayError : '';
 
         this._durationMS = 0;
 

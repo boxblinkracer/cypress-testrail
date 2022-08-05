@@ -13,7 +13,6 @@ test('Test is not passing if error exists', () => {
     expect(result.isPassed()).toBe(false);
 });
 
-
 test('Error Message is correctly read', () => {
     const result = new TestData({
         'displayError': 'Error Message ABC',
@@ -23,6 +22,14 @@ test('Error Message is correctly read', () => {
 
 test('Error message is empty if test is passing', () => {
     const result = new TestData({});
+    expect(result.getError()).toBe('');
+});
+
+
+test('Error Message that is NULL should be skipped', () => {
+    const result = new TestData({
+        'displayError': null,
+    });
     expect(result.getError()).toBe('');
 });
 
