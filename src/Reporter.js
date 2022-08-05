@@ -22,8 +22,16 @@ class Reporter {
 
     /**
      *
+     * @param customComment provide a custom comment if you want to add something to the result comment
      */
-    register() {
+    register(customComment) {
+
+        if (customComment === undefined || customComment === null) {
+            customComment = '';
+        }
+
+        this.customComment = customComment;
+
 
         this.on('before:run', (details) => {
             this.cypressVersion = details.cypressVersion;
@@ -43,6 +51,8 @@ class Reporter {
             console.log('  System: ' + this.system);
             /* eslint-disable no-console */
             console.log('  Base URL: ' + this.baseURL);
+            /* eslint-disable no-console */
+            console.log('  Comment: ' + this.customComment);
         })
 
         this.on('after:spec', (spec, results) => {
@@ -75,12 +85,20 @@ class Reporter {
                     status = this.config.getStatusFailed();
                 }
 
-                const comment = 'Tested by Cypress ' + this.cypressVersion + '\n' +
-                    'Browser: ' + this.browser + '\n' +
-                    'Base URL: ' + this.baseURL + '\n' +
-                    'System: ' + this.system + '\n' +
-                    'Spec: ' + specFile + '\n' +
-                    testData.getError();
+                let comment = 'Tested by Cypress';
+                comment += '\nCypress: ' + this.cypressVersion;
+                comment += '\nBrowser: ' + this.browser;
+                comment += '\nBase URL: ' + this.baseURL;
+                comment += '\nSystem: ' + this.system;
+                comment += '\nSpec: ' + specFile;
+
+                if (this.customComment !== '') {
+                    comment += '\n' + this.customComment;
+                }
+
+                if (testData.getError() !== '') {
+                    comment += '\nError: ' + testData.getError();
+                }
 
                 console.log('...sending results to TestRail for ' + caseId);
                 const result = new Result(caseId, status, comment, testData.getDurationMS());
