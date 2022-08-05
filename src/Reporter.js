@@ -15,9 +15,10 @@ class Reporter {
     constructor(on, config) {
         this.on = on;
 
-        this.testCaseParser = new TestCaseParser();
         /* eslint-disable no-undef */
         this.config = new ConfigService(config.env.testrail);
+
+        this.testCaseParser = new TestCaseParser();
     }
 
     /**
@@ -26,14 +27,26 @@ class Reporter {
      */
     register(customComment) {
 
-        if (customComment === undefined || customComment === null) {
-            customComment = '';
+        // clean and assign our custom comment for our test results
+        this.customComment = (customComment !== undefined && customComment !== null) ? customComment : '';
+
+
+        // if our config is not valid
+        // then do not even register anything
+        if (!this.config.isValid()) {
+            return;
         }
 
-        this.customComment = customComment;
+        // build our api client only once in here
+        this.testRailApi = new ApiClient(
+            this.config.getDomain(),
+            this.config.getUsername(),
+            this.config.getPassword()
+        );
 
 
         this.on('before:run', (details) => {
+
             this.cypressVersion = details.cypressVersion;
             this.browser = details.browser.displayName + ' (' + details.browser.version + ')';
             this.system = details.system.osName + ' (' + details.system.osVersion + ')';
@@ -55,54 +68,44 @@ class Reporter {
             console.log('  Comment: ' + this.customComment);
         })
 
+
         this.on('after:spec', (spec, results) => {
 
-            const specFile = spec.name;
-
-            const api = new ApiClient(
-                this.config.getDomain(),
-                this.config.getUsername(),
-                this.config.getPassword()
-            );
-
+            // iterate through all our test results
+            // and send the data to TestRail
             results.tests.forEach(test => {
 
                 const testData = new TestData(test);
 
-                if (!this.config.isValid()) {
-                    return;
-                }
-
                 const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
 
-                if (caseId === '') {
-                    return;
+                if (caseId !== '') {
+
+                    let status = this.config.getStatusPassed();
+
+                    if (testData.getState() !== 'passed') {
+                        status = this.config.getStatusFailed();
+                    }
+
+                    let comment = 'Tested by Cypress';
+                    comment += '\nCypress: ' + this.cypressVersion;
+                    comment += '\nBrowser: ' + this.browser;
+                    comment += '\nBase URL: ' + this.baseURL;
+                    comment += '\nSystem: ' + this.system;
+                    comment += '\nSpec: ' + spec.name;
+
+                    if (this.customComment !== '') {
+                        comment += '\n' + this.customComment;
+                    }
+
+                    if (testData.getError() !== '') {
+                        comment += '\nError: ' + testData.getError();
+                    }
+
+                    console.log('...sending results to TestRail for ' + caseId);
+                    const result = new Result(caseId, status, comment, testData.getDurationMS());
+                    this.testRailApi.sendResult(this.config.getRunId(), result);
                 }
-
-                let status = this.config.getStatusPassed();
-
-                if (testData.getState() !== 'passed') {
-                    status = this.config.getStatusFailed();
-                }
-
-                let comment = 'Tested by Cypress';
-                comment += '\nCypress: ' + this.cypressVersion;
-                comment += '\nBrowser: ' + this.browser;
-                comment += '\nBase URL: ' + this.baseURL;
-                comment += '\nSystem: ' + this.system;
-                comment += '\nSpec: ' + specFile;
-
-                if (this.customComment !== '') {
-                    comment += '\n' + this.customComment;
-                }
-
-                if (testData.getError() !== '') {
-                    comment += '\nError: ' + testData.getError();
-                }
-
-                console.log('...sending results to TestRail for ' + caseId);
-                const result = new Result(caseId, status, comment, testData.getDurationMS());
-                api.sendResult(this.config.getRunId(), result);
             });
 
         })
