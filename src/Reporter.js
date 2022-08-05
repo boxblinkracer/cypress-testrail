@@ -31,11 +31,17 @@ class Reporter {
             this.system = details.system.osName + ' (' + details.system.osVersion + ')';
             this.baseURL = details.config.baseUrl;
 
+            /* eslint-disable no-console */
             console.log('  Starting TestRail Integration');
+            /* eslint-disable no-console */
             console.log('  ....................................................');
+            /* eslint-disable no-console */
             console.log('  Cypress: ' + this.cypressVersion);
+            /* eslint-disable no-console */
             console.log('  Browser: ' + this.browser);
+            /* eslint-disable no-console */
             console.log('  System: ' + this.system);
+            /* eslint-disable no-console */
             console.log('  Base URL: ' + this.baseURL);
         })
 
