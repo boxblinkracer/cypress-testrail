@@ -11,25 +11,24 @@ class Reporter {
      *
      * @param on
      * @param config
+     * @param customComment provide a custom comment if you want to add something to the result comment
      */
-    constructor(on, config) {
+    constructor(on, config, customComment) {
         this.on = on;
 
         /* eslint-disable no-undef */
         this.config = new ConfigService(config.env.testrail);
+
+        // clean and assign our custom comment for our test results
+        this.customComment = (customComment !== undefined && customComment !== null) ? customComment : '';
 
         this.testCaseParser = new TestCaseParser();
     }
 
     /**
      *
-     * @param customComment provide a custom comment if you want to add something to the result comment
      */
-    register(customComment) {
-
-        // clean and assign our custom comment for our test results
-        this.customComment = (customComment !== undefined && customComment !== null) ? customComment : '';
-
+    register() {
 
         // if our config is not valid
         // then do not even register anything
