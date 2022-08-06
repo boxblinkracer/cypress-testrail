@@ -100,8 +100,7 @@ class Reporter {
                     if (testData.getError() !== '') {
                         comment += '\nError: ' + testData.getError();
                     }
-
-                    console.log('...sending results to TestRail for ' + caseId);
+                    
                     const result = new Result(caseId, status, comment, testData.getDurationMS());
                     this.testRailApi.sendResult(this.config.getRunId(), result);
                 }
