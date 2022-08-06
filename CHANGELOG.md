@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0]
+
+### Breaking Changes
+
+We had to change the way how the integration is registered.
+The new way allows to read additional Cypress events and gather information about browsers, versions and more.
+Please see the UPGRADE.md file for more about this topic.
+
+### Added
+
+- Add collected data to TestRail result such as Cypress version, browser, baseURL, system and Spec file.
+- Add option to set a custom comment that is passed on to the result in TestRail. You can use this to describe your AUT version, commit hash or more.
+
+### Changed
+
+- Changed the way how the integration is registered.
+- TestRail results are now sent at the end of a spec file, and not directly after a single test anymore.
+
 ## [1.1.0]
 
 ### Added
@@ -12,7 +30,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Result comment is now trimmed to keep it neat ;)
-- Improved extraction of Case IDs in Cypress titles by adding a trim to the title. 
+- Improved extraction of Case IDs in Cypress titles by adding a trim to the title.
 
 ## [1.0.0]
 

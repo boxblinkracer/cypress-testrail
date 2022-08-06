@@ -1,12 +1,11 @@
 # UPGRADE
 
-## vX -> ....
+## 1. CHANGELOGS
 
-### See changelog
+First, please always (and also) look at the CHANGELOG.md.
+It will tell you more about the changes made.
 
-First have a look at the changes in the CHANGELOG.md
-
-### New way to register plugin
+## Upgrade v1.x => v2.x
 
 There is a new way to register the plugin.
 
@@ -17,17 +16,16 @@ import 'cypress-testrail';
 ```
 
 The new way requires the plugin to be registered in the `plugins/index.js` file.
+
 This is required, because we need new events to read data about browsers and specs, and that is only available in that scope.
 
 ```javascript
 const TestRailReporter = require('cypress-testrail');
 
 module.exports = (on, config) => {
-
-    // create a new reporter with our variables
-    // and just use the register() function.
     new TestRailReporter(on, config).register();
-
     return config
 }
 ```
+
+That's it, it should all work again!

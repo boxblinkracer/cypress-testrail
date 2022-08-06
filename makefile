@@ -15,3 +15,9 @@ jest: ## Runs JS Unit Tests
 
 eslint: ## Starts the ESLinter
 	./node_modules/.bin/eslint --config ./.eslintrc.json ./src
+
+# ---------------------------------------------------------------------------------------------
+
+pr: ## Prepares a pull request
+	make jest -B
+	make eslint -B
