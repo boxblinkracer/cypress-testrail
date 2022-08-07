@@ -38,3 +38,16 @@ jobs:
 
       - name: Run ESLint
         run: make eslint -B
+
+  prettier:
+    name: Prettier Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Code
+        uses: actions/checkout@v2
+
+      - name: Install Dependencies
+        run: make install -B
+
+      - name: Run Prettier
+        run: make prettier -B
