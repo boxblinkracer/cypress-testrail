@@ -10,10 +10,6 @@ This integration helps you to automatically send test results to TestRail. And y
 
 Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
-This is a `TestRail-driven` workflow, so your QA team will always be in charge of the TestRail documentation and Cypress will only work as a testing client and does **not modify** anything in your test cases.
-
-Define new test cases in TestRail, and add automation to it, when you are ready.
-
 ### 1. Installation
 
 ```ruby 
@@ -32,13 +28,76 @@ You can find the ID inside the test run in TestRail. It usually starts with an R
   "testrail": {
     "domain": "my-company.testrail.io",
     "username": "myUser",
-    "password": "myPwd",
+    "password": "myPwd"
+  }
+}
+```
+
+You can also set these variables as ENV variable.
+
+```bash 
+CYPRESS_TESTRAIL_DOMAIN=my-company.testrail.io CYPRESS_TESTRAIL_USERNAME=myUser CYPRESS_TESTRAIL_PASSWORD=myPwd  ./node_modules/.bin/cypress run 
+```
+
+### 3. Setup Mode
+
+#### 3.1 Send result to specific Run in TestRail
+
+Just assign the RunID of TestRail in your `Cypress.env.json` and all results will be sent to this run.
+
+Results will only be saved, if the sent TestCaseID is also existing in that run inside TestRail.
+
+```yaml 
+{
+  "testrail": {
+    // ....
     "runId": "12345"
   }
 }
 ```
 
-### 3. Register Plugin
+You can also set this variable as ENV variable.
+
+```bash 
+CYPRESS_TESTRAIL_RUN_ID=15 ./node_modules/.bin/cypress run 
+```
+
+#### 3.2 Create new Run in TestRail for every Cypress run
+
+Sometimes you want to create test runs dynamically inside TestRail.
+For this, just assign the ProjectID and the optional MilestoneID of TestRail in your `Cypress.env.json`.
+
+The integration will then start a new run in TestRail and send the results to this one.
+It is also possible to provide a custom (or dynamically created) name for the new test run.
+
+```yaml 
+{
+  "testrail": {
+    // ....
+    "projectId": "12",                      // required
+    "milestoneId": "55",                    // optional
+    "runName": "Version XY (%datetime%)",   // optional, use placeholder %datetime% for current date time
+    "closeRun": true,                       // optional (default FALSE), automatically close run in this mode
+  }
+}
+```
+
+You can also set these variables as ENV variable.
+Here is a sample of 2 variables being used.
+
+```bash 
+CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.bin/cypress run 
+```
+
+| ENV Variable | Value |
+| ------------- | ---------- |
+| CYPRESS_TESTRAIL_PROJECT_ID | your ID from TestRail |
+| CYPRESS_TESTRAIL_MILESTONE_ID | your ID from TestRail |
+| CYPRESS_TESTRAIL_RUN_NAME | any string |
+| CYPRESS_TESTRAIL_RUN_CLOSE | true, false |
+
+
+### 4. Register Plugin
 
 Just place this line in your `plugins/index.js` file.
 There's nothing more that is required to register the TestRail reporter.
@@ -62,7 +121,7 @@ const customComment = 'AUT v' + Cypress.env('MY_APP_VERSION');
 new TestRailReporter(on, config, customComment).register();
 ```
 
-### 4. Map Test Cases
+### 5. Map Test Cases
 
 We're almost done.
 You can now map TestRail test cases to your Cypress tests.
