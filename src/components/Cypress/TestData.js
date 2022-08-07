@@ -1,22 +1,20 @@
 class TestData {
-
     /**
      *
      * @param data
      */
     constructor(data) {
-
-        this._title = (data.title !== undefined && data.title.length > 0) ? data.title[data.title.length - 1] : 'Title not found';
+        this._title = data.title !== undefined && data.title.length > 0 ? data.title[data.title.length - 1] : 'Title not found';
         this._state = data.state;
 
-        this._error = (data.displayError !== undefined && data.displayError !== null) ? data.displayError : '';
+        this._error = data.displayError !== undefined && data.displayError !== null ? data.displayError : '';
 
         this._durationMS = 0;
 
         if (data.attempts !== undefined) {
-            data.attempts.forEach(attempt => {
+            data.attempts.forEach((attempt) => {
                 this._durationMS += attempt.wallClockDuration;
-            })
+            });
         }
     }
 
@@ -33,7 +31,7 @@ class TestData {
      * @returns {boolean}
      */
     isPassed() {
-        return (this._error === '');
+        return this._error === '';
     }
 
     /**
@@ -59,7 +57,6 @@ class TestData {
     getError() {
         return this._error;
     }
-
 }
 
 module.exports = TestData;

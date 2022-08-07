@@ -1,7 +1,6 @@
 const axios = require('axios');
 
 class ApiClient {
-
     /**
      * @param domain
      * @param username
@@ -19,38 +18,35 @@ class ApiClient {
      * @param result
      */
     sendResult(runID, result) {
-
         const postData = {
-            'results': [
+            results: [
                 {
-                    'case_id': result.getCaseId(),
-                    'status_id': result.getStatusId(),
-                    'comment': result.getComment().trim(),
-                    'elapsed': result.getElapsed(),
+                    case_id: result.getCaseId(),
+                    status_id: result.getStatusId(),
+                    comment: result.getComment().trim(),
+                    elapsed: result.getElapsed(),
                 },
             ],
         };
 
-        axios(
-            {
-                method: 'post',
-                url: `${this.baseUrl}/add_results_for_cases/${runID}`,
-                headers: {'Content-Type': 'application/json'},
-                auth: {
-                    username: this.username,
-                    password: this.password,
-                },
-                data: JSON.stringify(postData),
-            })
+        axios({
+            method: 'post',
+            url: `${this.baseUrl}/add_results_for_cases/${runID}`,
+            headers: { 'Content-Type': 'application/json' },
+            auth: {
+                username: this.username,
+                password: this.password,
+            },
+            data: JSON.stringify(postData),
+        })
             .then(() => {
                 /* eslint-disable no-console */
                 console.log('  TestRail result sent for TestCase ' + result.getCaseId());
             })
-            .catch(error => {
-                console.error(error)
+            .catch((error) => {
+                console.error(error);
             });
     }
-
 }
 
 module.exports = ApiClient;

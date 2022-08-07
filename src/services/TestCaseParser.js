@@ -1,5 +1,4 @@
 class TestCaseParser {
-
     /**
      *
      * @param title
@@ -14,7 +13,6 @@ class TestCaseParser {
 
         return '';
     }
-
 }
 
 module.exports = TestCaseParser;

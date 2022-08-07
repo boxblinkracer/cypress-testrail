@@ -1,5 +1,4 @@
 class Result {
-
     /**
      *
      * @param caseId
@@ -42,7 +41,6 @@ class Result {
     getElapsed() {
         return Math.round(this._durationMS / 1000) + 's';
     }
-
 }
 
 module.exports = Result;

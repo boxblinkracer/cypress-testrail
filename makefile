@@ -16,8 +16,12 @@ jest: ## Runs JS Unit Tests
 eslint: ## Starts the ESLinter
 	./node_modules/.bin/eslint --config ./.eslintrc.json ./src
 
+prettier: ## Starts Prettier
+	./node_modules/.bin/prettier --write "src/**/*.js"
+
 # ---------------------------------------------------------------------------------------------
 
 pr: ## Prepares a pull request
-	make jest -B
+	make prettier -B
 	make eslint -B
+	make jest -B

@@ -1,10 +1,8 @@
 class ConfigService {
-
     /**
      *
      */
     constructor(configArray) {
-
         this.config = configArray;
 
         if (this.config === undefined) {
@@ -87,7 +85,6 @@ class ConfigService {
      * @returns {string}
      */
     getRunId() {
-
         if (this.config === null) {
             return '';
         }
@@ -116,7 +113,6 @@ class ConfigService {
     getStatusFailed() {
         return 5;
     }
-
 }
 
 module.exports = ConfigService;
