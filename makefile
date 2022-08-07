@@ -17,11 +17,11 @@ eslint: ## Starts the ESLinter
 	./node_modules/.bin/eslint --config ./.eslintrc.json ./src
 
 prettier: ## Starts Prettier
-	./node_modules/.bin/prettier --write "src/**/*.js"
+	./node_modules/.bin/prettier --check "src/**/*.js"
 
 # ---------------------------------------------------------------------------------------------
 
 pr: ## Prepares a pull request
-	make prettier -B
+	./node_modules/.bin/prettier --write "src/**/*.js"
 	make eslint -B
 	make jest -B
