@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0]
+
+### Added
+
+- Add mode to create TestRuns inside TestRail with custom names, placeholders and more
+- Added option to provide config data as Cypress ENV variables
+
 ## [2.0.0]
 
 ### Breaking Changes
