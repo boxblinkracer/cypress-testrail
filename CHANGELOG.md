@@ -2,10 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## []
+## [2.1.1]
 
 ### Changed
 
+- Elapsed times with "0s" will not be sent anymore. TestRail doesn't like this.
 - Changed runName placeholder from %datetime% to __datetime__ to support better usages with bash for CI pipelines
 
 ## [2.1.0]
