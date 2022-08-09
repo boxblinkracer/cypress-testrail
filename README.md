@@ -76,7 +76,7 @@ It is also possible to provide a custom (or dynamically created) name for the ne
     // ....
     "projectId": "12",                      // required
     "milestoneId": "55",                    // optional
-    "runName": "Version XY (%datetime%)",   // optional, use placeholder %datetime% for current date time
+    "runName": "Version XY (__datetime__)",   // optional, use placeholder __datetime__ for current date time
     "closeRun": true,                       // optional (default FALSE), automatically close run in this mode
   }
 }

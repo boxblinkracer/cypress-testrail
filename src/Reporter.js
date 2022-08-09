@@ -109,11 +109,11 @@ class Reporter {
             const today = new Date();
             const dateTime = today.toLocaleString();
 
-            let runName = this.runName === '' ? 'Cypress Run (%datetime%)' : this.runName;
+            let runName = this.runName === '' ? 'Cypress Run (__datetime__)' : this.runName;
 
             // now use our current date time if
             // that placeholder has been used
-            runName = runName.replace('%datetime%', dateTime);
+            runName = runName.replace('__datetime__', dateTime);
 
             let description = '';
             description += 'Tested by Cypress';

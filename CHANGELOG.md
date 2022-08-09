@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## []
+
+### Changed
+
+- Changed runName placeholder from %datetime% to __datetime__ to support better usages with bash for CI pipelines
+
 ## [2.1.0]
 
 ### Added
