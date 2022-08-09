@@ -14,13 +14,29 @@ class Reporter {
     constructor(on, config, customComment) {
         this.on = on;
 
-        /* eslint-disable no-undef */
-        this.config = new ConfigService(config.env.testrail);
+        this.testCaseParser = new TestCaseParser();
 
-        // clean and assign our custom comment for our test results
+        /* eslint-disable no-undef */
+        const configService = new ConfigService(config.env);
+
+        this.enabled = configService.isApiValid();
+
+        this.domain = configService.getDomain();
+        this.projectId = configService.getProjectId();
+        this.milestoneId = configService.getMilestoneId();
+        this.runId = configService.getRunId();
+        this.runName = configService.getRunName();
+
+        this.modeCreateRun = !configService.hasRunID();
+        this.closeRun = configService.shouldCloseRun();
+        this.foundCaseIds = [];
+
+        this.statusPassed = configService.getStatusPassed();
+        this.statusFailed = configService.getStatusFailed();
+
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
-        this.testCaseParser = new TestCaseParser();
+        this.testRailApi = new ApiClient(configService.getDomain(), configService.getUsername(), configService.getPassword());
     }
 
     /**
@@ -29,51 +45,169 @@ class Reporter {
     register() {
         // if our config is not valid
         // then do not even register anything
-        if (!this.config.isValid()) {
+        if (!this.enabled) {
             return;
         }
 
-        // build our api client only once in here
-        this.testRailApi = new ApiClient(this.config.getDomain(), this.config.getUsername(), this.config.getPassword());
-
-        this.on('before:run', (details) => {
-            this.cypressVersion = details.cypressVersion;
-            this.browser = details.browser.displayName + ' (' + details.browser.version + ')';
-            this.system = details.system.osName + ' (' + details.system.osVersion + ')';
-            this.baseURL = details.config.baseUrl;
-
-            /* eslint-disable no-console */
-            console.log('  Starting TestRail Integration');
-            /* eslint-disable no-console */
-            console.log('  ....................................................');
-            /* eslint-disable no-console */
-            console.log('  Cypress: ' + this.cypressVersion);
-            /* eslint-disable no-console */
-            console.log('  Browser: ' + this.browser);
-            /* eslint-disable no-console */
-            console.log('  System: ' + this.system);
-            /* eslint-disable no-console */
-            console.log('  Base URL: ' + this.baseURL);
-            /* eslint-disable no-console */
-            console.log('  Comment: ' + this.customComment);
+        this.on('before:run', async (details) => {
+            await this._beforeRun(details);
         });
 
-        this.on('after:spec', (spec, results) => {
-            // iterate through all our test results
-            // and send the data to TestRail
-            results.tests.forEach((test) => {
+        this.on('after:spec', async (spec, results) => {
+            await this._afterSpec(spec, results);
+        });
+
+        this.on('after:run', async () => {
+            await this._afterRun();
+        });
+    }
+
+    /**
+     *
+     * @param details
+     * @private
+     */
+    async _beforeRun(details) {
+        this.cypressVersion = details.cypressVersion;
+        this.browser = details.browser.displayName + ' (' + details.browser.version + ')';
+        this.system = details.system.osName + ' (' + details.system.osVersion + ')';
+        this.baseURL = details.config.baseUrl;
+
+        /* eslint-disable no-console */
+        console.log('  Starting TestRail Integration');
+        /* eslint-disable no-console */
+        console.log('  ....................................................');
+        /* eslint-disable no-console */
+        console.log('  Cypress: ' + this.cypressVersion);
+        /* eslint-disable no-console */
+        console.log('  Browser: ' + this.browser);
+        /* eslint-disable no-console */
+        console.log('  System: ' + this.system);
+        /* eslint-disable no-console */
+        console.log('  Base URL: ' + this.baseURL);
+        /* eslint-disable no-console */
+        console.log('  TestRail Domain: ' + this.domain);
+
+        if (this.modeCreateRun) {
+            /* eslint-disable no-console */
+            console.log('  TestRail Mode: Create Run');
+            /* eslint-disable no-console */
+            console.log('  TestRail Project ID: ' + this.projectId);
+            /* eslint-disable no-console */
+            console.log('  TestRail Milestone ID: ' + this.milestoneId);
+            /* eslint-disable no-console */
+            console.log('  TestRail Run Name: ' + this.runName);
+        } else {
+            /* eslint-disable no-console */
+            console.log('  TestRail Mode: Use existing Run');
+            /* eslint-disable no-console */
+            console.log('  TestRail Run ID: ' + this.runId);
+        }
+
+        // if we don't have a runID, then we need to create one
+        if (this.runId === '') {
+            const today = new Date();
+            const dateTime = today.toLocaleString();
+
+            let runName = this.runName === '' ? 'Cypress Run (%datetime%)' : this.runName;
+
+            // now use our current date time if
+            // that placeholder has been used
+            runName = runName.replace('%datetime%', dateTime);
+
+            let description = '';
+            description += 'Tested by Cypress';
+            description += '\nCypress: ' + this.cypressVersion;
+            description += '\nBrowser: ' + this.browser;
+            description += '\nBase URL: ' + this.baseURL;
+            description += '\nSystem: ' + this.system;
+
+            if (this.customComment !== '') {
+                description += '\n' + this.customComment;
+            }
+
+            await this.testRailApi.createRun(this.projectId, this.milestoneId, runName, description, (runId) => {
+                // run created
+                this.runId = runId;
+                /* eslint-disable no-console */
+                console.log('  New TestRail Run: R' + this.runId);
+            });
+        }
+    }
+
+    /**
+     *
+     * @param spec
+     * @param results
+     * @private
+     */
+    async _afterSpec(spec, results) {
+        if (this.modeCreateRun) {
+            // if we are in the mode to dynamically create runs
+            // then we also need to add the new found runs to our created test run
+            await results.tests.forEach((test) => {
                 const testData = new TestData(test);
-
                 const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
-
                 if (caseId !== '') {
-                    let status = this.config.getStatusPassed();
+                    this.foundCaseIds.push(caseId);
+                }
+            });
 
-                    if (testData.getState() !== 'passed') {
-                        status = this.config.getStatusFailed();
-                    }
+            await this.testRailApi.updateRun(this.runId, this.foundCaseIds);
+        }
 
-                    let comment = 'Tested by Cypress';
+        await this._sendSpecResults(spec, results);
+    }
+
+    /**
+     *
+     * @private
+     */
+    async _afterRun() {
+        if (this.modeCreateRun) {
+            if (this.closeRun) {
+                // if we have just created a run then automatically close it
+                await this.testRailApi.closeRun(this.runId, () => {
+                    /* eslint-disable no-console */
+                    console.log('  TestRail Run: R' + this.runId + ' is now closed');
+                });
+            } else {
+                /* eslint-disable no-console */
+                console.log('  Skipping closing of Test Run');
+            }
+        }
+    }
+
+    /**
+     *
+     * @param spec
+     * @param results
+     * @returns {Promise<void>}
+     * @private
+     */
+    async _sendSpecResults(spec, results) {
+        const allRequests = [];
+
+        // iterate through all our test results
+        // and send the data to TestRail
+        await results.tests.forEach(async (test) => {
+            const testData = new TestData(test);
+
+            const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
+
+            if (caseId !== '') {
+                let status = this.statusPassed;
+
+                if (testData.getState() !== 'passed') {
+                    status = this.statusFailed;
+                }
+
+                let comment = 'Tested by Cypress';
+
+                // this is already part of the run description
+                // if it was created dynamically.
+                // otherwise add it to the result
+                if (!this.modeCreateRun) {
                     comment += '\nCypress: ' + this.cypressVersion;
                     comment += '\nBrowser: ' + this.browser;
                     comment += '\nBase URL: ' + this.baseURL;
@@ -83,16 +217,19 @@ class Reporter {
                     if (this.customComment !== '') {
                         comment += '\n' + this.customComment;
                     }
-
-                    if (testData.getError() !== '') {
-                        comment += '\nError: ' + testData.getError();
-                    }
-
-                    const result = new Result(caseId, status, comment, testData.getDurationMS());
-                    this.testRailApi.sendResult(this.config.getRunId(), result);
                 }
-            });
+
+                if (testData.getError() !== '') {
+                    comment += '\nError: ' + testData.getError();
+                }
+
+                const result = new Result(caseId, status, comment, testData.getDurationMS());
+                const request = this.testRailApi.sendResult(this.runId, result);
+                allRequests.push(request);
+            }
         });
+
+        await Promise.all(allRequests);
     }
 }
 
