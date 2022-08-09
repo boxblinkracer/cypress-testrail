@@ -81,10 +81,14 @@ class ApiClient {
                     case_id: result.getCaseId(),
                     status_id: result.getStatusId(),
                     comment: result.getComment().trim(),
-                    elapsed: result.getElapsed(),
                 },
             ],
         };
+
+        // 0s is not valid
+        if (result.getElapsed() !== '0s') {
+            postData.results[0].elapsed = result.getElapsed();
+        }
 
         return this._post('/add_results_for_cases/' + runID, postData, () => {
             /* eslint-disable no-console */
