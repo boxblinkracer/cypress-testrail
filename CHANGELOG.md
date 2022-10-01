@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - RunIDs can now also be provided with a leading "R". The integration will automatically remove it.
+- RunIDs do now also work with spaces if accidentally inserted.
 
 ### Fixed
 
