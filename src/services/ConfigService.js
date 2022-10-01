@@ -1,5 +1,3 @@
-const {run} = require("jest");
-
 class ConfigService {
     /**
      *
@@ -135,7 +133,6 @@ class ConfigService {
                 return '';
             }
         }
-
 
         projectId = projectId.replace('P', '');
         projectId = projectId.trim();

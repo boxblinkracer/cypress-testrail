@@ -1,4 +1,4 @@
-import ConfigService from "../../../src/services/ConfigService";
+import ConfigService from '../../../src/services/ConfigService';
 
 
 test('undefined config returns default values', () => {
