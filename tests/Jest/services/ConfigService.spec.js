@@ -107,6 +107,24 @@ test('milestoneId is correctly read', () => {
     expect(config.getMilestoneId()).toBe('P123');
 });
 
+test('leading M from Milestone ID is correctly removed', () => {
+    const config = new ConfigService({
+        'testrail': {
+            'milestoneId': 'M123',
+        }
+    });
+    expect(config.getMilestoneId()).toBe('123');
+});
+
+test('milestoneId with whitespace is correctly trimmed', () => {
+    const config = new ConfigService({
+        'testrail': {
+            'milestoneId': ' 123 ',
+        }
+    });
+    expect(config.getMilestoneId()).toBe('123');
+});
+
 test('runName is correctly read', () => {
     const config = new ConfigService({
         'testrail': {

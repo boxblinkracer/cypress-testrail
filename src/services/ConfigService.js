@@ -152,20 +152,25 @@ class ConfigService {
             return '';
         }
 
+        let milestoneId = '';
+
         // CYPRESS_TESTRAIL_MILESTONE_ID
         if (this.config.TESTRAIL_MILESTONE_ID !== undefined && this.config.TESTRAIL_MILESTONE_ID !== '') {
-            return this.config.TESTRAIL_MILESTONE_ID;
+            milestoneId = this.config.TESTRAIL_MILESTONE_ID;
+        } else {
+            if (this.config.testrail === undefined || this.config.testrail === null) {
+                return '';
+            }
+
+            milestoneId = this.config.testrail.milestoneId;
+
+            if (milestoneId === undefined || milestoneId === null) {
+                return '';
+            }
         }
 
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return '';
-        }
-
-        const milestoneId = this.config.testrail.milestoneId;
-
-        if (milestoneId === undefined || milestoneId === null) {
-            return '';
-        }
+        milestoneId = milestoneId.replace('M', '');
+        milestoneId = milestoneId.trim();
 
         return milestoneId;
     }
