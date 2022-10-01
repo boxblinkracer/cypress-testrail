@@ -9,7 +9,9 @@ All notable changes to this project will be documented in this file.
 
 - RunIDs can now also be provided with a leading "R". The integration will automatically remove it.
 - RunIDs do now also work with spaces if accidentally inserted.
-
+- ProjectIDs can now also be provided with a leading "P". The integration will automatically remove it.
+- ProjectIDs do now also work with spaces if accidentally inserted.
+- 
 ### Fixed
 
 - Fixed problem with missing axio package when doing an installation from scratch

@@ -119,20 +119,26 @@ class ConfigService {
             return '';
         }
 
+        let projectId = '';
+
         // CYPRESS_TESTRAIL_PROJECT_ID
         if (this.config.TESTRAIL_PROJECT_ID !== undefined && this.config.TESTRAIL_PROJECT_ID !== '') {
-            return this.config.TESTRAIL_PROJECT_ID;
+            projectId = this.config.TESTRAIL_PROJECT_ID;
+        } else {
+            if (this.config.testrail === undefined || this.config.testrail === null) {
+                return '';
+            }
+
+            projectId = this.config.testrail.projectId;
+
+            if (projectId === undefined || projectId === null) {
+                return '';
+            }
         }
 
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return '';
-        }
 
-        const projectId = this.config.testrail.projectId;
-
-        if (projectId === undefined || projectId === null) {
-            return '';
-        }
+        projectId = projectId.replace('P', '');
+        projectId = projectId.trim();
 
         return projectId;
     }

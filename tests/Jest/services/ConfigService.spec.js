@@ -74,10 +74,28 @@ test('password is correctly read', () => {
 test('projectId is correctly read', () => {
     const config = new ConfigService({
         'testrail': {
+            'projectId': '123',
+        }
+    });
+    expect(config.getProjectId()).toBe('123');
+});
+
+test('leading P from Project ID is correctly removed', () => {
+    const config = new ConfigService({
+        'testrail': {
             'projectId': 'P123',
         }
     });
-    expect(config.getProjectId()).toBe('P123');
+    expect(config.getProjectId()).toBe('123');
+});
+
+test('projectId with whitespace is correctly trimmed', () => {
+    const config = new ConfigService({
+        'testrail': {
+            'projectId': ' 123 ',
+        }
+    });
+    expect(config.getProjectId()).toBe('123');
 });
 
 test('milestoneId is correctly read', () => {
