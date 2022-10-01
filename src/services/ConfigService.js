@@ -1,3 +1,5 @@
+const {run} = require("jest");
+
 class ConfigService {
     /**
      *
@@ -171,20 +173,24 @@ class ConfigService {
             return '';
         }
 
+        let runId = '';
+
         // CYPRESS_TESTRAIL_RUN_ID
         if (this.config.TESTRAIL_RUN_ID !== undefined && this.config.TESTRAIL_RUN_ID !== '') {
-            return this.config.TESTRAIL_RUN_ID;
+            runId = this.config.TESTRAIL_RUN_ID;
+        } else {
+            if (this.config.testrail === undefined || this.config.testrail === null) {
+                return '';
+            }
+            runId = this.config.testrail.runId;
+
+            if (runId === undefined || runId === null) {
+                return '';
+            }
         }
 
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return '';
-        }
-
-        const runId = this.config.testrail.runId;
-
-        if (runId === undefined || runId === null) {
-            return '';
-        }
+        runId = runId.replace('R', '');
+        runId = runId.trim();
 
         return runId;
     }

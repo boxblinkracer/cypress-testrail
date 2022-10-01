@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 
 ## [UNRELEASED]
 
+### Changed
+
+- RunIDs can now also be provided with a leading "R". The integration will automatically remove it.
+
 ### Fixed
 
 - Fixed problem with missing axio package when doing an installation from scratch

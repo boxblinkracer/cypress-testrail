@@ -19,11 +19,30 @@ test('empty config returns default values', () => {
 test('runId is correctly read', () => {
     const config = new ConfigService({
         'testrail': {
+            'runId': '123',
+        }
+    });
+    expect(config.getRunId()).toBe('123');
+});
+
+test('leading R from Run ID is correctly removed', () => {
+    const config = new ConfigService({
+        'testrail': {
             'runId': 'R123',
         }
     });
-    expect(config.getRunId()).toBe('R123');
+    expect(config.getRunId()).toBe('123');
 });
+
+test('runId with whitespace is correctly trimmed', () => {
+    const config = new ConfigService({
+        'testrail': {
+            'runId': ' 123 ',
+        }
+    });
+    expect(config.getRunId()).toBe('123');
+});
+
 
 test('domain is correctly read', () => {
     const config = new ConfigService({
