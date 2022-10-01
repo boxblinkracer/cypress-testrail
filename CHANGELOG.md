@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## [UNRELEASED]
+
+### Fixed
+
+- Fixed problem with missing axio package when doing an installation from scratch
+
+
+
 ## [2.1.1]
 
 ### Changed
