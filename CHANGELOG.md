@@ -3,7 +3,7 @@
 All notable changes to this project will be documented in this file.
 
 
-## [UNRELEASED]
+## [2.2.1]
 
 ### Fixed
 
