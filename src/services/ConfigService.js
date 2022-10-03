@@ -134,6 +134,7 @@ class ConfigService {
             }
         }
 
+        projectId = String(projectId);
         projectId = projectId.replace('P', '');
         projectId = projectId.trim();
 
@@ -166,6 +167,7 @@ class ConfigService {
             }
         }
 
+        milestoneId = String(milestoneId);
         milestoneId = milestoneId.replace('M', '');
         milestoneId = milestoneId.trim();
 
@@ -197,6 +199,7 @@ class ConfigService {
             }
         }
 
+        runId = String(runId);
         runId = runId.replace('R', '');
         runId = runId.trim();
 

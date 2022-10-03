@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 
+## [UNRELEASED]
+
+### Fixed
+
+- Fixed cast problem with string replace function when using CLI ENV variables with INT values.
+
+
 ## [2.2.0]
 
 ### Changed
