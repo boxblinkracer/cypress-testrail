@@ -121,6 +121,20 @@ const customComment = 'AUT v' + Cypress.env('MY_APP_VERSION');
 new TestRailReporter(on, config, customComment).register();
 ```
 
+If you are running Cypress 10 and higher, then there is no classic plugin/index.js file anymore.
+You can of course still use it. The new `cypress.config.js` has a configuration option called `setupNodeEvents`.
+That one acts as the perfect entrypoint to either directly start the configuration, or just load a separate file.
+
+```javascript
+e2e: {
+  // We've imported your old cypress plugins here.
+  // You may want to clean this up later by importing these.
+  setupNodeEvents(on, config) {
+      return require('./cypress/plugins/index.js')(on, config)
+  },
+}
+```
+
 ### 5. Map Test Cases
 
 We're almost done.
