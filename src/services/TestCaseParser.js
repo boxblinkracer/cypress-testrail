@@ -1,5 +1,4 @@
 class TestCaseParser {
-
     /**
      *
      * @param title
@@ -11,12 +10,11 @@ class TestCaseParser {
         const foundCases = [];
 
         if (trimmedTitle.includes(':')) {
-
             const caseSection = trimmedTitle.substring(0, trimmedTitle.indexOf(':'));
 
             const cases = caseSection.split(' ');
 
-            cases.forEach(singleCase => {
+            cases.forEach((singleCase) => {
                 if (singleCase.startsWith('C')) {
                     singleCase = singleCase.replace('C', '');
                     foundCases.push(singleCase);

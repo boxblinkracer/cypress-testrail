@@ -150,7 +150,7 @@ class Reporter {
 
                 const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
-                foundCaseIDs.forEach(singleCase => {
+                foundCaseIDs.forEach((singleCase) => {
                     this.foundCaseIds.push(singleCase);
                 });
             });
@@ -197,8 +197,7 @@ class Reporter {
 
             const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
-            foundCaseIDs.forEach(caseId => {
-
+            foundCaseIDs.forEach((caseId) => {
                 let status = this.statusPassed;
 
                 if (testData.getState() !== 'passed') {
