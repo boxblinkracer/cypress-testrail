@@ -147,10 +147,12 @@ class Reporter {
             // then we also need to add the new found runs to our created test run
             await results.tests.forEach((test) => {
                 const testData = new TestData(test);
-                const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
-                if (caseId !== '') {
-                    this.foundCaseIds.push(caseId);
-                }
+
+                const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
+
+                foundCaseIDs.forEach(singleCase => {
+                    this.foundCaseIds.push(singleCase);
+                });
             });
 
             await this.testRailApi.updateRun(this.runId, this.foundCaseIds);
@@ -193,9 +195,10 @@ class Reporter {
         await results.tests.forEach(async (test) => {
             const testData = new TestData(test);
 
-            const caseId = this.testCaseParser.searchCaseId(testData.getTitle());
+            const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
-            if (caseId !== '') {
+            foundCaseIDs.forEach(caseId => {
+
                 let status = this.statusPassed;
 
                 if (testData.getState() !== 'passed') {
@@ -226,7 +229,7 @@ class Reporter {
                 const result = new Result(caseId, status, comment, testData.getDurationMS());
                 const request = this.testRailApi.sendResult(this.runId, result);
                 allRequests.push(request);
-            }
+            });
         });
 
         await Promise.all(allRequests);

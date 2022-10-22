@@ -1,17 +1,30 @@
 class TestCaseParser {
+
     /**
      *
      * @param title
-     * @returns {string}
+     * @returns {string[]|*[]}
      */
     searchCaseId(title) {
         const trimmedTitle = title.trim();
 
-        if (trimmedTitle.includes(':', 0) && trimmedTitle.startsWith('C')) {
-            return trimmedTitle.substring(1, trimmedTitle.indexOf(':'));
+        const foundCases = [];
+
+        if (trimmedTitle.includes(':')) {
+
+            const caseSection = trimmedTitle.substring(0, trimmedTitle.indexOf(':'));
+
+            const cases = caseSection.split(' ');
+
+            cases.forEach(singleCase => {
+                if (singleCase.startsWith('C')) {
+                    singleCase = singleCase.replace('C', '');
+                    foundCases.push(singleCase);
+                }
+            });
         }
 
-        return '';
+        return foundCases;
     }
 }
 

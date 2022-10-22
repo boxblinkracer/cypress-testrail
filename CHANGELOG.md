@@ -2,13 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## []
+
+### Fixed
+
+- It's now possible to add multiple case ids to a test. Just do it like this "C1 C2 C3: my description of the test".
 
 ## [2.2.1]
 
 ### Fixed
 
 - Fixed cast problem with string replace function when using CLI ENV variables with INT values.
-
 
 ## [2.2.0]
 
@@ -21,7 +25,6 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Fixed problem with missing axio package when doing an installation from scratch
-
 
 ## [2.1.1]
 

@@ -4,16 +4,33 @@ const parser = new TestCaseParser();
 
 
 test('case id can be successfully extracted', () => {
-    const caseId = parser.searchCaseId('C123: This is a test');
-    expect(caseId).toBe('123');
+    const result = parser.searchCaseId('C123: This is a test');
+    expect(result.length).toBe(1);
+    expect(result[0]).toBe('123');
 });
 
 test('case id is empty if not existing', () => {
-    const caseId = parser.searchCaseId('This is a test');
-    expect(caseId).toBe('');
+    const result = parser.searchCaseId('This is a test');
+    expect(result.length).toBe(0);
 });
 
 test('case id can be found if starting with space', () => {
-    const caseId = parser.searchCaseId(' C123: This is a test');
-    expect(caseId).toBe('123');
+    const result = parser.searchCaseId(' C123: This is a test');
+    expect(result.length).toBe(1);
+    expect(result[0]).toBe('123');
+});
+
+test('multiple case IDs can be found', () => {
+    const result = parser.searchCaseId('C1 C2 C3: This is a test');
+    expect(result.length).toBe(3);
+    expect(result[0]).toBe('1');
+    expect(result[1]).toBe('2');
+    expect(result[2]).toBe('3');
+});
+
+test('multiple case IDs including invalid IDs can be found', () => {
+    const result = parser.searchCaseId('C1 2 ab test C3: This is a test');
+    expect(result.length).toBe(2);
+    expect(result[0]).toBe('1');
+    expect(result[1]).toBe('3');
 });
