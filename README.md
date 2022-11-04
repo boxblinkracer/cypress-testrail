@@ -96,7 +96,6 @@ CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.b
 | CYPRESS_TESTRAIL_RUN_NAME | any string |
 | CYPRESS_TESTRAIL_RUN_CLOSE | true, false |
 
-
 ### 4. Register Plugin
 
 Just place this line in your `plugins/index.js` file.
@@ -127,11 +126,13 @@ That one acts as the perfect entrypoint to either directly start the configurati
 
 ```javascript
 e2e: {
-  // We've imported your old cypress plugins here.
-  // You may want to clean this up later by importing these.
-  setupNodeEvents(on, config) {
-      return require('./cypress/plugins/index.js')(on, config)
-  },
+    // We've imported your old cypress plugins here.
+    // You may want to clean this up later by importing these.
+    setupNodeEvents(on, config)
+    {
+        return require('./cypress/plugins/index.js')(on, config)
+    }
+,
 }
 ```
 
@@ -141,10 +142,20 @@ We're almost done.
 You can now map TestRail test cases to your Cypress tests.
 Please use the TestRail case ID as a prefix inside the Cypress test title.
 The plugin will automatically extract it, and send the results to your test run in TestRail.
-The case ID needs to be at the beginning and separated with an `:` from the rest of the title.
+The Case ID needs to be at the beginning and separated with an `:` from the rest of the title.
+
+You can also add multiple Case IDs before the `:`. Results will be sent for all found test cases.
 
 ```javascript 
-it('C123: My Test for TestRail XYZ', () => {
+it('C123: My Test for TestRail case 123', () => {
+
+    cy.get('#sw-field--name').type('John');
+    // ...
+    // ...
+    
+})
+
+it('C123 C54 C36: My Test for multiple TestRail case IDs', () => {
 
     cy.get('#sw-field--name').type('John');
     // ...
