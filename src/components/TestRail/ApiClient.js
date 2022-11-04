@@ -1,4 +1,5 @@
 const axios = require('axios');
+const ColorConsole = require('../../services/ColorConsole');
 
 class ApiClient {
     /**
@@ -32,12 +33,19 @@ class ApiClient {
             postData['milestone_id'] = milestoneId;
         }
 
-        return this._post('/add_run/' + projectId, postData, (response) => {
-            /* eslint-disable no-console */
-            console.log('  TestRun created in TestRail: ' + name);
-            // notify our callback
-            callback(response.data.id);
-        });
+        return this._post(
+            '/add_run/' + projectId,
+            postData,
+            (response) => {
+                ColorConsole.success('  TestRun created in TestRail: ' + name);
+                // notify our callback
+                callback(response.data.id);
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not create TestRail run for project P' + projectId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
     }
 
     /**
@@ -52,10 +60,17 @@ class ApiClient {
             case_ids: caseIds,
         };
 
-        return this._post('/update_run/' + runId, postData, () => {
-            /* eslint-disable no-console */
-            console.log('  TestRun updated in TestRail: ' + runId);
-        });
+        return this._post(
+            '/update_run/' + runId,
+            postData,
+            () => {
+                ColorConsole.success('  TestRun updated in TestRail: ' + runId);
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not add TestRail test cases to run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
     }
 
     /**
@@ -64,9 +79,17 @@ class ApiClient {
      * @param onSuccess
      */
     closeRun(runId, onSuccess) {
-        return this._post('/close_run/' + runId, {}, () => {
-            onSuccess();
-        });
+        return this._post(
+            '/close_run/' + runId,
+            {},
+            () => {
+                onSuccess();
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not close TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
     }
 
     /**
@@ -90,10 +113,17 @@ class ApiClient {
             postData.results[0].elapsed = result.getElapsed();
         }
 
-        return this._post('/add_results_for_cases/' + runID, postData, () => {
-            /* eslint-disable no-console */
-            console.log('  TestRail result sent for TestCase C' + result.getCaseId());
-        });
+        return this._post(
+            '/add_results_for_cases/' + runID,
+            postData,
+            () => {
+                ColorConsole.success('  TestRail result sent for TestCase C' + result.getCaseId());
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not send TestRail result for case C' + result.getCaseId() + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
     }
 
     /**
@@ -101,9 +131,11 @@ class ApiClient {
      * @param slug
      * @param postData
      * @param onSuccess
+     * @param onError
+     * @returns {Promise<AxiosResponse<any>>}
      * @private
      */
-    _post(slug, postData, onSuccess) {
+    _post(slug, postData, onSuccess, onError) {
         return axios({
             method: 'post',
             url: this.baseUrl + slug,
@@ -120,7 +152,11 @@ class ApiClient {
                 onSuccess(response);
             })
             .catch((error) => {
-                console.error(error);
+                const statusCode = error.response.status;
+                const statusText = error.response.statusText;
+                const errorText = error.response.data.error;
+
+                onError(statusCode, statusText, errorText);
             });
     }
 }

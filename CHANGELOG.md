@@ -4,9 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## []
 
-### Fixed
+### Added
 
 - It's now possible to add multiple case ids to a test. Just do it like this "C1 C2 C3: my description of the test".
+- Added new colored console outputs for successful or failed API calls.
+- Improve the output of failed API calls to TestRail. The error message is now extracted and shown in a more convenient way.
 
 ## [2.2.1]
 

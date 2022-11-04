@@ -3,6 +3,7 @@ const TestCaseParser = require('./services/TestCaseParser');
 const Result = require('./components/TestRail/Result');
 const ConfigService = require('./services/ConfigService');
 const TestData = require('./components/Cypress/TestData');
+const ColorConsole = require('./services/ColorConsole');
 
 class Reporter {
     /**
@@ -73,35 +74,22 @@ class Reporter {
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
         this.baseURL = details.config.baseUrl;
 
-        /* eslint-disable no-console */
-        console.log('  Starting TestRail Integration');
-        /* eslint-disable no-console */
-        console.log('  ....................................................');
-        /* eslint-disable no-console */
-        console.log('  Cypress: ' + this.cypressVersion);
-        /* eslint-disable no-console */
-        console.log('  Browser: ' + this.browser);
-        /* eslint-disable no-console */
-        console.log('  System: ' + this.system);
-        /* eslint-disable no-console */
-        console.log('  Base URL: ' + this.baseURL);
-        /* eslint-disable no-console */
-        console.log('  TestRail Domain: ' + this.domain);
+        ColorConsole.success('  Starting TestRail Integration');
+        ColorConsole.debug('  ....................................................');
+        ColorConsole.debug('  Cypress: ' + this.cypressVersion);
+        ColorConsole.debug('  Browser: ' + this.browser);
+        ColorConsole.debug('  System: ' + this.system);
+        ColorConsole.debug('  Base URL: ' + this.baseURL);
+        ColorConsole.debug('  TestRail Domain: ' + this.domain);
 
         if (this.modeCreateRun) {
-            /* eslint-disable no-console */
-            console.log('  TestRail Mode: Create Run');
-            /* eslint-disable no-console */
-            console.log('  TestRail Project ID: ' + this.projectId);
-            /* eslint-disable no-console */
-            console.log('  TestRail Milestone ID: ' + this.milestoneId);
-            /* eslint-disable no-console */
-            console.log('  TestRail Run Name: ' + this.runName);
+            ColorConsole.debug('  TestRail Mode: Create Run');
+            ColorConsole.debug('  TestRail Project ID: ' + this.projectId);
+            ColorConsole.debugg('  TestRail Milestone ID: ' + this.milestoneId);
+            ColorConsole.debug('  TestRail Run Name: ' + this.runName);
         } else {
-            /* eslint-disable no-console */
-            console.log('  TestRail Mode: Use existing Run');
-            /* eslint-disable no-console */
-            console.log('  TestRail Run ID: ' + this.runId);
+            ColorConsole.debug('  TestRail Mode: Use existing Run');
+            ColorConsole.debug('  TestRail Run ID: ' + this.runId);
         }
 
         // if we don't have a runID, then we need to create one
