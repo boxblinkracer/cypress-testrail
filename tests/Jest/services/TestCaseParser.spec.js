@@ -1,4 +1,4 @@
-import TestCaseParser from "../../../src/services/TestCaseParser";
+import TestCaseParser from '../../../src/services/TestCaseParser';
 
 const parser = new TestCaseParser();
 
@@ -21,16 +21,16 @@ test('case id can be found if starting with space', () => {
 });
 
 test('multiple case IDs can be found', () => {
-    const result = parser.searchCaseId('C1 C2 C3: This is a test');
+    const result = parser.searchCaseId('C54 C22 C67: This is a test');
     expect(result.length).toBe(3);
-    expect(result[0]).toBe('1');
-    expect(result[1]).toBe('2');
-    expect(result[2]).toBe('3');
+    expect(result[0]).toBe('54');
+    expect(result[1]).toBe('22');
+    expect(result[2]).toBe('67');
 });
 
 test('multiple case IDs including invalid IDs can be found', () => {
-    const result = parser.searchCaseId('C1 2 ab test C3: This is a test');
+    const result = parser.searchCaseId('C13 24 ab test C35: This is a test');
     expect(result.length).toBe(2);
-    expect(result[0]).toBe('1');
-    expect(result[1]).toBe('3');
+    expect(result[0]).toBe('13');
+    expect(result[1]).toBe('35');
 });

@@ -1,4 +1,4 @@
-import TestData from "../../../../src/components/Cypress/TestData";
+import TestData from '../../../../src/components/Cypress/TestData';
 
 
 test('Test is passing if no error exists', () => {
