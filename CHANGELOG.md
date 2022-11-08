@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.1]
+
+- Fixed problem with "ColoredConsole.debugg" is not a function in Create-TestRun mode. it should be debug, and not debugg
+
+
 ## [2.3.0]
 
 ### Added

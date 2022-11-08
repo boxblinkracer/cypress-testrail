@@ -85,7 +85,7 @@ class Reporter {
         if (this.modeCreateRun) {
             ColorConsole.debug('  TestRail Mode: Create Run');
             ColorConsole.debug('  TestRail Project ID: ' + this.projectId);
-            ColorConsole.debugg('  TestRail Milestone ID: ' + this.milestoneId);
+            ColorConsole.debug('  TestRail Milestone ID: ' + this.milestoneId);
             ColorConsole.debug('  TestRail Run Name: ' + this.runName);
         } else {
             ColorConsole.debug('  TestRail Mode: Use existing Run');
