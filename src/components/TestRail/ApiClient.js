@@ -1,5 +1,6 @@
 const axios = require('axios');
 const ColorConsole = require('../../services/ColorConsole');
+const ApiError = require('./ApiError');
 
 class ApiClient {
     /**
@@ -152,11 +153,10 @@ class ApiClient {
                 onSuccess(response);
             })
             .catch((error) => {
-                const statusCode = error.response.status;
-                const statusText = error.response.statusText;
-                const errorText = error.response.data.error;
-
-                onError(statusCode, statusText, errorText);
+                // extract our error
+                const apiError = new ApiError(error);
+                // notify about an error
+                onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
             });
     }
 }
