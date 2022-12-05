@@ -188,6 +188,12 @@ class Reporter {
             foundCaseIDs.forEach((caseId) => {
                 let status = this.statusPassed;
 
+                // if we have a pending status, then do not
+                // send data to testrail
+                if (testData.getState() === 'pending') {
+                    return;
+                }
+
                 if (testData.getState() !== 'passed') {
                     status = this.statusFailed;
                 }
