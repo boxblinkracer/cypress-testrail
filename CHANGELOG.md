@@ -2,10 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.0]
+
+### Changed
+
+- Tests with status "pending" had been sent as "failed" to TestRail. These test results will now be skipped and not sent to TestRail.
+
+### Fixed
+
+- Improved error response handling from TestRail API. Some errors led to an "undefined reading 'status'" exception. There should still be no error, but now we should know better what happens.
+
 ## [2.3.1]
 
-- Fixed problem with "ColoredConsole.debugg" is not a function in Create-TestRun mode. it should be debug, and not debugg
-
+- Fixed problem with "ColoredConsole.debug" is not a function in Create-TestRun mode. it should be debug, and not debugg
 
 ## [2.3.0]
 
