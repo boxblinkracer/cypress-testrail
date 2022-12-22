@@ -140,10 +140,10 @@ describe('MilestoneID', () => {
         test('MilestoneID from .env', () => {
             const config = new ConfigService({
                 'testrail': {
-                    'milestoneId': 'P123',
+                    'milestoneId': '123',
                 }
             });
-            expect(config.getMilestoneId()).toBe('P123');
+            expect(config.getMilestoneId()).toBe('123');
         });
 
         test('MilestoneID from .env with leading M', () => {
