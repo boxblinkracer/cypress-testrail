@@ -3,3 +3,5 @@
 /cypress/
 .DS_Store
 /coverage
+node_modules
+/tests/Cypress/cypress/videos
