@@ -122,12 +122,10 @@ class ApiClient {
             postData.results[0].elapsed = result.getElapsed();
         }
 
-
         return this._post(
             '/add_results_for_cases/' + runID,
             postData,
             (response) => {
-
                 const resultId = response.data[0].id;
 
                 ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
@@ -136,7 +134,6 @@ class ApiClient {
                     ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
                     this._sendScreenshot(resultId, result.getScreenshotPath(), null, null);
                 }
-
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('  Could not send TestRail result for case C' + result.getCaseId() + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
@@ -171,7 +168,6 @@ class ApiClient {
                 onSuccess(response);
             })
             .catch((error) => {
-                console.log(error);
                 // extract our error
                 const apiError = new ApiError(error);
                 // notify about an error
@@ -189,7 +185,6 @@ class ApiClient {
      * @private
      */
     _sendScreenshot(resultId, screenshotPath, onSuccess, onError) {
-
         const formData = new FormData();
         formData.append('attachment', fs.createReadStream(screenshotPath));
 

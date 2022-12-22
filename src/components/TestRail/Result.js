@@ -1,5 +1,4 @@
 class Result {
-
     /**
      *
      * @param caseId

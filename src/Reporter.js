@@ -245,19 +245,16 @@ class Reporter {
      * @private
      */
     _getScreenshotByTestId(testId, screenshots) {
-
         var foundScreenshot = null;
 
         screenshots.forEach((screenshot) => {
             if (screenshot.testId === testId) {
-
                 foundScreenshot = screenshot;
             }
         });
 
         return foundScreenshot;
     }
-
 }
 
 module.exports = Reporter;
