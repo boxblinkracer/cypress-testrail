@@ -196,8 +196,15 @@ class Reporter {
                     return;
                 }
 
+                let screenshotPath = null;
+
                 if (testData.getState() !== 'passed') {
                     status = this.statusFailed;
+
+                    const screenshot = this._getScreenshotByTestId(test.testId, results.screenshots);
+                    if (screenshot !== null) {
+                        screenshotPath = screenshot.path;
+                    }
                 }
 
                 let comment = 'Tested by Cypress';
@@ -221,7 +228,7 @@ class Reporter {
                     comment += '\nError: ' + testData.getError();
                 }
 
-                const result = new Result(caseId, status, comment, testData.getDurationMS());
+                const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPath);
                 const request = this.testRailApi.sendResult(this.runId, result);
                 allRequests.push(request);
             });
@@ -229,6 +236,28 @@ class Reporter {
 
         await Promise.all(allRequests);
     }
+
+    /**
+     *
+     * @param testId
+     * @param screenshots
+     * @returns {null}
+     * @private
+     */
+    _getScreenshotByTestId(testId, screenshots) {
+
+        var foundScreenshot = null;
+
+        screenshots.forEach((screenshot) => {
+            if (screenshot.testId === testId) {
+
+                foundScreenshot = screenshot;
+            }
+        });
+
+        return foundScreenshot;
+    }
+
 }
 
 module.exports = Reporter;

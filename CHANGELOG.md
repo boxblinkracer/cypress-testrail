@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- The integration will now automatically send the screenshots to TestRail for every failed test. This is all automatically done.
 - Added option to provide optional "suiteId" when creating new runs. If you have a project with suites, this parameter is required.
 
 ## [2.4.0]

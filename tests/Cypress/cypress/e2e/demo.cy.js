@@ -1,11 +1,9 @@
-it('passes', () => {
+it('C6872: success', () => {
     cy.visit('https://example.cypress.io')
-
-    cy.contains('Kitchen Sink');
 })
 
 
-it('fails', () => {
+it('C6872: fails', () => {
     cy.visit('https://example.cypress.io')
 
     cy.contains('TestRail');

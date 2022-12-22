@@ -1,6 +1,8 @@
 const axios = require('axios');
 const ColorConsole = require('../../services/ColorConsole');
 const ApiError = require('./ApiError');
+const FormData = require('form-data');
+const fs = require('fs');
 
 class ApiClient {
     /**
@@ -120,11 +122,21 @@ class ApiClient {
             postData.results[0].elapsed = result.getElapsed();
         }
 
+
         return this._post(
             '/add_results_for_cases/' + runID,
             postData,
-            () => {
-                ColorConsole.success('  TestRail result sent for TestCase C' + result.getCaseId());
+            (response) => {
+
+                const resultId = response.data[0].id;
+
+                ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
+
+                if (result.getScreenshotPath() !== '') {
+                    ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
+                    this._sendScreenshot(resultId, result.getScreenshotPath(), null, null);
+                }
+
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('  Could not send TestRail result for case C' + result.getCaseId() + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
@@ -154,6 +166,44 @@ class ApiClient {
                 password: this.password,
             },
             data: JSON.stringify(postData),
+        })
+            .then((response) => {
+                onSuccess(response);
+            })
+            .catch((error) => {
+                console.log(error);
+                // extract our error
+                const apiError = new ApiError(error);
+                // notify about an error
+                onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
+            });
+    }
+
+    /**
+     *
+     * @param resultId
+     * @param screenshotPath
+     * @param onSuccess
+     * @param onError
+     * @returns {Promise<AxiosResponse<any>>}
+     * @private
+     */
+    _sendScreenshot(resultId, screenshotPath, onSuccess, onError) {
+
+        const formData = new FormData();
+        formData.append('attachment', fs.createReadStream(screenshotPath));
+
+        return axios({
+            method: 'post',
+            url: this.baseUrl + '/add_attachment_to_result/' + resultId,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            auth: {
+                username: this.username,
+                password: this.password,
+            },
+            data: formData,
         })
             .then((response) => {
                 onSuccess(response);
