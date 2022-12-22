@@ -50,7 +50,7 @@ Results will only be saved, if the sent TestCaseID is also existing in that run 
 ```yaml 
 {
   "testrail": {
-    // ....
+                // ....
     "runId": "12345"
   }
 }
@@ -73,7 +73,7 @@ It is also possible to provide a custom (or dynamically created) name for the ne
 ```yaml 
 {
   "testrail": {
-    // ....
+                // ....
     "projectId": "12",                      // required
     "milestoneId": "55",                    // optional
     "suiteId": "14",                        // optional
@@ -90,13 +90,13 @@ Here is a sample of 2 variables being used.
 CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.bin/cypress run 
 ```
 
-| ENV Variable                  | Value |
-|-------------------------------| ---------- |
+| ENV Variable                  | Value                 |
+|-------------------------------|-----------------------|
 | CYPRESS_TESTRAIL_PROJECT_ID   | your ID from TestRail |
 | CYPRESS_TESTRAIL_MILESTONE_ID | your ID from TestRail |
 | CYPRESS_TESTRAIL_SUITE_ID     | your ID from TestRail |
-| CYPRESS_TESTRAIL_RUN_NAME     | any string |
-| CYPRESS_TESTRAIL_RUN_CLOSE    | true, false |
+| CYPRESS_TESTRAIL_RUN_NAME     | any string            |
+| CYPRESS_TESTRAIL_RUN_CLOSE    | true, false           |
 
 ### 4. Register Plugin
 
@@ -154,7 +154,7 @@ it('C123: My Test for TestRail case 123', () => {
     cy.get('#sw-field--name').type('John');
     // ...
     // ...
-    
+
 })
 
 it('C123 C54 C36: My Test for multiple TestRail case IDs', () => {
@@ -162,7 +162,7 @@ it('C123 C54 C36: My Test for multiple TestRail case IDs', () => {
     cy.get('#sw-field--name').type('John');
     // ...
     // ...
-    
+
 })
 ```
 
@@ -172,4 +172,4 @@ You can now start Cypress (restart after config changes), and all your results s
 
 ### Copying / License
 
-This repository is distributed under the MIT License (MIT). You can find the whole license text in the [LICENSE](LICENSE) file.
+This repository is distributed under the MIT License (MIT).
