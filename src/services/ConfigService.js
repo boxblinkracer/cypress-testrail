@@ -178,6 +178,39 @@ class ConfigService {
      *
      * @returns {string}
      */
+    getSuiteId() {
+        if (this.config === null) {
+            return '';
+        }
+
+        let suiteId = '';
+
+        // CYPRESS_TESTRAIL_SUITE_ID
+        if (this.config.TESTRAIL_SUITE_ID !== undefined && this.config.TESTRAIL_SUITE_ID !== '') {
+            suiteId = this.config.TESTRAIL_SUITE_ID;
+        } else {
+            if (this.config.testrail === undefined || this.config.testrail === null) {
+                return '';
+            }
+
+            suiteId = this.config.testrail.suiteId;
+
+            if (suiteId === undefined || suiteId === null) {
+                return '';
+            }
+        }
+
+        suiteId = String(suiteId);
+        suiteId = suiteId.replace('S', '');
+        suiteId = suiteId.trim();
+
+        return suiteId;
+    }
+
+    /**
+     *
+     * @returns {string}
+     */
     getRunId() {
         if (this.config === null) {
             return '';

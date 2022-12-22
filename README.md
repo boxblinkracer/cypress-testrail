@@ -76,7 +76,8 @@ It is also possible to provide a custom (or dynamically created) name for the ne
     // ....
     "projectId": "12",                      // required
     "milestoneId": "55",                    // optional
-    "runName": "Version XY (__datetime__)",   // optional, use placeholder __datetime__ for current date time
+    "suiteId": "14",                        // optional
+    "runName": "Version XY (__datetime__)", // optional, use placeholder __datetime__ for current date time
     "closeRun": true,                       // optional (default FALSE), automatically close run in this mode
   }
 }
@@ -89,12 +90,13 @@ Here is a sample of 2 variables being used.
 CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.bin/cypress run 
 ```
 
-| ENV Variable | Value |
-| ------------- | ---------- |
-| CYPRESS_TESTRAIL_PROJECT_ID | your ID from TestRail |
+| ENV Variable                  | Value |
+|-------------------------------| ---------- |
+| CYPRESS_TESTRAIL_PROJECT_ID   | your ID from TestRail |
 | CYPRESS_TESTRAIL_MILESTONE_ID | your ID from TestRail |
-| CYPRESS_TESTRAIL_RUN_NAME | any string |
-| CYPRESS_TESTRAIL_RUN_CLOSE | true, false |
+| CYPRESS_TESTRAIL_SUITE_ID     | your ID from TestRail |
+| CYPRESS_TESTRAIL_RUN_NAME     | any string |
+| CYPRESS_TESTRAIL_RUN_CLOSE    | true, false |
 
 ### 4. Register Plugin
 

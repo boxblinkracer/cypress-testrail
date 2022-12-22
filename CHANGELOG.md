@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [UNRELEASED]
+
+### Added
+
+- Added option to provide optional "suiteId" when creating new runs. If you have a project with suites, this parameter is required.
+
 ## [2.4.0]
 
 ### Changed

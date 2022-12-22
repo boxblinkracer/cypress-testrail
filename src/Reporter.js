@@ -25,6 +25,7 @@ class Reporter {
         this.domain = configService.getDomain();
         this.projectId = configService.getProjectId();
         this.milestoneId = configService.getMilestoneId();
+        this.suiteId = configService.getSuiteId();
         this.runId = configService.getRunId();
         this.runName = configService.getRunName();
 
@@ -114,7 +115,7 @@ class Reporter {
                 description += '\n' + this.customComment;
             }
 
-            await this.testRailApi.createRun(this.projectId, this.milestoneId, runName, description, (runId) => {
+            await this.testRailApi.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, (runId) => {
                 // run created
                 this.runId = runId;
                 /* eslint-disable no-console */

@@ -186,6 +186,59 @@ describe('MilestoneID', () => {
     });
 });
 
+describe('SuiteID', () => {
+
+    describe('.env file', () => {
+
+        test('SuiteID from .env', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'suiteId': '123',
+                }
+            });
+            expect(config.getSuiteId()).toBe('123');
+        });
+
+        test('SuiteID from .env with leading S', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'suiteId': 'S123',
+                }
+            });
+            expect(config.getSuiteId()).toBe('123');
+        });
+
+        test('SuiteID from .env with whitespaces', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'suiteId': ' 123 ',
+                }
+            });
+            expect(config.getSuiteId()).toBe('123');
+        });
+
+        test('SuiteID from .env as INT', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'suiteId': 123,
+                }
+            });
+            expect(config.getSuiteId()).toBe('123');
+        });
+
+    });
+
+    describe('ENV variable', () => {
+
+        test('SuiteID from ENV variable as INT', () => {
+            const config = new ConfigService({
+                'TESTRAIL_SUITE_ID': 45,
+            });
+            expect(config.getSuiteId()).toBe('45');
+        });
+    });
+});
+
 describe('RunID', () => {
 
     describe('.env file', () => {

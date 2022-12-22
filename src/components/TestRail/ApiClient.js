@@ -18,11 +18,13 @@ class ApiClient {
      *
      * @param projectId
      * @param milestoneId
+     * @param suiteId
      * @param name
      * @param description
      * @param callback
+     * @returns {Promise<AxiosResponse<*>>}
      */
-    createRun(projectId, milestoneId, name, description, callback) {
+    createRun(projectId, milestoneId, suiteId, name, description, callback) {
         const postData = {
             name: name,
             description: description,
@@ -32,6 +34,10 @@ class ApiClient {
 
         if (milestoneId !== '') {
             postData['milestone_id'] = milestoneId;
+        }
+
+        if (suiteId !== '') {
+            postData['suite_id'] = suiteId;
         }
 
         return this._post(
