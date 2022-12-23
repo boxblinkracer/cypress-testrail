@@ -254,7 +254,6 @@ class Reporter {
      * @private
      */
     _getScreenshotByTestId(testId, screenshots) {
-
         var highestFoundAttemptId = -1;
         var foundScreenshot = null;
 
@@ -278,7 +277,6 @@ class Reporter {
 
         return foundScreenshot;
     }
-
 }
 
 module.exports = Reporter;
