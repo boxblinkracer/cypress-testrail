@@ -238,23 +238,47 @@ class Reporter {
     }
 
     /**
-     *
+     * {
+     *   screenshotId: 'snzdd',
+     *   name: null,
+     *   testId: 'r4',
+     *   testAttemptIndex: 3,
+     *   takenAt: '2022-12-23T08:03:08.888Z',
+     *   path: '/.../Test-Case ABC (failed) (attempt 4).png',
+     *   height: 720,
+     *   width: 1280
+     * }
      * @param testId
      * @param screenshots
      * @returns {null}
      * @private
      */
     _getScreenshotByTestId(testId, screenshots) {
+
+        var highestFoundAttemptId = -1;
         var foundScreenshot = null;
 
         screenshots.forEach((screenshot) => {
+            // only use images of our current test.
+            // screenshots would include all test images
             if (screenshot.testId === testId) {
-                foundScreenshot = screenshot;
+                // only use images with "(failed") in it. Other images might be custom
+                // images taken by the developer
+                if (screenshot.path.includes('(failed')) {
+                    // only use the image of the latest test-attempt for now
+                    const currentAttempt = screenshot.testAttemptIndex;
+
+                    if (currentAttempt > highestFoundAttemptId) {
+                        foundScreenshot = screenshot;
+                        highestFoundAttemptId = currentAttempt;
+                    }
+                }
             }
         });
 
         return foundScreenshot;
     }
+
 }
 
 module.exports = Reporter;
