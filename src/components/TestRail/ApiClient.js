@@ -201,13 +201,17 @@ class ApiClient {
             data: formData,
         })
             .then((response) => {
-                onSuccess(response);
+                if (onSuccess) {
+                    onSuccess(response);
+                }
             })
             .catch((error) => {
                 // extract our error
                 const apiError = new ApiError(error);
                 // notify about an error
-                onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
+                if (onError) {
+                    onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
+                }
             });
     }
 }
