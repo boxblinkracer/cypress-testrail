@@ -1,4 +1,4 @@
-const ApiClient = require('./components/TestRail/ApiClient');
+const TestRail = require('./components/TestRail/TestRail');
 const TestCaseParser = require('./services/TestCaseParser');
 const Result = require('./components/TestRail/Result');
 const ConfigService = require('./services/ConfigService');
@@ -38,7 +38,7 @@ class Reporter {
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
-        this.testRailApi = new ApiClient(configService.getDomain(), configService.getUsername(), configService.getPassword());
+        this.testrail = new TestRail(configService.getDomain(), configService.getUsername(), configService.getPassword());
     }
 
     /**
@@ -116,7 +116,7 @@ class Reporter {
                 description += '\n' + this.customComment;
             }
 
-            await this.testRailApi.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, (runId) => {
+            await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, (runId) => {
                 // run created
                 this.runId = runId;
                 /* eslint-disable no-console */
@@ -134,7 +134,7 @@ class Reporter {
     async _afterSpec(spec, results) {
         if (this.modeCreateRun) {
             // if we are in the mode to dynamically create runs
-            // then we also need to add the new found runs to our created test run
+            // then we also need to add the newly found runs to our created test run
             await results.tests.forEach((test) => {
                 const testData = new TestData(test);
 
@@ -145,7 +145,7 @@ class Reporter {
                 });
             });
 
-            await this.testRailApi.updateRun(this.runId, this.foundCaseIds);
+            await this.testrail.updateRun(this.runId, this.foundCaseIds);
         }
 
         await this._sendSpecResults(spec, results);
@@ -159,7 +159,7 @@ class Reporter {
         if (this.modeCreateRun) {
             if (this.closeRun) {
                 // if we have just created a run then automatically close it
-                await this.testRailApi.closeRun(this.runId, () => {
+                await this.testrail.closeRun(this.runId, () => {
                     /* eslint-disable no-console */
                     console.log('  TestRail Run: R' + this.runId + ' is now closed');
                 });
@@ -229,7 +229,7 @@ class Reporter {
                 }
 
                 const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPath);
-                const request = this.testRailApi.sendResult(this.runId, result);
+                const request = this.testrail.sendResult(this.runId, result);
                 allRequests.push(request);
             });
         });
@@ -261,7 +261,7 @@ class Reporter {
             // only use images of our current test.
             // screenshots would include all test images
             if (screenshot.testId === testId) {
-                // only use images with "(failed") in it. Other images might be custom
+                // only use images with '(failed)' in it. Other images might be custom
                 // images taken by the developer
                 if (screenshot.path.includes('(failed')) {
                     // only use the image of the latest test-attempt for now
