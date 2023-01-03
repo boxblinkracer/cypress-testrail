@@ -196,7 +196,7 @@ class Reporter {
                     return;
                 }
 
-                let screenshotPath = null;
+                let screenshotPath = '';
 
                 if (testData.getState() !== 'passed') {
                     status = this.statusFailed;

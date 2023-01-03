@@ -125,7 +125,7 @@ class TestRail {
 
                 ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
 
-                if (result.getScreenshotPath() !== '') {
+                if (result.getScreenshotPath() !== null && result.getScreenshotPath() !== '') {
                     ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
                     this.client.sendScreenshot(resultId, result.getScreenshotPath(), null, null);
                 }
