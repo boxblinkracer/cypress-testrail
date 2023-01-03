@@ -10,93 +10,72 @@ This integration helps you to automatically send test results to TestRail. And y
 
 Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
+
+
 ### 1. Installation
 
 ```ruby 
 npm i cypress-testrail --save-dev
 ```
 
-### 2. Setup TestRail credentials
 
-Now configure your credentials for the TestRail API.
-Just add this snippet in your `Cypress.env.json` file and adjust the values.
-Please keep in mind, the `runId` is always the test run, that you want to send the results to.
-You can find the ID inside the test run in TestRail. It usually starts with an R, like "R68".
+
+### 2. Setup
+
+The integration has a CLI command that you can use to build your configuration in an interactive way.
+
+Run it with this command and enter your data:
+
+```ruby 
+./node_modules/.bin/cypress-testrail 
+```
+
+Please copy the displayed JSON structure of that command to your `cypress.env.json` file. 
+
+You can of course also build such a JSON manually. In addition to this, you can also use ENV variables. Please see the section on variables below for more.
+
+Here is a sample of a JSON from the CLI command.
 
 ```yaml 
 {
   "testrail": {
     "domain": "my-company.testrail.io",
     "username": "myUser",
-    "password": "myPwd"
+    "password": "myPwd",
+    "runId" : "R123",
+    "screenshots": true
   }
 }
 ```
 
-You can also set these variables as ENV variable.
 
-```bash 
-CYPRESS_TESTRAIL_DOMAIN=my-company.testrail.io CYPRESS_TESTRAIL_USERNAME=myUser CYPRESS_TESTRAIL_PASSWORD=myPwd  ./node_modules/.bin/cypress run 
-```
 
-### 3. Setup Mode
+### 3. Execution Modes
 
-#### 3.1 Send result to specific Run in TestRail
+The integration has 2 different modes, that you can select while running our **Setup CLI** command.
 
-Just assign the RunID of TestRail in your `Cypress.env.json` and all results will be sent to this run.
 
-Results will only be saved, if the sent TestCaseID is also existing in that run inside TestRail.
 
-```yaml 
-{
-  "testrail": {
-                // ....
-    "runId": "12345"
-  }
-}
-```
+#### 3.1 Mode A: Send result to specific Run in TestRail
 
-You can also set this variable as ENV variable.
+With this mode, all results are fired against an existing Test Run in TestRail.
+This is a good option if you have already prepared your plan in TestRail and just need to have Cypress doing the work for you.
 
-```bash 
-CYPRESS_TESTRAIL_RUN_ID=15 ./node_modules/.bin/cypress run 
-```
+Please keep in mind, that the provided run must not be closed, so that the TestRail API allows you to send results to it.
 
-#### 3.2 Create new Run in TestRail for every Cypress run
+Results will only be saved, if the sent TestCaseID is  existing in that run inside TestRail.
+
+
+
+#### 3.2 Mode B: Create new Run in TestRail for every Cypress run
 
 Sometimes you want to create test runs dynamically inside TestRail.
-For this, just assign the ProjectID and the optional MilestoneID of TestRail in your `Cypress.env.json`.
+For this, just assign the ProjectID and the optional MilestoneID or SuiteId of TestRail in your configuration.
 
 The integration will then start a new run in TestRail and send the results to this one.
 It is also possible to provide a custom (or dynamically created) name for the new test run.
 
-```yaml 
-{
-  "testrail": {
-                // ....
-    "projectId": "12",                      // required
-    "milestoneId": "55",                    // optional
-    "suiteId": "14",                        // optional
-    "runName": "Version XY (__datetime__)", // optional, use placeholder __datetime__ for current date time
-    "closeRun": true,                       // optional (default FALSE), automatically close run in this mode
-  }
-}
-```
 
-You can also set these variables as ENV variable.
-Here is a sample of 2 variables being used.
-
-```bash 
-CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.bin/cypress run 
-```
-
-| ENV Variable                  | Value                 |
-|-------------------------------|-----------------------|
-| CYPRESS_TESTRAIL_PROJECT_ID   | your ID from TestRail |
-| CYPRESS_TESTRAIL_MILESTONE_ID | your ID from TestRail |
-| CYPRESS_TESTRAIL_SUITE_ID     | your ID from TestRail |
-| CYPRESS_TESTRAIL_RUN_NAME     | any string            |
-| CYPRESS_TESTRAIL_RUN_CLOSE    | true, false           |
 
 ### 4. Register Plugin
 
@@ -138,6 +117,8 @@ e2e: {
 }
 ```
 
+
+
 ### 5. Map Test Cases
 
 We're almost done.
@@ -166,6 +147,8 @@ it('C123 C54 C36: My Test for multiple TestRail case IDs', () => {
 })
 ```
 
+
+
 That's it!
 
 You can now start Cypress (restart after config changes), and all your results should be sent to TestRail as soon as your mapped tests pass or fail!
@@ -174,8 +157,9 @@ You can now start Cypress (restart after config changes), and all your results s
 
 ### 6. Advanced Features
 
-#### Sending Screenshots on failures
-The integration can automatically send the latest failure screenshot of Cypress to TestRail.
+#### 6.1 Sending Screenshots on failures
+
+You can automatically send the latest failure screenshot of Cypress to TestRail.
 This is not enabled by default. Just enable it, and it will automatically work.
 
 ```yaml 
@@ -187,11 +171,62 @@ This is not enabled by default. Just enable it, and it will automatically work.
 }
 ```
 
-You can also set the variable as ENV variable.
+
+
+### 7. Variables
+
+This is a list of all available variables and their explanation.
+
+The list shows you the ENV variable name as well as their JSON structure name.
+You can use all variables in both scopes. 
+
+Examples on how to use it are below the list.
+
+|  ENV                           | JSON | Required                   | Description             |
+|--------------------------------| ---------------------- |----------------------------|-------------------------|
+|  CYPRESS_TESTRAIL_DOMAIN       | testrail.domain                | yes | TestRail domain                                                   |
+|  CYPRESS_TESTRAIL_USERNAME     | testrail.username  | yes | TestRail username                                                 |
+|  CYPRESS_TESTRAIL_PASSWORD     | testrail.password    | yes | TestRail password                                                 |
+|  CYPRESS_TESTRAIL_SCREENSHOTS  | testrail.screenshots | no | Send screenshots for failed tests. <br />Values: true\            |
+|  CYPRESS_TESTRAIL_RUN_ID       | testrail.runId | yes (Mode A) | TestRail RunID to fire against, e.g. R123                         |
+|  CYPRESS_TESTRAIL_PROJECT_ID   | testrail.projectId | yes (Mode B) | TestRail ProjectID, e.g. P45                                      |
+|  CYPRESS_TESTRAIL_MILESTONE_ID | testrail.milestoneId | yes (Mode A) | TestRail MilestoneID, e.g. M4                                     |
+|  CYPRESS_TESTRAIL_SUITE_ID     | testrail.suiteId | yes/no (Mode B) | TestRail SuiteID, e.g. S8.<br />Some projects might require this! |
+|  CYPRESS_TESTRAIL_RUN_NAME     | testrail.runName | no (Mode B) | Template for the names of created runs. You can provide a fixed text but also use dynamic variables.<br /><br />Variables: (\_\_datetime\_\_) => generates e.g. "01/04/2022 12:45:00" |
+|  CYPRESS_TESTRAIL_RUN_CLOSE    | testrail.closeRun | no (Mode B) | Automatically close test runs.<br />Values: true \| false<br />Default: false |
+
+
+
+#### Use on CLI
+
+To provide variables on CLI just expose them before executing your actual command.
 
 ```bash 
-CYPRESS_TESTRAIL_SCREENSHOTS=1 ./node_modules/.bin/cypress run 
+CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.bin/cypress run 
 ```
+
+
+
+#### Use in cypress.env.json
+
+You can also provide the variables in a JSON structure like this inside your **cypress.env.json** file.
+
+```
+{
+    "testrail": {
+        "domain": "",
+        "username": "",
+        "password": "",
+        "screenshots": false,
+        "projectId": "",
+        "milestoneId": "",
+        "suiteId": "",
+        "runName": "",
+        "closeRun": false
+    }
+}
+```
+
 
 
 ### Copying / License
