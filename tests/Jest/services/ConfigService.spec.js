@@ -346,6 +346,49 @@ describe('CloseRun', () => {
     });
 });
 
+describe('Screenshots', () => {
+
+    describe('.env file', () => {
+
+        test('Screenshots from .env ON', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'screenshots': true,
+                },
+            });
+            expect(config.isScreenshotsEnabled()).toBe(true);
+        });
+
+        test('Screenshots from .env OFF', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'screenshots': false,
+                },
+            });
+            expect(config.isScreenshotsEnabled()).toBe(false);
+        });
+
+        test('Screenshots from .env default is OFF', () => {
+            const config = new ConfigService({
+                'testrail': {},
+            });
+            expect(config.isScreenshotsEnabled()).toBe(false);
+        });
+
+    });
+
+    describe('ENV variable', () => {
+
+        test('Screenshots from ENV variable', () => {
+            const config = new ConfigService({
+                'TESTRAIL_SCREENSHOTS': true,
+            });
+            expect(config.isScreenshotsEnabled()).toBe(true);
+        });
+    });
+});
+
+
 describe('Invalid Configurations', () => {
 
     test('undefined config returns default values', () => {
