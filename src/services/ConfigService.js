@@ -297,6 +297,33 @@ class ConfigService {
      *
      * @returns {boolean}
      */
+    isScreenshotsEnabled() {
+        if (this.config === null) {
+            return false;
+        }
+
+        // CYPRESS_TESTRAIL_SCREENSHOTS
+        if (this.config.TESTRAIL_SCREENSHOTS !== undefined && this.config.TESTRAIL_SCREENSHOTS !== '') {
+            return Boolean(this.config.TESTRAIL_SCREENSHOTS);
+        }
+
+        if (this.config.testrail === undefined || this.config.testrail === null) {
+            return false;
+        }
+
+        const screenshots = this.config.testrail.screenshots;
+
+        if (screenshots === undefined || screenshots === null) {
+            return false;
+        }
+
+        return Boolean(screenshots);
+    }
+
+    /**
+     *
+     * @returns {boolean}
+     */
     hasRunID() {
         return this.getRunId() !== '';
     }

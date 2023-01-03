@@ -38,7 +38,12 @@ class Reporter {
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
-        this.testrail = new TestRail(configService.getDomain(), configService.getUsername(), configService.getPassword());
+        this.testrail = new TestRail(
+            configService.getDomain(),
+            configService.getUsername(),
+            configService.getPassword(),
+            configService.isScreenshotsEnabled()
+        );
     }
 
     /**

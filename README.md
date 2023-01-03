@@ -166,9 +166,33 @@ it('C123 C54 C36: My Test for multiple TestRail case IDs', () => {
 })
 ```
 
-## That's it!
+That's it!
 
 You can now start Cypress (restart after config changes), and all your results should be sent to TestRail as soon as your mapped tests pass or fail!
+
+
+
+### 6. Advanced Features
+
+#### Sending Screenshots on failures
+The integration can automatically send the latest failure screenshot of Cypress to TestRail.
+This is not enabled by default. Just enable it, and it will automatically work.
+
+```yaml 
+{
+  "testrail": {
+      // ....
+      "screenshots": true
+  }
+}
+```
+
+You can also set the variable as ENV variable.
+
+```bash 
+CYPRESS_TESTRAIL_SCREENSHOTS=1 ./node_modules/.bin/cypress run 
+```
+
 
 ### Copying / License
 
