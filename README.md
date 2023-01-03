@@ -20,7 +20,7 @@ npm i cypress-testrail --save-dev
 
 
 
-### 2. Setup
+### 2. Setup Wizard
 
 The integration has a CLI command that you can use to build your configuration in an interactive way.
 
