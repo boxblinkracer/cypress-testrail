@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const package = require('../package.json');
+const packageData = require('../package.json');
 const setupWizard = require('../src/components/Setup/SetupWizard');
 const cliHandleUnhandled = require('cli-handle-unhandled');
 
@@ -13,7 +13,7 @@ const cliHandleUnhandled = require('cli-handle-unhandled');
     console.log('');
     console.log('Cypress TestRail Integration');
     console.log('*************************************************');
-    console.log('Version ' + package.version);
+    console.log('Version ' + packageData.version);
     console.log('');
 
     console.log('This tool will build a new configuration JSON template that matches your required workflow with TestRail.');

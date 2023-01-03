@@ -14,7 +14,7 @@ module.exports = async ({ message, hint, initial }) => {
             validate(value, state) {
                 if (state && (state.name === 'Action name' || state.name === 'Select docker image' || state.name === 'Select Docker image tag')) {
                     if (value.trim() === '') {
-                        return chalk.yellow.bold.inverse(' Error ') + " this field can't be empty.";
+                        return chalk.yellow.bold.inverse(' Error ') + ' this field cannot be empty.';
                     }
                 }
                 if (state && state.name === 'Action name') {
