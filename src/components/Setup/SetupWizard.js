@@ -1,9 +1,7 @@
 const ask = require('./service/Ask');
 const toggle = require('./service/Toggle');
 
-
 module.exports = async () => {
-
     const testrailDomain = await ask({
         message: 'TestRail Domain',
         type: 'input',
@@ -31,14 +29,11 @@ module.exports = async () => {
     let closeRun = false;
 
     if (modeExistingRun) {
-
         runID = await ask({
             message: 'TestRail Run ID',
             hint: '(R123)',
         });
-
     } else {
-
         projectId = await ask({
             message: 'TestRail Project ID',
             hint: '(required) P123',
@@ -62,7 +57,6 @@ module.exports = async () => {
         closeRun = await toggle({
             message: 'Automatically close run after execution?',
         });
-
     }
 
     const sendScreenshots = await toggle({
@@ -70,10 +64,10 @@ module.exports = async () => {
     });
 
     const config = {
-        'testrail': {
-            'domain': testrailDomain,
-            'username': testrailUser,
-            'password': testrailPwd,
+        testrail: {
+            domain: testrailDomain,
+            username: testrailUser,
+            password: testrailPwd,
         },
     };
 
@@ -89,10 +83,16 @@ module.exports = async () => {
 
     config.testrail.screenshots = sendScreenshots;
 
+    /* eslint-disable no-console */
     console.log();
+    /* eslint-disable no-console */
     console.log();
+    /* eslint-disable no-console */
     console.log('Here is your template:');
+    /* eslint-disable no-console */
     console.log('Please add it to your "cypress.env.json" file.');
+    /* eslint-disable no-console */
     console.log('================================================');
+    /* eslint-disable no-console */
     console.log(JSON.stringify(config, null, 4));
 };

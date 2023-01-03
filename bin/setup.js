@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const package = require('../package.json');
-const configWizard = require('../src/components/Setup/ConfigWizard');
+const setupWizard = require('../src/components/Setup/SetupWizard');
 const cliHandleUnhandled = require('cli-handle-unhandled');
 
 
@@ -16,9 +16,9 @@ const cliHandleUnhandled = require('cli-handle-unhandled');
     console.log('Version ' + package.version);
     console.log('');
 
-    console.log('This tool will scaffold a new configuration JSON template that matches your required workflow with TestRail.');
+    console.log('This tool will build a new configuration JSON template that matches your required workflow with TestRail.');
     console.log();
 
-    await configWizard();
+    await setupWizard();
 
 })();
