@@ -10,6 +10,13 @@ help:
 install: ## Installs all dependencies
 	npm install 
 
+# ---------------------------------------------------------------------------------------------
+
+setup: ## Runs the setup script (for DEV purpose)
+	npm run-script setup
+
+# ---------------------------------------------------------------------------------------------
+
 jest: ## Runs JS Unit Tests
 	@./node_modules/.bin/jest --config=./.jest.config.js --runInBand --detectOpenHandles --forceExit --coverage
 

@@ -1,31 +1,42 @@
 {
-    "name": "cypress-testrail",
-    "version": "2.4.0",
-    "description": "Easy and decoupled Cypress TestRail reporter",
-    "main": "index.js",
-    "private": false,
-    "keywords": [
-        "testrail",
-        "cypress"
-    ],
-    "author": {
-        "name": "Christian Dangl"
-    },
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/boxblinkracer/cypress-testrail.git"
-    },
-    "dependencies": {
-        "axios": "^0.27.2",
-        "form-data": "^4.0.0"
-    },
-    "devDependencies": {
-        "@babel/eslint-parser": "^7.18.2",
-        "@babel/preset-env": "^7.18.2",
-        "babel-jest": "^28.1.1",
-        "eslint": "^8.18.0",
-        "jest": "^28.1.1",
-        "prettier": "2.7.1"
-    }
+  "name": "cypress-testrail",
+  "version": "2.4.0",
+  "description": "Easy and decoupled Cypress TestRail reporter",
+  "private": false,
+  "keywords": [
+    "testrail",
+    "cypress",
+    "testautomation"
+  ],
+  "author": {
+    "name": "Christian Dangl"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boxblinkracer/cypress-testrail.git"
+  },
+  "main": "index.js",
+  "bin": {
+    "cypress-testrail": "./bin/setup.js"
+  },
+  "scripts": {
+    "setup": "node ./bin/setup.js"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "form-data": "^4.0.0",
+    "enquirer": "^2.3.6",
+    "await-to-js": "^3.0.0",
+    "cli-handle-error": "^4.4.0",
+    "cli-handle-unhandled": "^1.1.1"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.18.2",
+    "@babel/preset-env": "^7.18.2",
+    "babel-jest": "^28.1.1",
+    "eslint": "^8.18.0",
+    "jest": "^28.1.1",
+    "prettier": "2.7.1"
+  }
 }
