@@ -4,6 +4,7 @@ const toggle = require('./service/Toggle');
 module.exports = async () => {
     const testrailDomain = await ask({
         message: 'TestRail Domain',
+        hint: 'company.testrail.io',
         type: 'input',
     });
 
