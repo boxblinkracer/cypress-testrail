@@ -56,7 +56,7 @@ module.exports = async () => {
 
         runName = await ask({
             message: 'TestRail Run Name',
-            hint: '(optional) template name for the run being created',
+            hint: '(optional) template name for the run being created. Use this for the current date: (__datetime__)',
         });
 
         closeRun = await toggle({
