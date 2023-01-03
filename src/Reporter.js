@@ -5,6 +5,8 @@ const ConfigService = require('./services/ConfigService');
 const TestData = require('./components/Cypress/TestData');
 const ColorConsole = require('./services/ColorConsole');
 
+const packageData = require('../package.json');
+
 class Reporter {
     /**
      *
@@ -28,6 +30,7 @@ class Reporter {
         this.suiteId = configService.getSuiteId();
         this.runId = configService.getRunId();
         this.runName = configService.getRunName();
+        this.screenshotsEnabled = configService.isScreenshotsEnabled();
 
         this.modeCreateRun = !configService.hasRunID();
         this.closeRun = configService.shouldCloseRun();
@@ -75,7 +78,7 @@ class Reporter {
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
         this.baseURL = details.config.baseUrl;
 
-        ColorConsole.success('  Starting TestRail Integration');
+        ColorConsole.success('  Starting TestRail Integration v' + packageData.version);
         ColorConsole.debug('  ....................................................');
         ColorConsole.debug('  Cypress: ' + this.cypressVersion);
         ColorConsole.debug('  Browser: ' + this.browser);
@@ -93,6 +96,8 @@ class Reporter {
             ColorConsole.debug('  TestRail Mode: Use existing Run');
             ColorConsole.debug('  TestRail Run ID: ' + this.runId);
         }
+
+        ColorConsole.debug('  Screenshots: ' + this.screenshotsEnabled);
 
         // if we don't have a runID, then we need to create one
         if (this.runId === '') {
