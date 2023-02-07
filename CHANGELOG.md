@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Changed
+
+- Results are now sent as "batch" request to TestRail at the end of the file. This safes API requests by only sending 1 request for a spec file (excluding screenshot requests).
 ## [2.5.0]
 
 ### Added

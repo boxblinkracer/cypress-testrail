@@ -139,6 +139,59 @@ class TestRail {
             }
         );
     }
+
+    /**
+     *
+     * @param {string} runID
+     * @param {Result[]} testResults
+     * @returns {Promise<AxiosResponse<*>>}
+     */
+    sendBatchResults(runID, testResults) {
+        const url = '/add_results_for_cases/' + runID;
+
+        const postData = {
+            results: [],
+        };
+
+        testResults.forEach((result) => {
+            var resultEntry = {
+                case_id: result.getCaseId(),
+                status_id: result.getStatusId(),
+                comment: result.getComment().trim(),
+            };
+
+            // 0s is not valid
+            if (result.getElapsed() !== '0s') {
+                resultEntry.elapsed = result.getElapsed();
+            }
+
+            postData.results.push(resultEntry);
+        });
+
+        return this.client.sendData(
+            url,
+            postData,
+            (response) => {
+                ColorConsole.success(' Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
+
+                if (this.isScreenshotsEnabled) {
+                    testResults.forEach((result, i) => {
+                        if (result.getScreenshotPath() !== null && result.getScreenshotPath() !== '') {
+                            // there is no identifier, to match both, but
+                            // we usually get the same order back as we sent it to TestRail
+                            const matchingResultId = response.data[i].id;
+                            ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
+                            this.client.sendScreenshot(matchingResultId, result.getScreenshotPath(), null, null);
+                        }
+                    });
+                }
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
+    }
 }
 
 module.exports = TestRail;
