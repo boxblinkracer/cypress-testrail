@@ -79,25 +79,25 @@ class Reporter {
         this.baseURL = details.config.baseUrl;
 
         ColorConsole.success('  Starting TestRail Integration v' + packageData.version);
-        ColorConsole.debug('  ....................................................');
-        ColorConsole.debug('  Cypress: ' + this.cypressVersion);
-        ColorConsole.debug('  Browser: ' + this.browser);
-        ColorConsole.debug('  System: ' + this.system);
-        ColorConsole.debug('  Base URL: ' + this.baseURL);
-        ColorConsole.debug('  TestRail Domain: ' + this.domain);
+        ColorConsole.info('  ....................................................');
+        ColorConsole.info('  Cypress: ' + this.cypressVersion);
+        ColorConsole.info('  Browser: ' + this.browser);
+        ColorConsole.info('  System: ' + this.system);
+        ColorConsole.info('  Base URL: ' + this.baseURL);
+        ColorConsole.info('  TestRail Domain: ' + this.domain);
 
         if (this.modeCreateRun) {
-            ColorConsole.debug('  TestRail Mode: Create Run');
-            ColorConsole.debug('  TestRail Project ID: ' + this.projectId);
-            ColorConsole.debug('  TestRail Milestone ID: ' + this.milestoneId);
-            ColorConsole.debug('  TestRail Suite ID: ' + this.suiteId);
-            ColorConsole.debug('  TestRail Run Name: ' + this.runName);
+            ColorConsole.info('  TestRail Mode: Create Run');
+            ColorConsole.info('  TestRail Project ID: ' + this.projectId);
+            ColorConsole.info('  TestRail Milestone ID: ' + this.milestoneId);
+            ColorConsole.info('  TestRail Suite ID: ' + this.suiteId);
+            ColorConsole.info('  TestRail Run Name: ' + this.runName);
         } else {
-            ColorConsole.debug('  TestRail Mode: Use existing Run');
-            ColorConsole.debug('  TestRail Run ID: ' + this.runId);
+            ColorConsole.info('  TestRail Mode: Use existing Run');
+            ColorConsole.info('  TestRail Run ID: ' + this.runId);
         }
 
-        ColorConsole.debug('  Screenshots: ' + this.screenshotsEnabled);
+        ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
 
         // if we don't have a runID, then we need to create one
         if (this.runId === '') {
@@ -125,7 +125,7 @@ class Reporter {
                 // run created
                 this.runId = runId;
                 /* eslint-disable no-console */
-                console.log('  New TestRail Run: R' + this.runId);
+                ColorConsole.debug('  New TestRail Run: R' + this.runId);
             });
         }
     }

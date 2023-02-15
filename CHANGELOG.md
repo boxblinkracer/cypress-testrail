@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Results are now sent as "batch" request to TestRail at the end of the file. This safes API requests by only sending 1 request for a spec file (excluding screenshot requests).
+- Changed the output color of debug texts to gray.
+
 ## [2.5.0]
 
 ### Added

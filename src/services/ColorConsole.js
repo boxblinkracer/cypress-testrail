@@ -5,6 +5,15 @@ class ColorConsole {
      */
     static debug(text) {
         /* eslint-disable no-console */
+        console.log('\x1b[90m', text, '\x1b[0m');
+    }
+
+    /**
+     *
+     * @param text
+     */
+    static info(text) {
+        /* eslint-disable no-console */
         console.log('\x1b[1m', text, '\x1b[0m');
     }
 
