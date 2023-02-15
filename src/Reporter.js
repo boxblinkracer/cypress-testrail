@@ -184,6 +184,7 @@ class Reporter {
      */
     async _sendSpecResults(spec, results) {
         const allRequests = [];
+        const allResults = [];
 
         // iterate through all our test results
         // and send the data to TestRail
@@ -234,10 +235,13 @@ class Reporter {
                 }
 
                 const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPath);
-                const request = this.testrail.sendResult(this.runId, result);
-                allRequests.push(request);
+                allResults.push(result);
             });
         });
+
+        // now send all results in a single request
+        const request = this.testrail.sendBatchResults(this.runId, allResults);
+        allRequests.push(request);
 
         await Promise.all(allRequests);
     }
