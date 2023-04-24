@@ -136,8 +136,7 @@ class TestRail {
                 if (this.isScreenshotsEnabled && screenshotPaths.length) {
                     let allRequests = [];
                     ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
-                    for(let i=0; i<= screenshotPaths.length; i++) {
-                        let screenshot = screenshotPaths[i];
+                    screenshotPaths.forEach((screenshot, j) => {
                         let request = this.client.sendScreenshot(resultId, screenshot.path, (response) => {
                             ColorConsole.success(`  Created screenshot: ${response}`);
                         }, (error) => {
@@ -145,7 +144,7 @@ class TestRail {
                             ColorConsole.debug('');
                         });
                         allRequests.push(request);
-                    }
+                    });
 
                     return Promise.all(allRequests);
                 }
@@ -200,8 +199,7 @@ class TestRail {
                             // we usually get the same order back as we sent it to TestRail
                             const matchingResultId = response.data[i].id;
 
-                            for(let i=0; i<= screenshotPaths.length; i++) {
-                                let screenshot = screenshotPaths[i];
+                            screenshotPaths.forEach((screenshot, j) => {
                                 ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
                                 let addScreenShotRequest = this.client.sendScreenshot(matchingResultId, screenshot.path, (response) => {
                                     ColorConsole.success(`  Created screenshot: ${response}`);
@@ -210,7 +208,7 @@ class TestRail {
                                     ColorConsole.debug('');
                                 });
                                 allRequests.push(addScreenShotRequest);
-                            }
+                            });
                         }
                     });
                     ColorConsole.success(' Executing all Screenshot Requests: ' + `${allRequests}`);
