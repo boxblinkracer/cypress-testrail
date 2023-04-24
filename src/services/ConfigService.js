@@ -1,4 +1,5 @@
 class ConfigService {
+    CYPRESS_TESTRAIL_INCLUDE_ALL;
     /**
      *
      */
@@ -330,8 +331,8 @@ class ConfigService {
         }
 
         // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.CYPRESS_TESTRAIL_INCLUDE_ALL !== undefined && this.config.CYPRESS_TESTRAIL_INCLUDE_ALL !== '') {
-            return Boolean(this.config.CYPRESS_TESTRAIL_INCLUDE_ALL);
+        if (this.config.TESTRAIL_INCLUDE_ALL !== undefined && this.config.TESTRAIL_INCLUDE_ALL !== '') {
+            return Boolean(this.config.TESTRAIL_INCLUDE_ALL);
         }
 
         if (this.config.testrail === undefined || this.config.testrail === null) {
@@ -357,8 +358,8 @@ class ConfigService {
         }
 
         // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.CYPRESS_TESTRAIL_INCLUDE_ALL_SCREENSHOTS !== undefined && this.config.CYPRESS_TESTRAIL_INCLUDE_ALL_SCREENSHOTS !== '') {
-            return Boolean(this.config.CYPRESS_TESTRAIL_INCLUDE_ALL_SCREENSHOTS);
+        if (this.config.TESTRAIL_INCLUDE_ALL_SCREENSHOTS !== undefined && this.config.TESTRAIL_INCLUDE_ALL_SCREENSHOTS !== '') {
+            return Boolean(this.config.TESTRAIL_INCLUDE_ALL_SCREENSHOTS);
         }
 
         if (this.config.testrail === undefined || this.config.testrail === null) {

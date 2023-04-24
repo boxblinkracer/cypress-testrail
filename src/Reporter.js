@@ -94,12 +94,14 @@ class Reporter {
             ColorConsole.info('  TestRail Milestone ID: ' + this.milestoneId);
             ColorConsole.info('  TestRail Suite ID: ' + this.suiteId);
             ColorConsole.info('  TestRail Run Name: ' + this.runName);
+            ColorConsole.info('  TestRail Include All Cases: ' + this.includeAllCasesDuringCreation);
         } else {
             ColorConsole.info('  TestRail Mode: Use existing Run');
             ColorConsole.info('  TestRail Run ID: ' + this.runId);
         }
 
         ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
+        ColorConsole.info('  Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
 
         // if we don't have a runID, then we need to create one
         if (this.runId === '') {
