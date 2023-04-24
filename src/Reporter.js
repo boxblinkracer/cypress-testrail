@@ -31,6 +31,8 @@ class Reporter {
         this.runId = configService.getRunId();
         this.runName = configService.getRunName();
         this.screenshotsEnabled = configService.isScreenshotsEnabled();
+        this.includeAllCasesDuringCreation = configService.includeAllCasesDuringCreation();
+        this.includeAllFailedScreenshots = configService.includeAllFailedScreenshots();
 
         this.modeCreateRun = !configService.hasRunID();
         this.closeRun = configService.shouldCloseRun();
@@ -121,7 +123,7 @@ class Reporter {
                 description += '\n' + this.customComment;
             }
 
-            await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, (runId) => {
+            await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
                 // run created
                 this.runId = runId;
                 /* eslint-disable no-console */
@@ -202,14 +204,14 @@ class Reporter {
                     return;
                 }
 
-                let screenshotPath = '';
+                let screenshotPaths = [];
 
                 if (testData.getState() !== 'passed') {
                     status = this.statusFailed;
 
-                    const screenshot = this._getScreenshotByTestId(test.testId, results.screenshots);
-                    if (screenshot !== null) {
-                        screenshotPath = screenshot.path;
+                    screenshotPaths = this._getScreenshotByTestId(test.testId, results.screenshots);
+                    if (screenshotPaths === null) {
+                        screenshotPaths = [];
                     }
                 }
 
@@ -234,7 +236,7 @@ class Reporter {
                     comment += '\nError: ' + testData.getError();
                 }
 
-                const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPath);
+                const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPaths);
                 allResults.push(result);
             });
         });
@@ -264,8 +266,8 @@ class Reporter {
      */
     _getScreenshotByTestId(testId, screenshots) {
         var highestFoundAttemptId = -1;
-        var foundScreenshot = null;
-
+        var foundScreenshots = [];
+        var highestFoundScreenshot = [];
         screenshots.forEach((screenshot) => {
             // only use images of our current test.
             // screenshots would include all test images
@@ -273,18 +275,20 @@ class Reporter {
                 // only use images with '(failed)' in it. Other images might be custom
                 // images taken by the developer
                 if (screenshot.path.includes('(failed')) {
+                    foundScreenshots.push(screenshot);
                     // only use the image of the latest test-attempt for now
                     const currentAttempt = screenshot.testAttemptIndex;
 
                     if (currentAttempt > highestFoundAttemptId) {
-                        foundScreenshot = screenshot;
+                        highestFoundScreenshot = [];
+                        highestFoundScreenshot.push(screenshot);
                         highestFoundAttemptId = currentAttempt;
                     }
                 }
             }
         });
 
-        return foundScreenshot;
+        return this.includeAllFailedScreenshots ? foundScreenshots : highestFoundScreenshot;
     }
 }
 
