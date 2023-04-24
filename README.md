@@ -226,7 +226,9 @@ You can also provide the variables in a JSON structure like this inside your **c
         "milestoneId": "",
         "suiteId": "",
         "runName": "",
-        "closeRun": false
+        "closeRun": false,
+        "includeAllFailedScreenshots": false,
+        "includeAllCasesDuringCreation": false
     }
 }
 ```
