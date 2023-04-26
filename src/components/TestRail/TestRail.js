@@ -26,7 +26,6 @@ class TestRail {
      * @returns {Promise<AxiosResponse<*>>}
      */
     createRun(projectId, milestoneId, suiteId, name, description, includeAllCasesDuringCreation, callback) {
-
         if (typeof includeAllCasesDuringCreation !== 'boolean') {
             includeAllCasesDuringCreation = false; //preserving existing functionality
         }
@@ -132,17 +131,22 @@ class TestRail {
                 const resultId = response.data[0].id;
 
                 ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
-                let screenshotPaths = result.getScreenshotPaths();
+                const screenshotPaths = result.getScreenshotPaths();
                 if (this.isScreenshotsEnabled && screenshotPaths.length) {
-                    let allRequests = [];
+                    const allRequests = [];
                     ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
-                    screenshotPaths.forEach((screenshot, j) => {
-                        let request = this.client.sendScreenshot(resultId, screenshot.path, (response) => {
-                            ColorConsole.success(`  Created screenshot: ${response}`);
-                        }, (error) => {
-                            ColorConsole.error(`  Could not create screenshot: ${error}`);
-                            ColorConsole.debug('');
-                        });
+                    screenshotPaths.forEach((screenshot) => {
+                        const request = this.client.sendScreenshot(
+                            resultId,
+                            screenshot.path,
+                            (response) => {
+                                ColorConsole.success(`  Created screenshot: ${response}`);
+                            },
+                            (error) => {
+                                ColorConsole.error(`  Could not create screenshot: ${error}`);
+                                ColorConsole.debug('');
+                            }
+                        );
                         allRequests.push(request);
                     });
 
@@ -191,22 +195,27 @@ class TestRail {
                 ColorConsole.success(' Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
                 if (this.isScreenshotsEnabled) {
-                    let allRequests = [];
+                    const allRequests = [];
                     testResults.forEach((result, i) => {
-                        let screenshotPaths = result.getScreenshotPaths();
+                        const screenshotPaths = result.getScreenshotPaths();
                         if (screenshotPaths.length) {
                             // there is no identifier, to match both, but
                             // we usually get the same order back as we sent it to TestRail
                             const matchingResultId = response.data[i].id;
 
-                            screenshotPaths.forEach((screenshot, j) => {
+                            screenshotPaths.forEach((screenshot) => {
                                 ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
-                                let addScreenShotRequest = this.client.sendScreenshot(matchingResultId, screenshot.path, (response) => {
-                                    ColorConsole.success(`  Created screenshot: ${response}`);
-                                }, (error) => {
-                                    ColorConsole.error(`  Could not create screenshot: ${error}`);
-                                    ColorConsole.debug('');
-                                });
+                                const addScreenShotRequest = this.client.sendScreenshot(
+                                    matchingResultId,
+                                    screenshot.path,
+                                    (response) => {
+                                        ColorConsole.success(`  Created screenshot: ${response}`);
+                                    },
+                                    (error) => {
+                                        ColorConsole.error(`  Could not create screenshot: ${error}`);
+                                        ColorConsole.debug('');
+                                    }
+                                );
                                 allRequests.push(addScreenShotRequest);
                             });
                         }

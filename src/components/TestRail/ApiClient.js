@@ -73,7 +73,7 @@ class ApiClient {
         })
             .then((response) => {
                 if (onSuccess) {
-                   return onSuccess(response);
+                    return onSuccess(response);
                 }
             })
             .catch((error) => {
