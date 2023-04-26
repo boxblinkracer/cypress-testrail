@@ -141,9 +141,10 @@ class Reporter {
      * @private
      */
     async _afterSpec(spec, results) {
-        if (this.modeCreateRun) {
+        if (this.modeCreateRun && !this.includeAllCasesDuringCreation) {
             // if we are in the mode to dynamically create runs
             // then we also need to add the newly found runs to our created test run
+            // but only if we don't want to associate all cases during creation
             await results.tests.forEach((test) => {
                 const testData = new TestData(test);
 
