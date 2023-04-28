@@ -193,62 +193,64 @@ class Reporter {
 
         // iterate through all our test results
         // and send the data to TestRail
-        await results.tests.forEach(async (test) => {
-            const testData = new TestData(test);
+        if(results.tests && results.tests.length > 0 ) {
+            await results.tests.forEach(async (test) => {
+                const testData = new TestData(test);
 
-            const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
+                const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
-            foundCaseIDs.forEach((caseId) => {
-                let status = this.statusPassed;
+                foundCaseIDs.forEach((caseId) => {
+                    let status = this.statusPassed;
 
-                // if we have a pending status, then do not
-                // send data to testrail
-                if (testData.getState() === 'pending') {
-                    return;
-                }
-
-                let screenshotPaths = [];
-
-                if (testData.getState() !== 'passed') {
-                    status = this.statusFailed;
-
-                    screenshotPaths = this._getScreenshotByTestId(test.testId, results.screenshots);
-                    if (screenshotPaths === null) {
-                        screenshotPaths = [];
+                    // if we have a pending status, then do not
+                    // send data to testrail
+                    if (testData.getState() === 'pending') {
+                        return;
                     }
-                }
 
-                let comment = 'Tested by Cypress';
+                    let screenshotPaths = [];
 
-                // this is already part of the run description
-                // if it was created dynamically.
-                // otherwise add it to the result
-                if (!this.modeCreateRun) {
-                    comment += '\nCypress: ' + this.cypressVersion;
-                    comment += '\nBrowser: ' + this.browser;
-                    comment += '\nBase URL: ' + this.baseURL;
-                    comment += '\nSystem: ' + this.system;
-                    comment += '\nSpec: ' + spec.name;
+                    if (testData.getState() !== 'passed') {
+                        status = this.statusFailed;
 
-                    if (this.customComment !== '') {
-                        comment += '\n' + this.customComment;
+                        screenshotPaths = this._getScreenshotByTestId(test.testId, results.screenshots);
+                        if (screenshotPaths === null) {
+                            screenshotPaths = [];
+                        }
                     }
-                }
 
-                if (testData.getError() !== '') {
-                    comment += '\nError: ' + testData.getError();
-                }
+                    let comment = 'Tested by Cypress';
 
-                const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPaths);
-                allResults.push(result);
+                    // this is already part of the run description
+                    // if it was created dynamically.
+                    // otherwise add it to the result
+                    if (!this.modeCreateRun) {
+                        comment += '\nCypress: ' + this.cypressVersion;
+                        comment += '\nBrowser: ' + this.browser;
+                        comment += '\nBase URL: ' + this.baseURL;
+                        comment += '\nSystem: ' + this.system;
+                        comment += '\nSpec: ' + spec.name;
+
+                        if (this.customComment !== '') {
+                            comment += '\n' + this.customComment;
+                        }
+                    }
+
+                    if (testData.getError() !== '') {
+                        comment += '\nError: ' + testData.getError();
+                    }
+
+                    const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPaths);
+                    allResults.push(result);
+                });
             });
-        });
-
-        // now send all results in a single request
-        const request = this.testrail.sendBatchResults(this.runId, allResults);
-        allRequests.push(request);
-
-        await Promise.all(allRequests);
+        }
+        if(allResults.length > 0 ) {
+            // now send all results in a single request
+            const request = this.testrail.sendBatchResults(this.runId, allResults);
+            allRequests.push(request);
+            await Promise.all(allRequests);
+        }
     }
 
     /**
