@@ -193,7 +193,7 @@ class Reporter {
 
         // iterate through all our test results
         // and send the data to TestRail
-        if(results.tests && results.tests.length > 0 ) {
+        if (results.tests && results.tests.length > 0) {
             await results.tests.forEach(async (test) => {
                 const testData = new TestData(test);
 
@@ -245,7 +245,7 @@ class Reporter {
                 });
             });
         }
-        if(allResults.length > 0 ) {
+        if (allResults.length > 0) {
             // now send all results in a single request
             const request = this.testrail.sendBatchResults(this.runId, allResults);
             allRequests.push(request);
