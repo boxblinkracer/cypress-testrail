@@ -37,13 +37,13 @@ class ApiClient {
             data: JSON.stringify(postData),
         })
             .then((response) => {
-                onSuccess(response);
+                return onSuccess(response);
             })
             .catch((error) => {
                 // extract our error
                 const apiError = new ApiError(error);
                 // notify about an error
-                onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
+                return onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
             });
     }
 
@@ -73,7 +73,7 @@ class ApiClient {
         })
             .then((response) => {
                 if (onSuccess) {
-                    onSuccess(response);
+                    return onSuccess(response);
                 }
             })
             .catch((error) => {
@@ -81,7 +81,7 @@ class ApiClient {
                 const apiError = new ApiError(error);
                 // notify about an error
                 if (onError) {
-                    onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
+                    return onError(apiError.getStatusCode(), apiError.getStatusText(), apiError.getErrorText());
                 }
             });
     }

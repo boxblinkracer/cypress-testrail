@@ -43,7 +43,9 @@ Here is a sample of a JSON from the CLI command.
     "username": "myUser",
     "password": "myPwd",
     "runId" : "R123",
-    "screenshots": true
+    "screenshots": true,
+    "includeAllFailedScreenshots": true,
+    "includeAllCasesDuringCreation": true
   }
 }
 ```
@@ -182,18 +184,20 @@ You can use all variables in both scopes.
 
 Examples on how to use it are below the list.
 
-|  ENV                           | JSON | Required                   | Description             |
-|--------------------------------| ---------------------- |----------------------------|-------------------------|
-|  CYPRESS_TESTRAIL_DOMAIN       | testrail.domain                | yes | TestRail domain                                                   |
-|  CYPRESS_TESTRAIL_USERNAME     | testrail.username  | yes | TestRail username                                                 |
-|  CYPRESS_TESTRAIL_PASSWORD     | testrail.password    | yes | TestRail password                                                 |
-|  CYPRESS_TESTRAIL_SCREENSHOTS  | testrail.screenshots | no | Send screenshots for failed tests. <br />Values: true\            |
-|  CYPRESS_TESTRAIL_RUN_ID       | testrail.runId | yes (Mode A) | TestRail RunID to fire against, e.g. R123                         |
-|  CYPRESS_TESTRAIL_PROJECT_ID   | testrail.projectId | yes (Mode B) | TestRail ProjectID, e.g. P45                                      |
-|  CYPRESS_TESTRAIL_MILESTONE_ID | testrail.milestoneId | yes (Mode A) | TestRail MilestoneID, e.g. M4                                     |
-|  CYPRESS_TESTRAIL_SUITE_ID     | testrail.suiteId | yes/no (Mode B) | TestRail SuiteID, e.g. S8.<br />Some projects might require this! |
+|  ENV                           | JSON | Required                   | Description                                                                                                                                                                           |
+|--------------------------------| ---------------------- |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  CYPRESS_TESTRAIL_DOMAIN       | testrail.domain                | yes | TestRail domain                                                                                                                                                                       |
+|  CYPRESS_TESTRAIL_USERNAME     | testrail.username  | yes | TestRail username                                                                                                                                                                     |
+|  CYPRESS_TESTRAIL_PASSWORD     | testrail.password    | yes | TestRail password                                                                                                                                                                     |
+|  CYPRESS_TESTRAIL_SCREENSHOTS  | testrail.screenshots | no | Send screenshots for failed tests. <br />Values: true\                                                                                                                                |
+|  CYPRESS_TESTRAIL_INCLUDE_ALL  | testrail.includeAllCasesDuringCreation | no | Include all test cases in test run creation.<br />Values: true \                                                                                                                      | false<br />Default: false |
+|  CYPRESS_TESTRAIL_INCLUDE_ALL_SCREENSHOTS    | testrail.includeAllFailedScreenshots | no | Include all failed screenshots.<br />Values: true \                                                                                                                                   | false<br />Default: false |
+|  CYPRESS_TESTRAIL_RUN_ID       | testrail.runId | yes (Mode A) | TestRail RunID to fire against, e.g. R123                                                                                                                                             |
+|  CYPRESS_TESTRAIL_PROJECT_ID   | testrail.projectId | yes (Mode B) | TestRail ProjectID, e.g. P45                                                                                                                                                          |
+|  CYPRESS_TESTRAIL_MILESTONE_ID | testrail.milestoneId | yes (Mode A) | TestRail MilestoneID, e.g. M4                                                                                                                                                         |
+|  CYPRESS_TESTRAIL_SUITE_ID     | testrail.suiteId | yes/no (Mode B) | TestRail SuiteID, e.g. S8.<br />Some projects might require this!                                                                                                                     |
 |  CYPRESS_TESTRAIL_RUN_NAME     | testrail.runName | no (Mode B) | Template for the names of created runs. You can provide a fixed text but also use dynamic variables.<br /><br />Variables: (\_\_datetime\_\_) => generates e.g. "01/04/2022 12:45:00" |
-|  CYPRESS_TESTRAIL_RUN_CLOSE    | testrail.closeRun | no (Mode B) | Automatically close test runs.<br />Values: true \| false<br />Default: false |
+|  CYPRESS_TESTRAIL_RUN_CLOSE    | testrail.closeRun | no (Mode B) | Automatically close test runs.<br />Values: true \                                                                                                                                    | false<br />Default: false |
 
 
 
@@ -222,7 +226,9 @@ You can also provide the variables in a JSON structure like this inside your **c
         "milestoneId": "",
         "suiteId": "",
         "runName": "",
-        "closeRun": false
+        "closeRun": false,
+        "includeAllFailedScreenshots": false,
+        "includeAllCasesDuringCreation": false
     }
 }
 ```

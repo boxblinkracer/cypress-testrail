@@ -31,6 +31,8 @@ class Reporter {
         this.runId = configService.getRunId();
         this.runName = configService.getRunName();
         this.screenshotsEnabled = configService.isScreenshotsEnabled();
+        this.includeAllCasesDuringCreation = configService.includeAllCasesDuringCreation();
+        this.includeAllFailedScreenshots = configService.includeAllFailedScreenshots();
 
         this.modeCreateRun = !configService.hasRunID();
         this.closeRun = configService.shouldCloseRun();
@@ -92,12 +94,14 @@ class Reporter {
             ColorConsole.info('  TestRail Milestone ID: ' + this.milestoneId);
             ColorConsole.info('  TestRail Suite ID: ' + this.suiteId);
             ColorConsole.info('  TestRail Run Name: ' + this.runName);
+            ColorConsole.info('  TestRail Include All Cases: ' + this.includeAllCasesDuringCreation);
         } else {
             ColorConsole.info('  TestRail Mode: Use existing Run');
             ColorConsole.info('  TestRail Run ID: ' + this.runId);
         }
 
         ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
+        ColorConsole.info('  Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
 
         // if we don't have a runID, then we need to create one
         if (this.runId === '') {
@@ -121,7 +125,7 @@ class Reporter {
                 description += '\n' + this.customComment;
             }
 
-            await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, (runId) => {
+            await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
                 // run created
                 this.runId = runId;
                 /* eslint-disable no-console */
@@ -137,9 +141,10 @@ class Reporter {
      * @private
      */
     async _afterSpec(spec, results) {
-        if (this.modeCreateRun) {
+        if (this.modeCreateRun && !this.includeAllCasesDuringCreation) {
             // if we are in the mode to dynamically create runs
             // then we also need to add the newly found runs to our created test run
+            // but only if we don't want to associate all cases during creation
             await results.tests.forEach((test) => {
                 const testData = new TestData(test);
 
@@ -188,62 +193,64 @@ class Reporter {
 
         // iterate through all our test results
         // and send the data to TestRail
-        await results.tests.forEach(async (test) => {
-            const testData = new TestData(test);
+        if (results.tests && results.tests.length > 0) {
+            await results.tests.forEach(async (test) => {
+                const testData = new TestData(test);
 
-            const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
+                const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
-            foundCaseIDs.forEach((caseId) => {
-                let status = this.statusPassed;
+                foundCaseIDs.forEach((caseId) => {
+                    let status = this.statusPassed;
 
-                // if we have a pending status, then do not
-                // send data to testrail
-                if (testData.getState() === 'pending') {
-                    return;
-                }
-
-                let screenshotPath = '';
-
-                if (testData.getState() !== 'passed') {
-                    status = this.statusFailed;
-
-                    const screenshot = this._getScreenshotByTestId(test.testId, results.screenshots);
-                    if (screenshot !== null) {
-                        screenshotPath = screenshot.path;
+                    // if we have a pending status, then do not
+                    // send data to testrail
+                    if (testData.getState() === 'pending') {
+                        return;
                     }
-                }
 
-                let comment = 'Tested by Cypress';
+                    let screenshotPaths = [];
 
-                // this is already part of the run description
-                // if it was created dynamically.
-                // otherwise add it to the result
-                if (!this.modeCreateRun) {
-                    comment += '\nCypress: ' + this.cypressVersion;
-                    comment += '\nBrowser: ' + this.browser;
-                    comment += '\nBase URL: ' + this.baseURL;
-                    comment += '\nSystem: ' + this.system;
-                    comment += '\nSpec: ' + spec.name;
+                    if (testData.getState() !== 'passed') {
+                        status = this.statusFailed;
 
-                    if (this.customComment !== '') {
-                        comment += '\n' + this.customComment;
+                        screenshotPaths = this._getScreenshotByTestId(test.testId, results.screenshots);
+                        if (screenshotPaths === null) {
+                            screenshotPaths = [];
+                        }
                     }
-                }
 
-                if (testData.getError() !== '') {
-                    comment += '\nError: ' + testData.getError();
-                }
+                    let comment = 'Tested by Cypress';
 
-                const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPath);
-                allResults.push(result);
+                    // this is already part of the run description
+                    // if it was created dynamically.
+                    // otherwise add it to the result
+                    if (!this.modeCreateRun) {
+                        comment += '\nCypress: ' + this.cypressVersion;
+                        comment += '\nBrowser: ' + this.browser;
+                        comment += '\nBase URL: ' + this.baseURL;
+                        comment += '\nSystem: ' + this.system;
+                        comment += '\nSpec: ' + spec.name;
+
+                        if (this.customComment !== '') {
+                            comment += '\n' + this.customComment;
+                        }
+                    }
+
+                    if (testData.getError() !== '') {
+                        comment += '\nError: ' + testData.getError();
+                    }
+
+                    const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPaths);
+                    allResults.push(result);
+                });
             });
-        });
-
-        // now send all results in a single request
-        const request = this.testrail.sendBatchResults(this.runId, allResults);
-        allRequests.push(request);
-
-        await Promise.all(allRequests);
+        }
+        if (allResults.length > 0) {
+            // now send all results in a single request
+            const request = this.testrail.sendBatchResults(this.runId, allResults);
+            allRequests.push(request);
+            await Promise.all(allRequests);
+        }
     }
 
     /**
@@ -264,8 +271,8 @@ class Reporter {
      */
     _getScreenshotByTestId(testId, screenshots) {
         var highestFoundAttemptId = -1;
-        var foundScreenshot = null;
-
+        var foundScreenshots = [];
+        var highestFoundScreenshot = [];
         screenshots.forEach((screenshot) => {
             // only use images of our current test.
             // screenshots would include all test images
@@ -273,18 +280,20 @@ class Reporter {
                 // only use images with '(failed)' in it. Other images might be custom
                 // images taken by the developer
                 if (screenshot.path.includes('(failed')) {
+                    foundScreenshots.push(screenshot);
                     // only use the image of the latest test-attempt for now
                     const currentAttempt = screenshot.testAttemptIndex;
 
                     if (currentAttempt > highestFoundAttemptId) {
-                        foundScreenshot = screenshot;
+                        highestFoundScreenshot = [];
+                        highestFoundScreenshot.push(screenshot);
                         highestFoundAttemptId = currentAttempt;
                     }
                 }
             }
         });
 
-        return foundScreenshot;
+        return this.includeAllFailedScreenshots ? foundScreenshots : highestFoundScreenshot;
     }
 }
 

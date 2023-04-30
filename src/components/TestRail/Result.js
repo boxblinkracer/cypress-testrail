@@ -5,14 +5,14 @@ class Result {
      * @param statusId
      * @param comment
      * @param duration
-     * @param screenshotPath
+     * @param screenshotPaths
      */
-    constructor(caseId, statusId, comment, duration, screenshotPath) {
+    constructor(caseId, statusId, comment, duration, screenshotPaths) {
         this._caseId = caseId;
         this._statusId = statusId;
         this._comment = comment;
         this._durationMS = duration;
-        this._screenshotPath = screenshotPath;
+        this._screenshotPaths = screenshotPaths;
     }
 
     /**
@@ -48,8 +48,8 @@ class Result {
      *
      * @returns {*}
      */
-    getScreenshotPath() {
-        return this._screenshotPath;
+    getScreenshotPaths() {
+        return this._screenshotPaths;
     }
 }
 

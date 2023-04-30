@@ -21,14 +21,18 @@ class TestRail {
      * @param suiteId
      * @param name
      * @param description
+     * @param includeAllCasesDuringCreation
      * @param callback
      * @returns {Promise<AxiosResponse<*>>}
      */
-    createRun(projectId, milestoneId, suiteId, name, description, callback) {
+    createRun(projectId, milestoneId, suiteId, name, description, includeAllCasesDuringCreation, callback) {
+        if (typeof includeAllCasesDuringCreation !== 'boolean') {
+            includeAllCasesDuringCreation = false; //preserving existing functionality
+        }
         const postData = {
             name: name,
             description: description,
-            include_all: false,
+            include_all: includeAllCasesDuringCreation,
             case_ids: [],
         };
 
@@ -46,7 +50,7 @@ class TestRail {
             (response) => {
                 ColorConsole.success('  TestRun created in TestRail: ' + name);
                 // notify our callback
-                callback(response.data.id);
+                return callback(response.data.id);
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('  Could not create TestRail run for project P' + projectId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
@@ -90,7 +94,7 @@ class TestRail {
             '/close_run/' + runId,
             {},
             () => {
-                onSuccess();
+                return onSuccess();
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('  Could not close TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
@@ -127,10 +131,26 @@ class TestRail {
                 const resultId = response.data[0].id;
 
                 ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
+                const screenshotPaths = result.getScreenshotPaths();
+                if (this.isScreenshotsEnabled && screenshotPaths.length) {
+                    const allRequests = [];
+                    ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
+                    screenshotPaths.forEach((screenshot) => {
+                        const request = this.client.sendScreenshot(
+                            resultId,
+                            screenshot.path,
+                            (response) => {
+                                ColorConsole.success(`  Created screenshot: ${response}`);
+                            },
+                            (error) => {
+                                ColorConsole.error(`  Could not create screenshot: ${error}`);
+                                ColorConsole.debug('');
+                            }
+                        );
+                        allRequests.push(request);
+                    });
 
-                if (this.isScreenshotsEnabled && result.getScreenshotPath() !== null && result.getScreenshotPath() !== '') {
-                    ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
-                    this.client.sendScreenshot(resultId, result.getScreenshotPath(), null, null);
+                    return Promise.all(allRequests);
                 }
             },
             (statusCode, statusText, errorText) => {
@@ -175,15 +195,33 @@ class TestRail {
                 ColorConsole.success(' Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
                 if (this.isScreenshotsEnabled) {
+                    const allRequests = [];
                     testResults.forEach((result, i) => {
-                        if (result.getScreenshotPath() !== null && result.getScreenshotPath() !== '') {
+                        const screenshotPaths = result.getScreenshotPaths();
+                        if (screenshotPaths.length) {
                             // there is no identifier, to match both, but
                             // we usually get the same order back as we sent it to TestRail
                             const matchingResultId = response.data[i].id;
-                            ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
-                            this.client.sendScreenshot(matchingResultId, result.getScreenshotPath(), null, null);
+
+                            screenshotPaths.forEach((screenshot) => {
+                                ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
+                                const addScreenShotRequest = this.client.sendScreenshot(
+                                    matchingResultId,
+                                    screenshot.path,
+                                    (response) => {
+                                        ColorConsole.success(`  Created screenshot: ${response}`);
+                                    },
+                                    (error) => {
+                                        ColorConsole.error(`  Could not create screenshot: ${error}`);
+                                        ColorConsole.debug('');
+                                    }
+                                );
+                                allRequests.push(addScreenShotRequest);
+                            });
                         }
                     });
+                    ColorConsole.success(' Executing all Screenshot Requests: ' + `${allRequests}`);
+                    return Promise.all(allRequests);
                 }
             },
             (statusCode, statusText, errorText) => {
