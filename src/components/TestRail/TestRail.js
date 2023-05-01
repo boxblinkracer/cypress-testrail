@@ -143,11 +143,11 @@ class TestRail {
                         const request = this.client.sendScreenshot(
                             resultId,
                             screenshot.path,
-                            (response) => {
-                                ColorConsole.success(`  Created screenshot: ${response}`);
+                            () => {
+                                ColorConsole.success('    created screenshot');
                             },
                             (error) => {
-                                ColorConsole.error(`  Could not create screenshot: ${error}`);
+                                ColorConsole.error(`    could not create screenshot: ${error}`);
                                 ColorConsole.debug('');
                             }
                         );
@@ -216,11 +216,11 @@ class TestRail {
                                 const addScreenShotRequest = this.client.sendScreenshot(
                                     matchingResultId,
                                     screenshot.path,
-                                    (response) => {
-                                        ColorConsole.success(`  Created screenshot: ${response}`);
+                                    () => {
+                                        ColorConsole.success('    created screenshot');
                                     },
                                     (error) => {
-                                        ColorConsole.error(`  Could not create screenshot: ${error}`);
+                                        ColorConsole.error(`    could not create screenshot: ${error}`);
                                         ColorConsole.debug('');
                                     }
                                 );
@@ -229,8 +229,6 @@ class TestRail {
                             });
                         }
                     });
-
-                    ColorConsole.success(' Executing all Screenshot Requests: ' + `${allRequests}`);
 
                     return Promise.all(allRequests);
                 }
