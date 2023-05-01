@@ -316,6 +316,48 @@ describe('RunName', () => {
     });
 });
 
+describe('RunIncludeAll', () => {
+
+    describe('.env file', () => {
+
+        test('RunIncludeAll from .env ON', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIncludeAll': true,
+                },
+            });
+            expect(config.includeAllCasesDuringCreation()).toBe(true);
+        });
+
+        test('RunIncludeAll from .env OFF', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIncludeAll': false,
+                },
+            });
+            expect(config.includeAllCasesDuringCreation()).toBe(false);
+        });
+
+        test('RunIncludeAll from .env default is OFF', () => {
+            const config = new ConfigService({
+                'testrail': {},
+            });
+            expect(config.includeAllCasesDuringCreation()).toBe(false);
+        });
+
+    });
+
+    describe('ENV variable', () => {
+
+        test('RunIncludeAll from ENV variable', () => {
+            const config = new ConfigService({
+                'TESTRAIL_RUN_INCLUDE_ALL': true,
+            });
+            expect(config.includeAllCasesDuringCreation()).toBe(true);
+        });
+    });
+});
+
 describe('CloseRun', () => {
 
     describe('.env file', () => {
@@ -388,6 +430,48 @@ describe('Screenshots', () => {
     });
 });
 
+
+describe('Screenshots All', () => {
+
+    describe('.env file', () => {
+
+        test('ScreenshotsAll from .env ON', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'screenshotsAll': true,
+                },
+            });
+            expect(config.includeAllFailedScreenshots()).toBe(true);
+        });
+
+        test('ScreenshotsAll from .env OFF', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'screenshotsAll': false,
+                },
+            });
+            expect(config.includeAllFailedScreenshots()).toBe(false);
+        });
+
+        test('ScreenshotsAll from .env default is OFF', () => {
+            const config = new ConfigService({
+                'testrail': {},
+            });
+            expect(config.includeAllFailedScreenshots()).toBe(false);
+        });
+
+    });
+
+    describe('ENV variable', () => {
+
+        test('ScreenshotsAll from ENV variable', () => {
+            const config = new ConfigService({
+                'TESTRAIL_SCREENSHOTS_ALL': true,
+            });
+            expect(config.includeAllFailedScreenshots()).toBe(true);
+        });
+    });
+});
 
 describe('Invalid Configurations', () => {
 

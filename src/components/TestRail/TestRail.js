@@ -131,10 +131,14 @@ class TestRail {
                 const resultId = response.data[0].id;
 
                 ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
+
                 const screenshotPaths = result.getScreenshotPaths();
+
                 if (this.isScreenshotsEnabled && screenshotPaths.length) {
-                    const allRequests = [];
                     ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
+
+                    const allRequests = [];
+
                     screenshotPaths.forEach((screenshot) => {
                         const request = this.client.sendScreenshot(
                             resultId,
@@ -147,6 +151,7 @@ class TestRail {
                                 ColorConsole.debug('');
                             }
                         );
+
                         allRequests.push(request);
                     });
 
@@ -196,8 +201,10 @@ class TestRail {
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];
+
                     testResults.forEach((result, i) => {
                         const screenshotPaths = result.getScreenshotPaths();
+
                         if (screenshotPaths.length) {
                             // there is no identifier, to match both, but
                             // we usually get the same order back as we sent it to TestRail
@@ -205,6 +212,7 @@ class TestRail {
 
                             screenshotPaths.forEach((screenshot) => {
                                 ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
+
                                 const addScreenShotRequest = this.client.sendScreenshot(
                                     matchingResultId,
                                     screenshot.path,
@@ -216,11 +224,14 @@ class TestRail {
                                         ColorConsole.debug('');
                                     }
                                 );
+
                                 allRequests.push(addScreenShotRequest);
                             });
                         }
                     });
+
                     ColorConsole.success(' Executing all Screenshot Requests: ' + `${allRequests}`);
+
                     return Promise.all(allRequests);
                 }
             },
