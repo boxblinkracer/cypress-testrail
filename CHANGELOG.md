@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Added
+
+- Added new configuration **runIncludeAll** that automatically adds all test cases to test runs when creating dynamic runs. (thx @williamatpaper)
+- Added new configuration **screenshotsAll** that sends all screenshots of all attempts of a failed test to TestRail. (thx @williamatpaper)
+- The integration now also works if you have accidentally provided "http://" and "https://" within your TestRail domain.
+
 ## [2.6.0]
 
 ### Changed
