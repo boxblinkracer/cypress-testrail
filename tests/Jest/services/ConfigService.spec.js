@@ -26,6 +26,22 @@ describe('TestRail Domain', () => {
         });
 
     });
+
+
+    test('Leading http:// is removed from TestRail domain', () => {
+        const config = new ConfigService({
+            'TESTRAIL_DOMAIN': 'http://my-domain',
+        });
+        expect(config.getDomain()).toBe('my-domain');
+    });
+
+    test('Leading https:// is removed from TestRail domain', () => {
+        const config = new ConfigService({
+            'TESTRAIL_DOMAIN': 'https://my-domain',
+        });
+        expect(config.getDomain()).toBe('my-domain');
+    });
+
 });
 
 describe('TestRail Username', () => {

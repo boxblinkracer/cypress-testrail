@@ -19,21 +19,24 @@ class ConfigService {
             return '';
         }
 
-        if (this.config.TESTRAIL_DOMAIN !== undefined && this.config.TESTRAIL_DOMAIN !== '') {
-            return this.config.TESTRAIL_DOMAIN;
+        var domain = '';
+
+        if (this.config.TESTRAIL_DOMAIN !== undefined) {
+            domain = this.config.TESTRAIL_DOMAIN;
+        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
+            domain = this.config.testrail.domain;
         }
 
-        if (this.config.testrail === undefined || this.config.testrail === null) {
+        if (domain === undefined || domain === null || domain === '') {
             return '';
         }
 
-        const value = this.config.testrail.domain;
+        domain = String(domain);
+        domain = domain.replace('http://', '');
+        domain = domain.replace('https://', '');
+        domain = domain.trim();
 
-        if (value === undefined || value === null) {
-            return '';
-        }
-
-        return value;
+        return domain;
     }
 
     /**
