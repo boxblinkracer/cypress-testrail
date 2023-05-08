@@ -16,7 +16,7 @@ class TestCaseParser {
 
             cases.forEach((singleCase) => {
                 if (singleCase.startsWith('C')) {
-                    singleCase = singleCase.replace('C', '');
+                    singleCase = singleCase.replace('C', '').replace(',', '');
                     foundCases.push(singleCase);
                 }
             });
