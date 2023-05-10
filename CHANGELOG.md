@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Added
+
+- Added better test case extraction by removing comma character, if accidentally existing (thx @asalgado87)
+
 ## [2.7.0]
 
 ### Added
