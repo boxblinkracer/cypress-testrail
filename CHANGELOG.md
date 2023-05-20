@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added better test case extraction by removing comma character, if accidentally existing (thx @asalgado87)
+- Add new output, if the integration is not correctly configured.
 
 ## [2.7.0]
 
