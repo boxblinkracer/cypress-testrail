@@ -34,3 +34,11 @@ test('multiple case IDs including invalid IDs can be found', () => {
     expect(result[0]).toBe('13');
     expect(result[1]).toBe('35');
 });
+
+test('remove commas if accidentally existing', () => {
+    const result = parser.searchCaseId('C1234, C1235, C1236: test case example title');
+    expect(result.length).toBe(3);
+    expect(result[0]).toBe('1234');
+    expect(result[1]).toBe('1235');
+    expect(result[2]).toBe('1236');
+});

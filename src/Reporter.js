@@ -53,6 +53,12 @@ class Reporter {
         // if our config is not valid
         // then do not even register anything
         if (!this.enabled) {
+            ColorConsole.info('');
+            ColorConsole.info('');
+            ColorConsole.warn('  TestRail Integration v' + packageData.version);
+            ColorConsole.warn('  ....................................................');
+            ColorConsole.warn('  Integration is not correctly configured.');
+            ColorConsole.warn('  If you expect this to work, please check your configuration.');
             return;
         }
 

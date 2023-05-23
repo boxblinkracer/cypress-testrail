@@ -1,6 +1,6 @@
 {
   "name": "cypress-testrail",
-  "version": "2.6.0",
+  "version": "2.7.1",
   "description": "Easy and decoupled Cypress TestRail reporter",
   "private": false,
   "keywords": [

@@ -10,15 +10,11 @@ This integration helps you to automatically send test results to TestRail. And y
 
 Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
-
-
 ### 1. Installation
 
 ```ruby 
 npm i cypress-testrail --save-dev
 ```
-
-
 
 ### 2. Setup Wizard
 
@@ -30,7 +26,7 @@ Run it with this command and enter your data:
 ./node_modules/.bin/cypress-testrail 
 ```
 
-Please copy the displayed JSON structure of that command to your `cypress.env.json` file. 
+Please copy the displayed JSON structure of that command to your `cypress.env.json` file.
 
 You can of course also build such a JSON manually. In addition to this, you can also use ENV variables. Please see the section on variables below for more.
 
@@ -50,13 +46,9 @@ Here is a sample of a JSON from the CLI command.
 }
 ```
 
-
-
 ### 3. Execution Modes
 
 The integration has 2 different modes, that you can select while running our **Setup CLI** command.
-
-
 
 #### 3.1 Mode A: Send result to specific Run in TestRail
 
@@ -65,9 +57,7 @@ This is a good option if you have already prepared your plan in TestRail and jus
 
 Please keep in mind, that the provided run must not be closed, so that the TestRail API allows you to send results to it.
 
-Results will only be saved, if the sent TestCaseID is  existing in that run inside TestRail.
-
-
+Results will only be saved, if the sent TestCaseID is existing in that run inside TestRail.
 
 #### 3.2 Mode B: Create new Run in TestRail for every Cypress run
 
@@ -76,8 +66,6 @@ For this, just assign the ProjectID and the optional MilestoneID or SuiteId of T
 
 The integration will then start a new run in TestRail and send the results to this one.
 It is also possible to provide a custom (or dynamically created) name for the new test run.
-
-
 
 ### 4. Register Plugin
 
@@ -119,8 +107,6 @@ e2e: {
 }
 ```
 
-
-
 ### 5. Map Test Cases
 
 We're almost done.
@@ -149,13 +135,9 @@ it('C123 C54 C36: My Test for multiple TestRail case IDs', () => {
 })
 ```
 
-
-
 That's it!
 
 You can now start Cypress (restart after config changes), and all your results should be sent to TestRail as soon as your mapped tests pass or fail!
-
-
 
 ### 6. Advanced Features
 
@@ -163,42 +145,50 @@ You can now start Cypress (restart after config changes), and all your results s
 
 You can automatically send the latest failure screenshot of Cypress to TestRail.
 This is not enabled by default. Just enable it, and it will automatically work.
+Once enabled, the latest failed screenshot is sent to TestRail.
 
 ```yaml 
 {
   "testrail": {
-      // ....
-      "screenshots": true
+    "screenshots": true
   }
 }
 ```
 
+If you want to send all failed screenshots to TestRail, just enable the additional (optional) feature.
+This will send all failed screenshots of all attempts in Cypress to TestRail.
 
+```yaml 
+{
+  "testrail": {
+    "screenshots": true,
+    "screenshotsAll": true
+  }
+}
+```
 
 ### 7. Variables
 
 This is a list of all available variables and their explanation.
 
 The list shows you the ENV variable name as well as their JSON structure name.
-You can use all variables in both scopes. 
+You can use all variables in both scopes.
 
 Examples on how to use it are below the list.
-
-|  ENV                           | JSON | Required                   | Description                                                                                                                                                                           |
-|--------------------------------| ---------------------- |----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|  CYPRESS_TESTRAIL_DOMAIN       | testrail.domain                | yes | TestRail domain                                                                                                                                                                       |
-|  CYPRESS_TESTRAIL_USERNAME     | testrail.username  | yes | TestRail username                                                                                                                                                                     |
-|  CYPRESS_TESTRAIL_PASSWORD     | testrail.password    | yes | TestRail password                                                                                                                                                                     |
-|  CYPRESS_TESTRAIL_SCREENSHOTS  | testrail.screenshots | no | Send screenshots for failed tests. <br />Values: true\                                                                                                                                |
-|  CYPRESS_TESTRAIL_INCLUDE_ALL  | testrail.includeAllCasesDuringCreation | no | Include all test cases in test run creation.<br />Values: true \                                                                                                                      | false<br />Default: false |
-|  CYPRESS_TESTRAIL_INCLUDE_ALL_SCREENSHOTS    | testrail.includeAllFailedScreenshots | no | Include all failed screenshots.<br />Values: true \                                                                                                                                   | false<br />Default: false |
-|  CYPRESS_TESTRAIL_RUN_ID       | testrail.runId | yes (Mode A) | TestRail RunID to fire against, e.g. R123                                                                                                                                             |
-|  CYPRESS_TESTRAIL_PROJECT_ID   | testrail.projectId | yes (Mode B) | TestRail ProjectID, e.g. P45                                                                                                                                                          |
-|  CYPRESS_TESTRAIL_MILESTONE_ID | testrail.milestoneId | yes (Mode A) | TestRail MilestoneID, e.g. M4                                                                                                                                                         |
-|  CYPRESS_TESTRAIL_SUITE_ID     | testrail.suiteId | yes/no (Mode B) | TestRail SuiteID, e.g. S8.<br />Some projects might require this!                                                                                                                     |
-|  CYPRESS_TESTRAIL_RUN_NAME     | testrail.runName | no (Mode B) | Template for the names of created runs. You can provide a fixed text but also use dynamic variables.<br /><br />Variables: (\_\_datetime\_\_) => generates e.g. "01/04/2022 12:45:00" |
-|  CYPRESS_TESTRAIL_RUN_CLOSE    | testrail.closeRun | no (Mode B) | Automatically close test runs.<br />Values: true \                                                                                                                                    | false<br />Default: false |
-
+| ENV                              | JSON                    | Required        | Description                                                                                                                                                                           |
+|----------------------------------|-------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CYPRESS_TESTRAIL_DOMAIN          | testrail.domain         | yes             | TestRail domain                                                                                                                                                                       |
+| CYPRESS_TESTRAIL_USERNAME        | testrail.username       | yes             | TestRail username                                                                                                                                                                     |
+| CYPRESS_TESTRAIL_PASSWORD        | testrail.password       | yes             | TestRail password                                                                                                                                                                     |
+| CYPRESS_TESTRAIL_SCREENSHOTS     | testrail.screenshots    | no              | Send last screenshot of failed test.<br />Values: true/false                                                                                                                          |
+| CYPRESS_TESTRAIL_SCREENSHOTS_ALL | testrail.screenshotsAll | no              | Send all screenshots of failed test. (requires screenshots to be enabled).<br />Values: true/false                                                                                    |
+| CYPRESS_TESTRAIL_RUN_ID          | testrail.runId          | yes (Mode A)    | TestRail RunID to fire against, e.g. R123                                                                                                                                             |
+| CYPRESS_TESTRAIL_PROJECT_ID      | testrail.projectId      | yes (Mode B)    | TestRail ProjectID, e.g. P45                                                                                                                                                          |
+| CYPRESS_TESTRAIL_MILESTONE_ID    | testrail.milestoneId    | yes (Mode A)    | TestRail MilestoneID, e.g. M4                                                                                                                                                         |
+| CYPRESS_TESTRAIL_SUITE_ID        | testrail.suiteId        | yes/no (Mode B) | TestRail SuiteID, e.g. S8.<br />Some projects might require this!                                                                                                                     |
+| CYPRESS_TESTRAIL_RUN_NAME        | testrail.runName        | no (Mode B)     | Template for the names of created runs. You can provide a fixed text but also use dynamic variables.<br /><br />Variables: (\_\_datetime\_\_) => generates e.g. "01/04/2022 12:45:00" |
+| CYPRESS_TESTRAIL_RUN_INCLUDE_ALL | testrail.runIncludeAll  | no              | Include all test cases in test run creation.<br />Values: true/false                                                                                                                  |
+| CYPRESS_TESTRAIL_RUN_CLOSE       | testrail.closeRun       | no (Mode B)     | Automatically close test runs.<br />Values: true/false                                                                                                                                |
 
 
 #### Use on CLI
@@ -208,8 +198,6 @@ To provide variables on CLI just expose them before executing your actual comman
 ```bash 
 CYPRESS_TESTRAIL_PROJECT_ID=2 CYPRESS_TESTRAIL_MILESTONE_ID=15 ./node_modules/.bin/cypress run 
 ```
-
-
 
 #### Use in cypress.env.json
 
@@ -228,12 +216,12 @@ You can also provide the variables in a JSON structure like this inside your **c
         "runName": "",
         "closeRun": false,
         "includeAllFailedScreenshots": false,
-        "includeAllCasesDuringCreation": false
+        "includeAllCasesDuringCreation": false,
+        "runIncludeAll": false,
+        "screenshots": false
     }
 }
 ```
-
-
 
 ### Copying / License
 

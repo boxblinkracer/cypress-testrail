@@ -150,6 +150,28 @@ class TestRail {
                         allRequests.push(request);
                     });
 
+                const screenshotPaths = result.getScreenshotPaths();
+
+                if (this.isScreenshotsEnabled && screenshotPaths.length) {
+                    ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
+
+                    const allRequests = [];
+
+                    screenshotPaths.forEach((screenshot) => {
+                        const request = this.client.sendScreenshot(
+                            resultId,
+                            screenshot.path,
+                            () => {
+                                ColorConsole.success('    created screenshot');
+                            },
+                            (error) => {
+                                ColorConsole.error(`    could not create screenshot: ${error}`);
+                                ColorConsole.debug('');
+                            }
+                        );
+
+                        allRequests.push(request);
+                    });
                     return Promise.all(allRequests);
                 }
             },
