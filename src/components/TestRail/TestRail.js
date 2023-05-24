@@ -131,24 +131,6 @@ class TestRail {
                 const resultId = response.data[0].id;
 
                 ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
-                const screenshotPaths = result.getScreenshotPaths();
-                if (this.isScreenshotsEnabled && screenshotPaths.length) {
-                    const allRequests = [];
-                    ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
-                    screenshotPaths.forEach((screenshot) => {
-                        const request = this.client.sendScreenshot(
-                            resultId,
-                            screenshot.path,
-                            (response) => {
-                                ColorConsole.success(`  Created screenshot: ${response}`);
-                            },
-                            (error) => {
-                                ColorConsole.error(`  Could not create screenshot: ${error}`);
-                                ColorConsole.debug('');
-                            }
-                        );
-                        allRequests.push(request);
-                    });
 
                 const screenshotPaths = result.getScreenshotPaths();
 
