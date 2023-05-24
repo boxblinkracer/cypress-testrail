@@ -172,6 +172,7 @@ class TestRail {
 
                         allRequests.push(request);
                     });
+
                     return Promise.all(allRequests);
                 }
             },
@@ -218,8 +219,10 @@ class TestRail {
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];
+
                     testResults.forEach((result, i) => {
                         const screenshotPaths = result.getScreenshotPaths();
+
                         if (screenshotPaths.length) {
                             // there is no identifier, to match both, but
                             // we usually get the same order back as we sent it to TestRail
@@ -227,6 +230,7 @@ class TestRail {
 
                             screenshotPaths.forEach((screenshot) => {
                                 ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
+
                                 const addScreenShotRequest = this.client.sendScreenshot(
                                     matchingResultId,
                                     screenshot.path,
@@ -238,10 +242,12 @@ class TestRail {
                                         ColorConsole.debug('');
                                     }
                                 );
+
                                 allRequests.push(addScreenShotRequest);
                             });
                         }
                     });
+
                     ColorConsole.success(' Executing all Screenshot Requests: ' + `${allRequests}`);
                     return Promise.all(allRequests);
                 }

@@ -1,5 +1,4 @@
 class ConfigService {
-    CYPRESS_TESTRAIL_INCLUDE_ALL;
     /**
      *
      */
@@ -334,20 +333,20 @@ class ConfigService {
         }
 
         // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.TESTRAIL_INCLUDE_ALL !== undefined && this.config.TESTRAIL_INCLUDE_ALL !== '') {
-            return Boolean(this.config.TESTRAIL_INCLUDE_ALL);
+        if (this.config.TESTRAIL_RUN_INCLUDE_ALL !== undefined && this.config.TESTRAIL_RUN_INCLUDE_ALL !== '') {
+            return Boolean(this.config.TESTRAIL_RUN_INCLUDE_ALL);
         }
 
         if (this.config.testrail === undefined || this.config.testrail === null) {
             return false;
         }
-        const includeAllCasesDuringCreation = this.config.testrail.includeAllCasesDuringCreation;
+        const includeAll = this.config.testrail.runIncludeAll;
 
-        if (includeAllCasesDuringCreation === undefined || includeAllCasesDuringCreation === null) {
+        if (includeAll === undefined || includeAll === null) {
             return false;
         }
 
-        return Boolean(includeAllCasesDuringCreation);
+        return Boolean(includeAll);
     }
 
     /**
@@ -360,21 +359,21 @@ class ConfigService {
         }
 
         // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.TESTRAIL_INCLUDE_ALL_SCREENSHOTS !== undefined && this.config.TESTRAIL_INCLUDE_ALL_SCREENSHOTS !== '') {
-            return Boolean(this.config.TESTRAIL_INCLUDE_ALL_SCREENSHOTS);
+        if (this.config.TESTRAIL_SCREENSHOTS_ALL !== undefined && this.config.TESTRAIL_SCREENSHOTS_ALL !== '') {
+            return Boolean(this.config.TESTRAIL_SCREENSHOTS_ALL);
         }
 
         if (this.config.testrail === undefined || this.config.testrail === null) {
             return false;
         }
 
-        const includeAllFailedScreenshots = this.config.testrail.includeAllFailedScreenshots;
+        const includeAll = this.config.testrail.screenshotsAll;
 
-        if (includeAllFailedScreenshots === undefined || includeAllFailedScreenshots === null) {
+        if (includeAll === undefined || includeAll === null) {
             return false;
         }
 
-        return Boolean(includeAllFailedScreenshots);
+        return Boolean(includeAll);
     }
 
     /**
