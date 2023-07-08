@@ -4,6 +4,7 @@ const Result = require('./components/TestRail/Result');
 const ConfigService = require('./services/ConfigService');
 const TestData = require('./components/Cypress/TestData');
 const ColorConsole = require('./services/ColorConsole');
+const fs = require('fs');
 
 const packageData = require('../package.json');
 
@@ -70,8 +71,8 @@ class Reporter {
             await this._afterSpec(spec, results);
         });
 
-        this.on('after:run', async () => {
-            await this._afterRun();
+        this.on('after:run', async (afterRunDetails) => {
+            await this._afterRun(afterRunDetails);
         });
     }
 
@@ -81,18 +82,20 @@ class Reporter {
      * @private
      */
     async _beforeRun(details) {
+        this.baseURL = details.config.baseUrl;
         this.cypressVersion = details.cypressVersion;
         this.browser = details.browser.displayName + ' (' + details.browser.version + ')';
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
-        this.baseURL = details.config.baseUrl;
+        this.tags = details.config.env.tags;
 
         ColorConsole.success('  Starting TestRail Integration v' + packageData.version);
         ColorConsole.info('  ....................................................');
-        ColorConsole.info('  Cypress: ' + this.cypressVersion);
-        ColorConsole.info('  Browser: ' + this.browser);
-        ColorConsole.info('  System: ' + this.system);
-        ColorConsole.info('  Base URL: ' + this.baseURL);
         ColorConsole.info('  TestRail Domain: ' + this.domain);
+        ColorConsole.info('  Environment/ Base URL: ' + this.baseURL);
+        ColorConsole.info('  Cypress Version: ' + this.cypressVersion);
+        ColorConsole.info('  Browser: ' + this.browser);
+        ColorConsole.info('  OS: ' + this.system);
+        ColorConsole.info('  Testing Type (Tags): ' + this.tags);
 
         if (this.modeCreateRun) {
             ColorConsole.info('  TestRail Mode: Create Run');
@@ -122,14 +125,14 @@ class Reporter {
 
             let description = '';
             description += 'Tested by Cypress';
-            description += '\nCypress: ' + this.cypressVersion;
-            description += '\nBrowser: ' + this.browser;
-            description += '\nBase URL: ' + this.baseURL;
-            description += '\nSystem: ' + this.system;
-
             if (this.customComment !== '') {
                 description += '\n' + this.customComment;
             }
+            description += '\nEnvironment/ Base URL: ' + this.baseURL;
+            description += '\nCypress Version: ' + this.cypressVersion;
+            description += '\nBrowser: ' + this.browser;
+            description += '\nOS: ' + this.system;
+            description += '\nTesting Type (Tags) ' + this.tags;
 
             await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
                 // run created
@@ -171,7 +174,13 @@ class Reporter {
      *
      * @private
      */
-    async _afterRun() {
+    async _afterRun(afterRunDetails) {
+        this.baseURL = afterRunDetails.config.baseUrl;
+        this.cypressVersion = afterRunDetails.cypressVersion;
+        this.browser = afterRunDetails.browserName + ' (' + afterRunDetails.browserVersion + ')';
+        this.system = afterRunDetails.osName + ' (' + afterRunDetails.osVersion + ')';
+        this.tags = afterRunDetails.config.env.tags;
+
         if (this.modeCreateRun) {
             if (this.closeRun) {
                 // if we have just created a run then automatically close it
@@ -184,6 +193,23 @@ class Reporter {
                 console.log('  Skipping closing of Test Run');
             }
         }
+        // Save metadata in a file
+        const filePath = "./metadata.json";
+        const data = {
+            baseUrl: this.baseURL,
+            cypressVersion: this.cypressVersion,
+            browser: this.browser,
+            system: this.system,
+            tags: this.tags
+        };
+        const jsonData = JSON.stringify(data, null, 2);
+        fs.writeFile(filePath, jsonData, (err) => {
+            if (err) {
+                ColorConsole.error('Error writing Metadata file:', err);
+            } else {
+                ColorConsole.success('Metadata saved to the file: ' + filePath);
+            }
+        });
     }
 
     /**
@@ -231,15 +257,15 @@ class Reporter {
                     // if it was created dynamically.
                     // otherwise add it to the result
                     if (!this.modeCreateRun) {
-                        comment += '\nCypress: ' + this.cypressVersion;
-                        comment += '\nBrowser: ' + this.browser;
-                        comment += '\nBase URL: ' + this.baseURL;
-                        comment += '\nSystem: ' + this.system;
-                        comment += '\nSpec: ' + spec.name;
-
                         if (this.customComment !== '') {
                             comment += '\n' + this.customComment;
                         }
+                        comment += '\nEnvironment/ Base URL: ' + this.baseURL;
+                        comment += '\nCypress Version: ' + this.cypressVersion;
+                        comment += '\nBrowser: ' + this.browser;
+                        comment += '\nOS: ' + this.system;
+                        comment += '\nTesting Type (Tags) ' + this.tags;
+                        comment += '\nSpec: ' + spec.name;
                     }
 
                     if (testData.getError() !== '') {
