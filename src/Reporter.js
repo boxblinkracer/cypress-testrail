@@ -194,7 +194,11 @@ class Reporter {
             }
         }
         // Save metadata in a file
-        const filePath = "./cypress/.run/downloads/metadata.json";
+        static saveMetadataToFile(filePath) {
+            if (!filePath) {
+              ColorConsole.warn('TestRail metadata file path not provided.');
+              return;
+            }
         const data = {
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
@@ -205,11 +209,12 @@ class Reporter {
         const jsonData = JSON.stringify(data, null, 2);
         fs.writeFile(filePath, jsonData, (err) => {
             if (err) {
-                ColorConsole.error('Error writing Metadata file:', err);
+                ColorConsole.error('Error writing TestRail metadata file:', err);
             } else {
-                ColorConsole.success('Metadata saved to the file: ' + filePath);
+                ColorConsole.success('TestRail metadata saved to file: ', filePath);
             }
         });
+        }
     }
 
     /**
