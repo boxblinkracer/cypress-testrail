@@ -184,20 +184,9 @@ class Reporter {
         this.tags = afterRunDetails.config.env.tags;
         this.startedTestsAt = afterRunDetails.startedTestsAt;
         this.endedTestsAt = afterRunDetails.endedTestsAt;
+        this.testsExecutionTotalDuration = afterRunDetails.totalDuration;
 
-        if (this.modeCreateRun) {
-            if (this.closeRun) {
-                // if we have just created a run then automatically close it
-                await this.testrail.closeRun(this.runId, () => {
-                    /* eslint-disable no-console */
-                    console.log('  TestRail Run: R' + this.runId + ' is now closed');
-                });
-            } else {
-                /* eslint-disable no-console */
-                console.log('  Skipping closing of Test Run');
-            }
-        }
-        // Save TestRail metadata in a file
+        // No TestRail metadata file
         if (!this.metadataFilePath) {
             ColorConsole.warn('TestRail metadata file path not provided.');
             return;
@@ -212,6 +201,13 @@ class Reporter {
             second: '2-digit',
             hour12: false
           };
+        const totalDuration = this.testsExecutionTotalDuration
+        const seconds = Math.floor(totalDuration / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+
         const data = {
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
@@ -219,16 +215,44 @@ class Reporter {
             system: this.system,
             tags: this.tags,
             startedTestsAt: new Date(this.startedTestsAt).toLocaleString('en-US', options),
-            endedTestsAt: new Date(this.endedTestsAt).toLocaleString('en-US', options) 
+            endedTestsAt: new Date(this.endedTestsAt).toLocaleString('en-US', options),
+            testsExecutionTotalDuration: `${hours} hours ${remainingMinutes} minutes ${remainingSeconds} seconds`
         };
+            let description = '';
+            description += 'Tested by Cypress';
+            description += '\nEnvironment/ Base URL: ' + this.baseURL;
+            description += '\nCypress Version: ' + this.cypressVersion;
+            description += '\nBrowser: ' + this.browser;
+            description += '\nOS: ' + this.system;
+            description += '\nTesting Type (Tags): ' + this.tags;
+            description += '\nTests Execution Start Time: ' + new Date(this.startedTestsAt).toLocaleString('en-US', options);
+            description += '\nTests Execution End Time: ' + new Date(this.endedTestsAt).toLocaleString('en-US', options);
+            description += '\nTests Execution Total Duration: ' + `${hours} hours ${remainingMinutes} minutes ${remainingSeconds} seconds`;
+
         const jsonData = JSON.stringify(data, null, 2);
+        // Update a TestRail run description with after:run metadata
+        await this.testrail.updateRunDescriptionMetadata(this.runId, description);
+        
         fs.writeFile(this.metadataFilePath, jsonData, (err) => {
             if (err) {
-                ColorConsole.error(`Error writing TestRail metadata file: "${err}"`);
+                ColorConsole.error(`  Error writing TestRail metadata file: "${err}"`);
             } else {
-                ColorConsole.success(`TestRail metadata saved to file: '${this.metadataFilePath}'`);
+                ColorConsole.success(`  TestRail metadata saved to file: '${this.metadataFilePath}'`);
             }
         });
+
+        if (this.modeCreateRun) {
+            if (this.closeRun) {
+                // if we have just created a run then automatically close it
+                await this.testrail.closeRun(this.runId, () => {
+                    /* eslint-disable no-console */
+                    console.log('  TestRail Run: R' + this.runId + ' is now closed');
+                });
+            } else {
+                /* eslint-disable no-console */
+                console.log('  Skipping closing of Test Run');
+            }
+        }
     }
 
     /**
