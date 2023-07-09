@@ -231,7 +231,7 @@ class Reporter {
 
         const jsonData = JSON.stringify(data, null, 2);
         // Update a TestRail run description with after:run metadata
-        await this.testrail.updateAfterRunMetadata(this.runId, description, this.caseIds);
+        await this.testrail.updateAfterRunMetadata(this.runId, description, this.foundCaseIds);
         
         fs.writeFile(this.metadataFilePath, jsonData, (err) => {
             if (err) {
