@@ -93,7 +93,7 @@ class TestRail {
     updateAfterRunMetadata(runId, metadataAfterRun) {
         const postData = {
             description: metadataAfterRun,
-            include_all: true
+            include_all: false
         };
 
         return this.client.sendData(
