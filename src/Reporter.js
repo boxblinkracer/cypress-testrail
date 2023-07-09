@@ -15,7 +15,7 @@ class Reporter {
      * @param config
      * @param customComment provide a custom comment if you want to add something to the result comment
      */
-    constructor(on, config, customComment) {
+    constructor(on, config, customComment, metadataFilePath) {
         this.on = on;
 
         this.testCaseParser = new TestCaseParser();
@@ -43,6 +43,8 @@ class Reporter {
         this.statusFailed = configService.getStatusFailed();
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
+
+        this.metadataFilePath = metadataFilePath !== undefined && metadataFilePath !== null ? metadataFilePath : '';
 
         this.testrail = new TestRail(configService.getDomain(), configService.getUsername(), configService.getPassword(), configService.isScreenshotsEnabled());
     }
@@ -193,12 +195,11 @@ class Reporter {
                 console.log('  Skipping closing of Test Run');
             }
         }
-        // Save metadata in a file
-        function saveMetadataToFile(filePath) {
-            if (!filePath) {
-              ColorConsole.warn('TestRail metadata file path not provided.');
-              return;
-            }
+        // Save TestRail metadata in a file
+        if (!this.metadataFilePath) {
+            ColorConsole.warn('TestRail metadata file path not provided.');
+            return;
+        }
         const data = {
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
@@ -207,14 +208,13 @@ class Reporter {
             tags: this.tags
         };
         const jsonData = JSON.stringify(data, null, 2);
-        fs.writeFile(filePath, jsonData, (err) => {
+        fs.writeFile(this.metadataFilePath, jsonData, (err) => {
             if (err) {
-                ColorConsole.error('Error writing TestRail metadata file:', err);
+                ColorConsole.error(`Error writing TestRail metadata file: "${err}"`);
             } else {
-                ColorConsole.success('TestRail metadata saved to file: ', filePath);
+                ColorConsole.success(`TestRail metadata saved to file: '${this.metadataFilePath}'`);
             }
         });
-        }
     }
 
     /**
