@@ -90,7 +90,7 @@ class TestRail {
      * @param metadataAfterRun
      * @returns {Promise<AxiosResponse<any>>}
      */
-    updateRunDescriptionMetadata(runId, metadataAfterRun) {
+    updateAfterRunMetadata(runId, metadataAfterRun) {
         const postData = {
             description: metadataAfterRun,
             include_all: true
