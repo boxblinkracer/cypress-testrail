@@ -283,7 +283,7 @@ class Reporter {
                         comment += '\nCypress Version: ' + this.cypressVersion;
                         comment += '\nBrowser: ' + this.browser;
                         comment += '\nOS: ' + this.system;
-                        comment += '\nTesting Type (Tags) ' + this.tags;
+                        comment += '\nTesting Type (Tags): ' + this.tags;
                         comment += '\nSpec: ' + spec.name;
                     }
 
