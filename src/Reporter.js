@@ -188,7 +188,7 @@ class Reporter {
 
         // No TestRail metadata file
         if (!this.metadataFilePath) {
-            ColorConsole.warn('TestRail metadata file path not provided.');
+            ColorConsole.warn('  TestRail metadata file path not provided.');
             return;
         }
         // Create an options object specifying the desired date and time format.
