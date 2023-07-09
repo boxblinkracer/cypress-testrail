@@ -84,6 +84,31 @@ class TestRail {
         );
     }
 
+     /**
+     *
+     * @param runId
+     * @param metadataAfterRun
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    updateRunDescriptionMetadata(runId, metadataAfterRun) {
+        const postData = {
+            description: metadataAfterRun,
+            include_all: true
+        };
+
+        return this.client.sendData(
+            '/update_run/' + runId,
+            postData,
+            () => {
+                ColorConsole.success('  TestRun metadata updated in TestRail for run: R' + runId);
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not update metadata of TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
+    }
+
     /**
      *
      * @param runId
