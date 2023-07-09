@@ -182,6 +182,8 @@ class Reporter {
         this.browser = afterRunDetails.browserName + ' (' + afterRunDetails.browserVersion + ')';
         this.system = afterRunDetails.osName + ' (' + afterRunDetails.osVersion + ')';
         this.tags = afterRunDetails.config.env.tags;
+        this.startedTestsAt = afterRunDetails.startedTestsAt;
+        this.endedTestsAt = afterRunDetails.endedTestsAt;
 
         if (this.modeCreateRun) {
             if (this.closeRun) {
@@ -200,12 +202,24 @@ class Reporter {
             ColorConsole.warn('TestRail metadata file path not provided.');
             return;
         }
+        // Create an options object specifying the desired date and time format.
+        const options = {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          };
         const data = {
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
             browser: this.browser,
             system: this.system,
-            tags: this.tags
+            tags: this.tags,
+            startedTestsAt: new Date(this.startedTestsAt).toLocaleString('en-US', options),
+            endedTestsAt: new Date(this.endedTestsAt).toLocaleString('en-US', options) 
         };
         const jsonData = JSON.stringify(data, null, 2);
         fs.writeFile(this.metadataFilePath, jsonData, (err) => {
