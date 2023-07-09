@@ -194,7 +194,7 @@ class Reporter {
             }
         }
         // Save metadata in a file
-        const filePath = "./metadata.json";
+        const filePath = "./cypress/.run/downloads/metadata.json";
         const data = {
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
