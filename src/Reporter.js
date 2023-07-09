@@ -194,7 +194,7 @@ class Reporter {
             }
         }
         // Save metadata in a file
-        static saveMetadataToFile(filePath) {
+        function saveMetadataToFile(filePath) {
             if (!filePath) {
               ColorConsole.warn('TestRail metadata file path not provided.');
               return;
