@@ -134,7 +134,7 @@ class Reporter {
             description += '\nCypress Version: ' + this.cypressVersion;
             description += '\nBrowser: ' + this.browser;
             description += '\nOS: ' + this.system;
-            description += '\nTesting Type (Tags) ' + this.tags;
+            description += '\nTesting Type (Tags): ' + this.tags;
 
             await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
                 // run created
