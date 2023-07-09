@@ -68,7 +68,7 @@ class TestRail {
     updateRun(runId, caseIds) {
         const postData = {
             include_all: false,
-            case_ids: caseIds,
+            case_ids: caseIds
         };
 
         return this.client.sendData(
@@ -90,11 +90,12 @@ class TestRail {
      * @param metadataAfterRun
      * @returns {Promise<AxiosResponse<any>>}
      */
-    updateAfterRunMetadata(runId, metadataAfterRun) {
+    updateAfterRunMetadata(runId, metadataAfterRun, caseIds) {
         const postData = {
-            description: metadataAfterRun
+            description: metadataAfterRun,
+            include_all: false,
+            case_ids: caseIds
         };
-
         return this.client.sendData(
             '/update_run/' + runId,
             postData,
@@ -221,7 +222,7 @@ class TestRail {
             url,
             postData,
             (response) => {
-                ColorConsole.success('  Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
+                ColorConsole.success('   Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];
