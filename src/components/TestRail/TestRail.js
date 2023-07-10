@@ -75,7 +75,7 @@ class TestRail {
             '/update_run/' + runId,
             postData,
             () => {
-                ColorConsole.success('  TestRun updated in TestRail: ' + runId);
+                ColorConsole.success('  TestRun updated in TestRail: R' + runId);
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('  Could not add TestRail test cases to run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
