@@ -108,7 +108,7 @@ class Reporter {
             ColorConsole.info('  TestRail Include All Cases: ' + this.includeAllCasesDuringCreation);
         } else {
             ColorConsole.info('  TestRail Mode: Use existing Run');
-            ColorConsole.info('  TestRail Run ID: ' + this.runId);
+            ColorConsole.info('  TestRail Run ID: R' + this.runId);
         }
 
         ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
