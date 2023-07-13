@@ -210,7 +210,7 @@ class Reporter {
 
         const data = {
             testRailRunName : this.runName,
-            testRailRunId: `R${this.runId}`,
+            testRailRunId: this.runId,
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
             browser: this.browser,
