@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Added
+
+- Skipped tests in Cypress will now be sent as "blocked" to TestRail.
+
 ## [2.7.1]
 
 ### Added

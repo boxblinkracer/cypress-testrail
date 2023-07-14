@@ -400,6 +400,14 @@ class ConfigService {
     getStatusFailed() {
         return 5;
     }
+
+    /**
+     *
+     * @returns {number}
+     */
+    getStatusSkipped() {
+        return 2;
+    }
 }
 
 module.exports = ConfigService;

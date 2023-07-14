@@ -4,6 +4,7 @@ const Result = require('./components/TestRail/Result');
 const ConfigService = require('./services/ConfigService');
 const TestData = require('./components/Cypress/TestData');
 const ColorConsole = require('./services/ColorConsole');
+const CypressStatusConverter = require('./services/CypressStatusConverter');
 
 const packageData = require('../package.json');
 
@@ -38,8 +39,7 @@ class Reporter {
         this.closeRun = configService.shouldCloseRun();
         this.foundCaseIds = [];
 
-        this.statusPassed = configService.getStatusPassed();
-        this.statusFailed = configService.getStatusFailed();
+        this.statusConverter = new CypressStatusConverter(configService.getStatusPassed(), configService.getStatusFailed(), configService.getStatusSkipped());
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
@@ -206,19 +206,11 @@ class Reporter {
                 const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
                 foundCaseIDs.forEach((caseId) => {
-                    let status = this.statusPassed;
-
-                    // if we have a pending status, then do not
-                    // send data to testrail
-                    if (testData.getState() === 'pending') {
-                        return;
-                    }
+                    const testRailStatusID = this.statusConverter.convertToTestRail(testData.getState());
 
                     let screenshotPaths = [];
 
                     if (testData.getState() !== 'passed') {
-                        status = this.statusFailed;
-
                         screenshotPaths = this._getScreenshotByTestId(test.testId, results.screenshots);
                         if (screenshotPaths === null) {
                             screenshotPaths = [];
@@ -246,7 +238,7 @@ class Reporter {
                         comment += '\nError: ' + testData.getError();
                     }
 
-                    const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPaths);
+                    const result = new Result(caseId, testRailStatusID, comment, testData.getDurationMS(), screenshotPaths);
                     allResults.push(result);
                 });
             });
