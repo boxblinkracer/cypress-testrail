@@ -178,7 +178,7 @@ class TestRail {
             results: [],
         };
 
-        ColorConsole.debug(' Sending cases: ' + testResults.map((r) => 'C' + r.getCaseId()));
+        ColorConsole.debug(' TestRail >> Sending case results to run R' + runID + ': ' + testResults.map((r) => 'C' + r.getCaseId()));
 
         testResults.forEach((result) => {
             var resultEntry = {

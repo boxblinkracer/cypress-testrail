@@ -5,13 +5,27 @@ describe('TestRail Domain', () => {
 
     describe('.env file', () => {
 
+        test('TestRailDomain from .env file with NULL config', () => {
+            const config = new ConfigService(null);
+            expect(config.getDomain()).toBe('');
+        });
+
         test('TestRailDomain from .env file', () => {
             const config = new ConfigService({
                 'testrail': {
                     'domain': 'my-domain',
-                }
+                },
             });
             expect(config.getDomain()).toBe('my-domain');
+        });
+
+        test('TestRailDomain from .env file with NULL domain', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'domain': null,
+                },
+            });
+            expect(config.getDomain()).toBe('');
         });
 
     });
@@ -52,9 +66,14 @@ describe('TestRail Username', () => {
             const config = new ConfigService({
                 'testrail': {
                     'username': 'user123',
-                }
+                },
             });
             expect(config.getUsername()).toBe('user123');
+        });
+
+        test('TestRailUsername from ENV with NULL config', () => {
+            const config = new ConfigService(null);
+            expect(config.getUsername()).toBe('');
         });
     });
 
@@ -78,9 +97,14 @@ describe('TestRail Password', () => {
             const config = new ConfigService({
                 'testrail': {
                     'password': 'P123',
-                }
+                },
             });
             expect(config.getPassword()).toBe('P123');
+        });
+
+        test('TestRailPassword from .env file with NULL config', () => {
+            const config = new ConfigService(null);
+            expect(config.getPassword()).toBe('');
         });
     });
 
@@ -307,6 +331,106 @@ describe('RunID', () => {
     });
 });
 
+
+describe('RunIDs', () => {
+
+    describe('.env file', () => {
+
+        test('RunIDs from .env file', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIds': ['123', '456'],
+                },
+            });
+            expect(config.getRunIds().length).toBe(2);
+            expect(config.getRunIds()[0]).toBe('123');
+            expect(config.getRunIds()[1]).toBe('456');
+        });
+
+        test('RunIDs from .env file with leading R', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIds': ['R123', 'R456'],
+                },
+            });
+            expect(config.getRunIds().length).toBe(2);
+            expect(config.getRunIds()[0]).toBe('123');
+            expect(config.getRunIds()[1]).toBe('456');
+        });
+
+        test('RunIDs from .env file with whitespaces', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIds': [' 123 ', ' 456 '],
+                },
+            });
+            expect(config.getRunIds().length).toBe(2);
+            expect(config.getRunIds()[0]).toBe('123');
+            expect(config.getRunIds()[1]).toBe('456');
+        });
+
+        test('RunIDs from .env as INT', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIds': [123, 456],
+                },
+            });
+            expect(config.getRunIds().length).toBe(2);
+            expect(config.getRunIds()[0]).toBe('123');
+            expect(config.getRunIds()[1]).toBe('456');
+        });
+
+        test('RunIDs from .env if NULL', () => {
+            const config = new ConfigService({
+                'testrail': {
+                    'runIds': null,
+                },
+            });
+            expect(config.getRunIds().length).toBe(0);
+        });
+
+        test('RunIDs from .env if missing', () => {
+            const config = new ConfigService({
+                'testrail': {},
+            });
+            expect(config.getRunIds().length).toBe(0);
+        });
+    });
+
+    describe('ENV variable', () => {
+
+        test('RunIDs from ENV variable as STRING', () => {
+            const config = new ConfigService({
+                'TESTRAIL_RUN_IDS': '123,456',
+            });
+            expect(config.getRunIds().length).toBe(2);
+            expect(config.getRunIds()[0]).toBe('123');
+            expect(config.getRunIds()[1]).toBe('456');
+        });
+
+        test('RunIDs from ENV variable as STRING with single entry', () => {
+            const config = new ConfigService({
+                'TESTRAIL_RUN_IDS': '123',
+            });
+            expect(config.getRunIds().length).toBe(1);
+            expect(config.getRunIds()[0]).toBe('123');
+        });
+
+        test('RunIDs from ENV variable with NULL', () => {
+            const config = new ConfigService({
+                'TESTRAIL_RUN_IDS': null,
+            });
+            expect(config.getRunIds().length).toBe(0);
+        });
+
+        test('RunIDs from ENV variable if not provided', () => {
+            const config = new ConfigService({});
+            expect(config.getRunIds().length).toBe(0);
+        });
+    });
+});
+
+
 describe('RunName', () => {
 
     describe('.env file', () => {
@@ -505,4 +629,31 @@ describe('Invalid Configurations', () => {
         const config = new ConfigService({});
         expect(config.getRunId()).toBe('');
     });
+});
+
+describe('hasRunID', () => {
+
+    test('hasRunID is true on single runs', () => {
+        const config = new ConfigService({
+            'testrail': {
+                'runId': '123',
+            },
+        });
+        expect(config.hasRunID()).toBe(true);
+    });
+
+    test('hasRunID is true on multiple runs', () => {
+        const config = new ConfigService({
+            'testrail': {
+                'runIds': ['123', '456']
+            },
+        });
+        expect(config.hasRunID()).toBe(true);
+    });
+
+    test('hasRunID is false if no runs provided', () => {
+        const config = new ConfigService(null);
+        expect(config.hasRunID()).toBe(false);
+    });
+
 });
