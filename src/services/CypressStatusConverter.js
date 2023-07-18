@@ -28,7 +28,7 @@ class CypressStatusConverter {
                 return this.statusPending;
         }
 
-        return '';
+        return -1;
     }
 }
 

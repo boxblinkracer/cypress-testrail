@@ -70,8 +70,22 @@ test('Missing attempts lead to a duration of 0', () => {
 
 test('State is correctly read', () => {
     const result = new TestData({
-        'state': 'passed'
+        'state': 'passed',
     });
     expect(result.getState()).toBe('passed');
+});
+
+test('isFailed is true with state failed', () => {
+    const result = new TestData({
+        'state': 'failed',
+    });
+    expect(result.isFailed()).toBe(true);
+});
+
+test('isFailed is false with state passed', () => {
+    const result = new TestData({
+        'state': 'passed',
+    });
+    expect(result.isFailed()).toBe(false);
 });
 

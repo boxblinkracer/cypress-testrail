@@ -48,9 +48,9 @@ Here is a sample of a JSON from the CLI command.
 
 The integration has 2 different modes, that you can select while running our **Setup CLI** command.
 
-#### 3.1 Mode A: Send result to specific Run in TestRail
+#### 3.1 Mode A: Send results to one or more runs in TestRail
 
-With this mode, all results are fired against an existing Test Run in TestRail.
+With this mode, all results are fired against an existing Test Run or a list of Test Runs in TestRail.
 This is a good option if you have already prepared your plan in TestRail and just need to have Cypress doing the work for you.
 
 Please keep in mind, that the provided run must not be closed, so that the TestRail API allows you to send results to it.
@@ -182,6 +182,7 @@ Examples on how to use it are below the list.
 | CYPRESS_TESTRAIL_SCREENSHOTS     | testrail.screenshots    | no              | Send last screenshot of failed test.<br />Values: true/false                                                                                                                          |
 | CYPRESS_TESTRAIL_SCREENSHOTS_ALL | testrail.screenshotsAll | no              | Send all screenshots of failed test. (requires screenshots to be enabled).<br />Values: true/false                                                                                    |
 | CYPRESS_TESTRAIL_RUN_ID          | testrail.runId          | yes (Mode A)    | TestRail RunID to fire against, e.g. R123                                                                                                                                             |
+| CYPRESS_TESTRAIL_RUN_IDS         | testrail.runIds         | yes (Mode A)    | TestRail RunIDs to fire against, e.g. ["R123", "R456"]. Either provide single runID or this list. Send comma separated as ENV variable from CLI (xxx="R1,R2"                          |
 | CYPRESS_TESTRAIL_PROJECT_ID      | testrail.projectId      | yes (Mode B)    | TestRail ProjectID, e.g. P45                                                                                                                                                          |
 | CYPRESS_TESTRAIL_MILESTONE_ID    | testrail.milestoneId    | yes (Mode A)    | TestRail MilestoneID, e.g. M4                                                                                                                                                         |
 | CYPRESS_TESTRAIL_SUITE_ID        | testrail.suiteId        | yes/no (Mode B) | TestRail SuiteID, e.g. S8.<br />Some projects might require this!                                                                                                                     |

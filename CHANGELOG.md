@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Skipped tests in Cypress will now be sent as "blocked" to TestRail.
+- Add option to provide a list of TestRail RunIDs with **runIDs**. This will send all test results to all provided run IDs.
 
 ## [2.7.1]
 

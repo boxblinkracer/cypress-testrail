@@ -28,6 +28,14 @@ class TestData {
 
     /**
      *
+     * @returns {*}
+     */
+    getState() {
+        return this._state;
+    }
+
+    /**
+     *
      * @returns {boolean}
      */
     isPassed() {
@@ -36,10 +44,10 @@ class TestData {
 
     /**
      *
-     * @returns {*}
+     * @returns {boolean}
      */
-    getState() {
-        return this._state;
+    isFailed() {
+        return this._state === 'failed';
     }
 
     /**
