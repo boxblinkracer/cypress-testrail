@@ -657,3 +657,19 @@ describe('hasRunID', () => {
     });
 
 });
+
+
+test('getStatusPassed', () => {
+    const config = new ConfigService(null);
+    expect(config.getStatusPassed()).toBe(1);
+});
+
+test('getStatusSkipped', () => {
+    const config = new ConfigService(null);
+    expect(config.getStatusSkipped()).toBe(2);
+});
+
+test('getStatusFailed', () => {
+    const config = new ConfigService(null);
+    expect(config.getStatusFailed()).toBe(5);
+});
