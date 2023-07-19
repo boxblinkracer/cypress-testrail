@@ -89,7 +89,7 @@ class Reporter {
      */
     async _beforeRun(details) {
         this.cypressVersion = details.cypressVersion;
-        this.browser = (details.browser !== undefined) ? details.browser.displayName + ' (' + details.browser.version + ')' : 'unknown';
+        this.browser = details.browser !== undefined ? details.browser.displayName + ' (' + details.browser.version + ')' : 'unknown';
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
         this.baseURL = details.config.baseUrl;
 
