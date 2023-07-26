@@ -200,6 +200,13 @@ class Reporter {
 
             const convertedTestResult = new TestData(cypressTestResult);
 
+            // if we have a skipped test, then do NOT send it in create-mode
+            // only if we have an existing test run in TestRail
+            if (convertedTestResult.isSkipped() && this.modeCreateRun) {
+                ColorConsole.debug('  Skipping test: ' + convertedTestResult.getTitle());
+                continue;
+            }
+
             const testRailStatusID = this.statusConverter.convertToTestRail(convertedTestResult.getState());
 
             let screenshotPaths = [];

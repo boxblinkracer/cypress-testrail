@@ -52,6 +52,14 @@ class TestData {
 
     /**
      *
+     * @returns {boolean}
+     */
+    isSkipped() {
+        return this._state === 'pending';
+    }
+
+    /**
+     *
      * @returns {*}
      */
     getDurationMS() {

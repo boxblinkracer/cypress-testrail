@@ -89,3 +89,16 @@ test('isFailed is false with state passed', () => {
     expect(result.isFailed()).toBe(false);
 });
 
+test('isSkipped is true with state pending', () => {
+    const result = new TestData({
+        'state': 'pending',
+    });
+    expect(result.isSkipped()).toBe(true);
+});
+
+test('isSkipped is false with state passed', () => {
+    const result = new TestData({
+        'state': 'passed',
+    });
+    expect(result.isSkipped()).toBe(false);
+});
