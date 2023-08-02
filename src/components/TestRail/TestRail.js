@@ -68,17 +68,42 @@ class TestRail {
     updateRun(runId, caseIds) {
         const postData = {
             include_all: false,
-            case_ids: caseIds,
+            case_ids: caseIds
         };
 
         return this.client.sendData(
             '/update_run/' + runId,
             postData,
             () => {
-                ColorConsole.success('  TestRun updated in TestRail: ' + runId);
+                ColorConsole.success('  TestRun updated in TestRail: R' + runId);
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('  Could not add TestRail test cases to run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
+    }
+
+     /**
+     *
+     * @param runId
+     * @param metadataAfterRun
+     * @returns {Promise<AxiosResponse<any>>}
+     */
+    updateAfterRunMetadata(runId, metadataAfterRun) {
+        const postData = {
+            description: metadataAfterRun,
+            //include_all: false,
+            //case_ids: caseIds
+        };
+        return this.client.sendData(
+            '/update_run/' + runId,
+            postData,
+            () => {
+                ColorConsole.success('  TestRun metadata updated in TestRail for run: R' + runId);
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('  Could not update metadata of TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );
@@ -199,7 +224,7 @@ class TestRail {
             url,
             postData,
             (response) => {
-                ColorConsole.success(' Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
+                ColorConsole.success('  Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];

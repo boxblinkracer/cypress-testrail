@@ -5,6 +5,7 @@ const ConfigService = require('./services/ConfigService');
 const TestData = require('./components/Cypress/TestData');
 const ColorConsole = require('./services/ColorConsole');
 const CypressStatusConverter = require('./services/CypressStatusConverter');
+const fs = require('fs');
 
 const packageData = require('../package.json');
 
@@ -15,7 +16,7 @@ class Reporter {
      * @param config
      * @param customComment provide a custom comment if you want to add something to the result comment
      */
-    constructor(on, config, customComment) {
+    constructor(on, config, customComment, metadataFilePath) {
         this.on = on;
 
         this.testCaseParser = new TestCaseParser();
@@ -50,6 +51,8 @@ class Reporter {
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
+        this.metadataFilePath = metadataFilePath !== undefined && metadataFilePath !== null ? metadataFilePath : '';
+
         this.testrail = new TestRail(configService.getDomain(), configService.getUsername(), configService.getPassword(), configService.isScreenshotsEnabled());
     }
 
@@ -77,8 +80,8 @@ class Reporter {
             await this._afterSpec(spec, results);
         });
 
-        this.on('after:run', async () => {
-            await this._afterRun();
+        this.on('after:run', async (afterRunDetails) => {
+            await this._afterRun(afterRunDetails);
         });
     }
 
@@ -88,18 +91,20 @@ class Reporter {
      * @private
      */
     async _beforeRun(details) {
+        this.baseURL = details.config.baseUrl;
         this.cypressVersion = details.cypressVersion;
         this.browser = details.browser !== undefined ? details.browser.displayName + ' (' + details.browser.version + ')' : 'unknown';
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
-        this.baseURL = details.config.baseUrl;
+        this.tags = details.config.env.tags;
 
         ColorConsole.success('  Starting TestRail Integration v' + packageData.version);
         ColorConsole.info('  ....................................................');
-        ColorConsole.info('  Cypress: ' + this.cypressVersion);
-        ColorConsole.info('  Browser: ' + this.browser);
-        ColorConsole.info('  System: ' + this.system);
-        ColorConsole.info('  Base URL: ' + this.baseURL);
         ColorConsole.info('  TestRail Domain: ' + this.domain);
+        ColorConsole.info('  Environment/ Base URL: ' + this.baseURL);
+        ColorConsole.info('  Cypress Version: ' + this.cypressVersion);
+        ColorConsole.info('  Browser: ' + this.browser);
+        ColorConsole.info('  OS: ' + this.system);
+        ColorConsole.info('  Testing Type (Tags): ' + this.tags);
 
         if (this.modeCreateRun) {
             ColorConsole.info('  TestRail Mode: Create Run');
@@ -119,6 +124,7 @@ class Reporter {
         // if we don't have a runID, then we need to create one
         if (this.modeCreateRun) {
             await this._createTestRailRun();
+
         }
     }
 
@@ -160,7 +166,73 @@ class Reporter {
      *
      * @private
      */
-    async _afterRun() {
+    async _afterRun(afterRunDetails) {
+        this.baseURL = afterRunDetails.config.baseUrl;
+        this.cypressVersion = afterRunDetails.cypressVersion;
+        this.browser = afterRunDetails.browserName + ' (' + afterRunDetails.browserVersion + ')';
+        this.system = afterRunDetails.osName + ' (' + afterRunDetails.osVersion + ')';
+        this.tags = afterRunDetails.config.env.tags;
+        this.startedTestsAt = afterRunDetails.startedTestsAt;
+        this.endedTestsAt = afterRunDetails.endedTestsAt;
+        this.testsExecutionTotalDuration = afterRunDetails.totalDuration;
+
+        // No TestRail metadata file
+        if (!this.metadataFilePath) {
+            ColorConsole.warn('  TestRail metadata file path not provided.');
+            return;
+        }
+        // Create an options object specifying the desired date and time format.
+        const options = {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          };
+        const totalDuration = this.testsExecutionTotalDuration
+        const seconds = Math.floor(totalDuration / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        const hours = Math.floor(minutes / 60);
+        const remainingMinutes = minutes % 60;
+
+        const data = {
+            testRailRunName : this.runName,
+            testRailRunId: this.runId,
+            baseUrl: this.baseURL,
+            cypressVersion: this.cypressVersion,
+            browser: this.browser,
+            system: this.system,
+            tags: this.tags,
+            startedTestsAt: new Date(this.startedTestsAt).toLocaleString('en-US', options),
+            endedTestsAt: new Date(this.endedTestsAt).toLocaleString('en-US', options),
+            testsExecutionTotalDuration: `${hours} hours ${remainingMinutes} minutes ${remainingSeconds} seconds`
+        };
+            let description = '';
+            description += 'Tested by Cypress';
+            description += '\nEnvironment/ Base URL: ' + this.baseURL;
+            description += '\nCypress Version: ' + this.cypressVersion;
+            description += '\nBrowser: ' + this.browser;
+            description += '\nOS: ' + this.system;
+            description += '\nTesting Type (Tags): ' + this.tags;
+            description += '\nTests Execution Start Time: ' + new Date(this.startedTestsAt).toLocaleString('en-US', options);
+            description += '\nTests Execution End Time: ' + new Date(this.endedTestsAt).toLocaleString('en-US', options);
+            description += '\nTests Execution Total Duration: ' + `${hours} hours ${remainingMinutes} minutes ${remainingSeconds} seconds`;
+
+        const jsonData = JSON.stringify(data, null, 2);
+        // Update a TestRail run description with after:run metadata
+        await this.testrail.updateAfterRunMetadata(this.runId, description);
+        
+        fs.writeFile(this.metadataFilePath, jsonData, (err) => {
+            if (err) {
+                ColorConsole.error(`  Error writing TestRail metadata file for run R${this.runId}: "${err}"`);
+            } else {
+                ColorConsole.success(`  TestRail metadata for run R${this.runId} saved to file: '${this.metadataFilePath}'`);
+            }
+        });
+
         if (this.modeCreateRun) {
             if (this.closeRun) {
                 // if we have just created a run then automatically close it
@@ -172,7 +244,7 @@ class Reporter {
                 }
             } else {
                 /* eslint-disable no-console */
-                console.log('  Skipping closing of Test Run');
+                console.log(`  Skipping closing of Test Run: R${this.runId}`);
             }
         }
     }
