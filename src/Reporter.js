@@ -229,7 +229,7 @@ class Reporter {
             if (err) {
                 ColorConsole.error(`  Error writing TestRail metadata file for run R${this.runIds}: "${err}"`);
             } else {
-                ColorConsole.success(`  TestRail metadata for run R${this.runIds} saved to file: '${this.metadataFilePath}'`);
+                ColorConsole.success(`  TestRail metadata for run ID(s) R${this.runIds} saved to file: '${this.metadataFilePath}'`);
             }
         });
 
