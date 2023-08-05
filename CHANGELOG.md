@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.0]
+
+### Added
+
+- Skipped tests in Cypress will now be sent as "blocked" to TestRail (only in createTestRun mode).
+- Add option to provide a list of TestRail RunIDs with **runIDs**. This will send all test results to all provided run IDs.
+
+### Fixed
+
+- Fixed crash with missing *browser* when running in UI mode with experimentalInteractiveRunEvents turned on.
+
 ## [2.7.1]
 
 ### Added

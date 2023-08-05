@@ -244,6 +244,49 @@ class ConfigService {
 
     /**
      *
+     * @returns {array}
+     */
+    getRunIds() {
+        if (this.config === null) {
+            return [];
+        }
+
+        let runIds = [];
+
+        // CYPRESS_TESTRAIL_RUN_IDS
+        if (this.config.TESTRAIL_RUN_IDS !== undefined && this.config.TESTRAIL_RUN_IDS !== null && this.config.TESTRAIL_RUN_IDS !== '') {
+            const tmpString = this.config.TESTRAIL_RUN_IDS;
+            if (tmpString.toString().indexOf(',') !== -1) {
+                runIds = tmpString.split(',');
+            } else {
+                runIds = [tmpString];
+            }
+        } else {
+            if (this.config.testrail === undefined || this.config.testrail === null) {
+                return [];
+            }
+            runIds = this.config.testrail.runIds;
+
+            if (runIds === undefined || runIds === null) {
+                return [];
+            }
+        }
+
+        if (runIds === undefined || runIds === null) {
+            return [];
+        }
+
+        for (let i = 0; i < runIds.length; i++) {
+            runIds[i] = String(runIds[i]);
+            runIds[i] = runIds[i].replace('R', '');
+            runIds[i] = runIds[i].trim();
+        }
+
+        return runIds;
+    }
+
+    /**
+     *
      * @returns {string}
      */
     getRunName() {
@@ -382,7 +425,7 @@ class ConfigService {
      * @returns {boolean}
      */
     hasRunID() {
-        return this.getRunId() !== '';
+        return this.getRunId() !== '' || this.getRunIds().length > 0;
     }
 
     /**
@@ -399,6 +442,14 @@ class ConfigService {
      */
     getStatusFailed() {
         return 5;
+    }
+
+    /**
+     *
+     * @returns {number}
+     */
+    getStatusSkipped() {
+        return 2;
     }
 }
 

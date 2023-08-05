@@ -4,6 +4,7 @@ const Result = require('./components/TestRail/Result');
 const ConfigService = require('./services/ConfigService');
 const TestData = require('./components/Cypress/TestData');
 const ColorConsole = require('./services/ColorConsole');
+const CypressStatusConverter = require('./services/CypressStatusConverter');
 const fs = require('fs');
 
 const packageData = require('../package.json');
@@ -29,7 +30,14 @@ class Reporter {
         this.projectId = configService.getProjectId();
         this.milestoneId = configService.getMilestoneId();
         this.suiteId = configService.getSuiteId();
-        this.runId = configService.getRunId();
+
+        const singleRunId = configService.getRunId();
+        if (singleRunId !== '') {
+            this.runIds = [configService.getRunId()];
+        } else {
+            this.runIds = configService.getRunIds();
+        }
+
         this.runName = configService.getRunName();
         this.screenshotsEnabled = configService.isScreenshotsEnabled();
         this.includeAllCasesDuringCreation = configService.includeAllCasesDuringCreation();
@@ -39,8 +47,7 @@ class Reporter {
         this.closeRun = configService.shouldCloseRun();
         this.foundCaseIds = [];
 
-        this.statusPassed = configService.getStatusPassed();
-        this.statusFailed = configService.getStatusFailed();
+        this.statusConverter = new CypressStatusConverter(configService.getStatusPassed(), configService.getStatusFailed(), configService.getStatusSkipped());
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
@@ -86,7 +93,7 @@ class Reporter {
     async _beforeRun(details) {
         this.baseURL = details.config.baseUrl;
         this.cypressVersion = details.cypressVersion;
-        this.browser = details.browser.displayName + ' (' + details.browser.version + ')';
+        this.browser = details.browser !== undefined ? details.browser.displayName + ' (' + details.browser.version + ')' : 'unknown';
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
         this.tags = details.config.env.tags;
 
@@ -107,41 +114,17 @@ class Reporter {
             ColorConsole.info('  TestRail Run Name: ' + this.runName);
             ColorConsole.info('  TestRail Include All Cases: ' + this.includeAllCasesDuringCreation);
         } else {
-            ColorConsole.info('  TestRail Mode: Use existing Run');
-            ColorConsole.info('  TestRail Run ID: R' + this.runId);
+            ColorConsole.info('  TestRail Mode: Use existing Run(s)');
+            ColorConsole.info('  TestRail Run ID(s): ' + this.runIds.map((id) => 'R' + id));
         }
 
         ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
         ColorConsole.info('  Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
 
         // if we don't have a runID, then we need to create one
-        if (this.runId === '') {
-            const today = new Date();
-            const dateTime = today.toLocaleString();
+        if (this.modeCreateRun) {
+            await this._createTestRailRun();
 
-            let runName = this.runName === '' ? 'Cypress Run (__datetime__)' : this.runName;
-
-            // now use our current date time if
-            // that placeholder has been used
-            runName = runName.replace('__datetime__', dateTime);
-
-            let description = '';
-            description += 'Tested by Cypress';
-            if (this.customComment !== '') {
-                description += '\n' + this.customComment;
-            }
-            description += '\nEnvironment/ Base URL: ' + this.baseURL;
-            description += '\nCypress Version: ' + this.cypressVersion;
-            description += '\nBrowser: ' + this.browser;
-            description += '\nOS: ' + this.system;
-            description += '\nTesting Type (Tags): ' + this.tags;
-
-            await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
-                // run created
-                this.runId = runId;
-                /* eslint-disable no-console */
-                ColorConsole.debug('  New TestRail Run: R' + this.runId);
-            });
         }
     }
 
@@ -152,21 +135,28 @@ class Reporter {
      * @private
      */
     async _afterSpec(spec, results) {
+        // if we are in the mode to dynamically create runs
+        // then we also need to add the newly found runs to our created test run
+        // but only if we don't want to associate all cases during creation
         if (this.modeCreateRun && !this.includeAllCasesDuringCreation) {
-            // if we are in the mode to dynamically create runs
-            // then we also need to add the newly found runs to our created test run
-            // but only if we don't want to associate all cases during creation
-            await results.tests.forEach((test) => {
+            for (let i = 0; i < results.tests.length; i++) {
+                const test = results.tests[i];
+
+                // extract our custom test data from the Cypress test object
                 const testData = new TestData(test);
 
+                // search the case ids from the title of the Cypress test
                 const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
 
-                foundCaseIDs.forEach((singleCase) => {
-                    this.foundCaseIds.push(singleCase);
-                });
-            });
+                // add all found case ids to our list
+                for (let i = 0; i < foundCaseIDs.length; i++) {
+                    this.foundCaseIds.push(foundCaseIDs[i]);
+                }
+            }
 
-            await this.testrail.updateRun(this.runId, this.foundCaseIds);
+            for (let i = 0; i < this.runIds.length; i++) {
+                await this.testrail.updateRun(this.runIds[i], this.foundCaseIds);
+            }
         }
 
         await this._sendSpecResults(spec, results);
@@ -246,10 +236,12 @@ class Reporter {
         if (this.modeCreateRun) {
             if (this.closeRun) {
                 // if we have just created a run then automatically close it
-                await this.testrail.closeRun(this.runId, () => {
-                    /* eslint-disable no-console */
-                    console.log('  TestRail Run: R' + this.runId + ' is now closed');
-                });
+                for (let i = 0; i < this.runIds.length; i++) {
+                    await this.testrail.closeRun(this.runIds[i], () => {
+                        /* eslint-disable no-console */
+                        console.log('  TestRail Run: R' + this.runIds[i] + ' is now closed');
+                    });
+                }
             } else {
                 /* eslint-disable no-console */
                 console.log(`  Skipping closing of Test Run: R${this.runId}`);
@@ -258,6 +250,8 @@ class Reporter {
     }
 
     /**
+     * This function is being triggered after each spec file.
+     * It's the main entrypoint to send all test results of that file to TestRail.
      *
      * @param spec
      * @param results
@@ -265,69 +259,114 @@ class Reporter {
      * @private
      */
     async _sendSpecResults(spec, results) {
+        // if we don't have anything, just return
+        if (!results.tests || results.tests.length === 0) {
+            return;
+        }
+
         const allRequests = [];
         const allResults = [];
 
-        // iterate through all our test results
-        // and send the data to TestRail
-        if (results.tests && results.tests.length > 0) {
-            await results.tests.forEach(async (test) => {
-                const testData = new TestData(test);
+        for (let i = 0; i < results.tests.length; i++) {
+            const cypressTestResult = results.tests[i];
 
-                const foundCaseIDs = this.testCaseParser.searchCaseId(testData.getTitle());
+            const convertedTestResult = new TestData(cypressTestResult);
 
-                foundCaseIDs.forEach((caseId) => {
-                    let status = this.statusPassed;
+            // if we have a skipped test, then do NOT send it in create-mode
+            // only if we have an existing test run in TestRail
+            if (convertedTestResult.isSkipped() && this.modeCreateRun) {
+                ColorConsole.debug('  Skipping test: ' + convertedTestResult.getTitle());
+                continue;
+            }
 
-                    // if we have a pending status, then do not
-                    // send data to testrail
-                    if (testData.getState() === 'pending') {
-                        return;
-                    }
+            const testRailStatusID = this.statusConverter.convertToTestRail(convertedTestResult.getState());
 
-                    let screenshotPaths = [];
+            let screenshotPaths = [];
 
-                    if (testData.getState() !== 'passed') {
-                        status = this.statusFailed;
+            // if we have a failed test, then extract the screenshot
+            if (convertedTestResult.isFailed()) {
+                screenshotPaths = this._getScreenshotByTestId(cypressTestResult.testId, results.screenshots);
+                if (screenshotPaths === null) {
+                    screenshotPaths = [];
+                }
+            }
 
-                        screenshotPaths = this._getScreenshotByTestId(test.testId, results.screenshots);
-                        if (screenshotPaths === null) {
-                            screenshotPaths = [];
-                        }
-                    }
+            let comment = 'Tested by Cypress';
 
-                    let comment = 'Tested by Cypress';
+            // this is already part of the run description
+            // if it was created dynamically.
+            // otherwise add it to the result
+            if (!this.modeCreateRun) {
+                comment += '\nCypress: ' + this.cypressVersion;
+                comment += '\nBrowser: ' + this.browser;
+                comment += '\nBase URL: ' + this.baseURL;
+                comment += '\nSystem: ' + this.system;
+                comment += '\nSpec: ' + spec.name;
 
-                    // this is already part of the run description
-                    // if it was created dynamically.
-                    // otherwise add it to the result
-                    if (!this.modeCreateRun) {
-                        if (this.customComment !== '') {
-                            comment += '\n' + this.customComment;
-                        }
-                        comment += '\nEnvironment/ Base URL: ' + this.baseURL;
-                        comment += '\nCypress Version: ' + this.cypressVersion;
-                        comment += '\nBrowser: ' + this.browser;
-                        comment += '\nOS: ' + this.system;
-                        comment += '\nTesting Type (Tags): ' + this.tags;
-                        comment += '\nSpec: ' + spec.name;
-                    }
+                if (this.customComment !== '') {
+                    comment += '\n' + this.customComment;
+                }
+            }
 
-                    if (testData.getError() !== '') {
-                        comment += '\nError: ' + testData.getError();
-                    }
+            if (convertedTestResult.getError() !== '') {
+                comment += '\nError: ' + convertedTestResult.getError();
+            }
 
-                    const result = new Result(caseId, status, comment, testData.getDurationMS(), screenshotPaths);
-                    allResults.push(result);
-                });
-            });
+            const foundCaseIDs = this.testCaseParser.searchCaseId(convertedTestResult.getTitle());
+
+            // now build a separate result entry
+            // for each found case id for TestRail later on
+            for (let i = 0; i < foundCaseIDs.length; i++) {
+                const caseId = foundCaseIDs[i];
+
+                const result = new Result(caseId, testRailStatusID, comment, convertedTestResult.getDurationMS(), screenshotPaths);
+
+                allResults.push(result);
+            }
         }
+
         if (allResults.length > 0) {
-            // now send all results in a single request
-            const request = this.testrail.sendBatchResults(this.runId, allResults);
-            allRequests.push(request);
+            for (let i = 0; i < this.runIds.length; i += 1) {
+                const request = this.testrail.sendBatchResults(this.runIds[i], allResults);
+                allRequests.push(request);
+            }
+
             await Promise.all(allRequests);
         }
+    }
+
+    /**
+     *
+     * @returns {Promise<void>}
+     * @private
+     */
+    async _createTestRailRun() {
+        const today = new Date();
+        const dateTime = today.toLocaleString();
+
+        let runName = this.runName === '' ? 'Cypress Run (__datetime__)' : this.runName;
+
+        // now use our current date time if
+        // that placeholder has been used
+        runName = runName.replace('__datetime__', dateTime);
+
+        let description = '';
+        description += 'Tested by Cypress';
+        description += '\nCypress: ' + this.cypressVersion;
+        description += '\nBrowser: ' + this.browser;
+        description += '\nBase URL: ' + this.baseURL;
+        description += '\nSystem: ' + this.system;
+
+        if (this.customComment !== '') {
+            description += '\n' + this.customComment;
+        }
+
+        await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
+            // run created
+            this.runIds = [runId];
+            /* eslint-disable no-console */
+            ColorConsole.debug('  New TestRail Run: R' + runId);
+        });
     }
 
     /**

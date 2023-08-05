@@ -203,6 +203,8 @@ class TestRail {
             results: [],
         };
 
+        ColorConsole.debug(' TestRail >> Sending case results to run R' + runID + ': ' + testResults.map((r) => 'C' + r.getCaseId()));
+
         testResults.forEach((result) => {
             var resultEntry = {
                 case_id: result.getCaseId(),
@@ -259,7 +261,7 @@ class TestRail {
                 }
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.error(' Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );

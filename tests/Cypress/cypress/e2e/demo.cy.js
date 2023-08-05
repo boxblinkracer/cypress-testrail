@@ -8,3 +8,9 @@ it('C6872: fails', () => {
 
     cy.contains('TestRail');
 })
+
+it.skip('C6873: skipped', () => {
+    cy.visit('https://example.cypress.io')
+
+    cy.contains('TestRail');
+})
