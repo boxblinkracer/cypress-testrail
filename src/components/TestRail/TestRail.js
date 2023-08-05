@@ -131,11 +131,11 @@ class TestRail {
                 '/update_run/' + runId,
                 postData,
                 () => {
-                    ColorConsole.success('TestRun metadata updated in TestRail for run: R' + runId);
+                    ColorConsole.success('TestRun metadata updated in TestRail for run ID(s): R' + runId);
                     resolve(); // Resolve the promise when the update is successful
                 },
                 (statusCode, statusText, errorText) => {
-                    ColorConsole.error('Could not update metadata of TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                    ColorConsole.error('Could not update metadata for TestRail run ID(s) R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                     ColorConsole.debug('');
                     reject(new Error('Update failed')); // Reject the promise when the update fails
                 }
@@ -154,7 +154,7 @@ class TestRail {
             ColorConsole.error('At least one TestRun metadata update failed');
             throw error; // Propagate the error to the caller if needed
         });
-}
+    }
 
     
     /**
