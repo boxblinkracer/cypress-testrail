@@ -72,7 +72,9 @@ class TestRail {
         };
 
         return this.client.sendData(
-            '/update_run/' + runId,
+            for (let i = 0; i < runId.length; i++) {
+            '/update_run/' +  runId[i];
+            },
             postData,
             () => {
                 ColorConsole.success('  TestRun updated in TestRail: R' + runId);
@@ -97,7 +99,9 @@ class TestRail {
             //case_ids: caseIds
         };
         return this.client.sendData(
-            '/update_run/' + runId,
+            for (let i = 0; i < runId.length; i++) {
+            '/update_run/' +  runId[i];
+            },
             postData,
             () => {
                 ColorConsole.success('  TestRun metadata updated in TestRail for run: R' + runId);
