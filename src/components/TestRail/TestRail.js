@@ -65,6 +65,25 @@ class TestRail {
      * @param caseIds
      * @returns {Promise<AxiosResponse<any>>}
      */
+    updateRun(runId, caseIds) {
+        const postData = {
+            include_all: false,
+            case_ids: caseIds
+        };
+
+        return this.client.sendData(
+            '/update_run/' + runId,
+            postData,
+            () => {
+                ColorConsole.success('TestRun updated in TestRail: R' + runId);
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('Could not add TestRail test cases to run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
+    }
+    /**
     updateRun(runIds, caseIds) {
     const promises = [];
     const postData = {
@@ -89,37 +108,34 @@ class TestRail {
     }
 
     return Promise.all(promises);
-}
-/**
-    updateRun(runIds, caseIds) {
-        const postData = {
-            include_all: false,
-            case_ids: caseIds
-        };
-        
-        for (let i = 0; i < runIds.length; i++) {
-            const runId = runIds[i];
-            
-        return this.client.sendData(
-            '/update_run/' +  runId
-            ,
-            postData,
-            () => {
-                ColorConsole.success('  TestRun updated in TestRail: R' + runIds);
-            },
-            (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not add TestRail test cases to run R' + runIds + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
-                ColorConsole.debug('');
-            }
-        );
     }
-*/
+    */
      /**
      *
      * @param runId
      * @param metadataAfterRun
      * @returns {Promise<AxiosResponse<any>>}
      */
+    updateAfterRunMetadata(runId, metadataAfterRun) {
+        const postData = {
+            description: metadataAfterRun,
+            //include_all: false,
+            //case_ids: caseIds
+        };
+        return this.client.sendData(
+            '/update_run/' + runId,
+            postData,
+            () => {
+                ColorConsole.success('TestRun metadata updated for TestRail run: R' + runId);
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error('Could not update metadata for TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.debug('');
+            }
+        );
+    }
+    
+    /**
     updateAfterRunMetadata(runIds, metadataAfterRun) {
     const promises = runIds.map((runId) => {
         const postData = {
@@ -155,30 +171,9 @@ class TestRail {
             throw error; // Propagate the error to the caller if needed
         });
     }
-
     
-    /**
-    updateAfterRunMetadata(runId, metadataAfterRun) {
-        const postData = {
-            description: metadataAfterRun,
-            //include_all: false,
-            //case_ids: caseIds
-        };
-        return this.client.sendData(
-            for (let i = 0; i < runId.length; i++) {
-            '/update_run/' +  runId[i];
-            },
-            postData,
-            () => {
-                ColorConsole.success('  TestRun metadata updated in TestRail for run: R' + runId);
-            },
-            (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not update metadata of TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
-                ColorConsole.debug('');
-            }
-        );
-    }
-*/
+    */
+    
     /**
      *
      * @param runId
