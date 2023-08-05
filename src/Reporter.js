@@ -200,7 +200,7 @@ class Reporter {
 
         const data = {
             testRailRunName : this.runName,
-            testRailRunId: this.runId,
+            testRailRunId: this.runIds,
             baseUrl: this.baseURL,
             cypressVersion: this.cypressVersion,
             browser: this.browser,
@@ -223,13 +223,13 @@ class Reporter {
 
         const jsonData = JSON.stringify(data, null, 2);
         // Update a TestRail run description with after:run metadata
-        await this.testrail.updateAfterRunMetadata(this.runId, description);
+        await this.testrail.updateAfterRunMetadata(this.runIds, description);
         
         fs.writeFile(this.metadataFilePath, jsonData, (err) => {
             if (err) {
-                ColorConsole.error(`  Error writing TestRail metadata file for run R${this.runId}: "${err}"`);
+                ColorConsole.error(`  Error writing TestRail metadata file for run R${this.runIds}: "${err}"`);
             } else {
-                ColorConsole.success(`  TestRail metadata for run R${this.runId} saved to file: '${this.metadataFilePath}'`);
+                ColorConsole.success(`  TestRail metadata for run R${this.runIds} saved to file: '${this.metadataFilePath}'`);
             }
         });
 
@@ -244,7 +244,7 @@ class Reporter {
                 }
             } else {
                 /* eslint-disable no-console */
-                console.log(`  Skipping closing of Test Run: R${this.runId}`);
+                console.log(`  Skipping closing of Test Run: R${this.runIds}`);
             }
         }
     }
