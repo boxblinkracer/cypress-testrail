@@ -16,6 +16,12 @@ Add your TestRail credentials in Cypress, decide which test results should be se
 npm i cypress-testrail --save-dev
 ```
 
+#### 1.1 Pre-Requisites
+```
+Node 13
+```
+Note: Versions of Node < Node 13 may work but will require enabling experimental-modules flag.
+
 ### 2. Setup Wizard
 
 The integration has a CLI command that you can use to build your configuration in an interactive way.
@@ -104,6 +110,9 @@ e2e: {
 ,
 }
 ```
+
+#### 4.1 (Optional) Register plugin for using Cypress in Open Mode
+Enable ```experimentalInteractiveRunEvents``` in ```cypress.config.js```
 
 ### 5. Map Test Cases
 
