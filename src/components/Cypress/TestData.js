@@ -11,11 +11,11 @@ class TestData {
 
         this._durationMS = data.duration;
 
-        if (data.attempts !== undefined) {
-            data.attempts.forEach((attempt) => {
-                this._durationMS += attempt.wallClockDuration;
-            });
-        }
+        // if (data.attempts !== undefined) {
+        //     data.attempts.forEach((attempt) => {
+        //         this._durationMS += attempt.wallClockDuration;
+        //     });
+        // }
     }
 
     /**
