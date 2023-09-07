@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.8.1]
+
+### Fixed
+
+- Fixed broken **elapsedTime** calculation with Cypress v13.
+
 ## [2.8.0]
 
 ### Added
