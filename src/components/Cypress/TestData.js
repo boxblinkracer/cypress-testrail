@@ -9,13 +9,13 @@ class TestData {
 
         this._error = data.displayError !== undefined && data.displayError !== null ? data.displayError : '';
 
-        this._durationMS = 0;
+        this._durationMS = data.duration;
 
-        if (data.attempts !== undefined) {
-            data.attempts.forEach((attempt) => {
-                this._durationMS += attempt.wallClockDuration;
-            });
-        }
+        // if (data.attempts !== undefined) {
+        //     data.attempts.forEach((attempt) => {
+        //         this._durationMS += attempt.wallClockDuration;
+        //     });
+        // }
     }
 
     /**
