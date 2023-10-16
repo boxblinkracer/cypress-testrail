@@ -219,7 +219,7 @@ class Reporter {
                 }
             }
 
-            let comment = 'Tested by Cypress';
+            let comment = convertedTestResult.getTitle() ? convertedTestResult.getTitle() : 'Tested by Cypress';
 
             // this is already part of the run description
             // if it was created dynamically.
