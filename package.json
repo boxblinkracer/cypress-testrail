@@ -24,7 +24,7 @@
     "setup": "node ./bin/setup.js"
   },
   "dependencies": {
-    "axios": "^0.27.2",
+    "axios": "^1.6.2",
     "form-data": "^4.0.0",
     "enquirer": "^2.3.6",
     "await-to-js": "^3.0.0",
