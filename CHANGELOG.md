@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Fixed
+
+- Fixed a broken **elapsedTime** error with Cypress v13 in combination with **undefined** values for the duration of
+  tests.
+
 ## [2.8.2]
 
 ### Fixed
