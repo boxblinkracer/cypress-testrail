@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### Changed
+
+- Updated **Axios** dependency to version ^1.6.2 (thx @MelaAxel)
+
 ### Fixed
 
 - Fixed a broken **elapsedTime** error with Cypress v13 in combination with **undefined** values for the duration of
