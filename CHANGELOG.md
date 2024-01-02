@@ -2,12 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [2.9.0]
 
 ### Changed
 
-- Updated **Axios** dependency to version ^1.6.2 (thx @MelaAxel)
 - Use the Cypress **test title** instead of the plain "Tested by Cypress" in the TestRail comments (thx @vijigit)
+- Updated **Axios** dependency to version ^1.6.2 (thx @MelaAxel)
 
 ### Fixed
 
