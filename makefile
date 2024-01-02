@@ -10,6 +10,9 @@ help:
 install: ## Installs all dependencies
 	npm install 
 
+clean: ## Cleans all dependencies
+	rm -rf node_modules
+
 # ---------------------------------------------------------------------------------------------
 
 setup: ## Runs the setup script (for DEV purpose)

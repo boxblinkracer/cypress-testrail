@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Changed
+
+- Updated **Axios** dependency to version ^1.6.2 (thx @MelaAxel)
+
+### Fixed
+
+- Fixed a broken **elapsedTime** error with Cypress v13 in combination with **undefined** values for the duration of
+  tests.
+
+## [2.8.2]
+
+### Fixed
+
+- Fixed broken *screenshots upload* in Cypress 13.
+
 ## [2.8.1]
 
 ### Fixed
@@ -13,7 +30,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Skipped tests in Cypress will now be sent as "blocked" to TestRail (only in createTestRun mode).
-- Add option to provide a list of TestRail RunIDs with **runIDs**. This will send all test results to all provided run IDs.
+- Add option to provide a list of TestRail RunIDs with **runIDs**. This will send all test results to all provided run
+  IDs.
 
 ### Fixed
 
@@ -30,15 +48,18 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Added new configuration **runIncludeAll** that automatically adds all test cases to test runs when creating dynamic runs. (thx @williamatpaper)
-- Added new configuration **screenshotsAll** that sends all screenshots of all attempts of a failed test to TestRail. (thx @williamatpaper)
+- Added new configuration **runIncludeAll** that automatically adds all test cases to test runs when creating dynamic
+  runs. (thx @williamatpaper)
+- Added new configuration **screenshotsAll** that sends all screenshots of all attempts of a failed test to TestRail. (
+  thx @williamatpaper)
 - The integration now also works if you have accidentally provided "http://" and "https://" within your TestRail domain.
 
 ## [2.6.0]
 
 ### Changed
 
-- Results are now sent as "batch" request to TestRail at the end of the file. This safes API requests by only sending 1 request for a spec file (excluding screenshot requests).
+- Results are now sent as "batch" request to TestRail at the end of the file. This safes API requests by only sending 1
+  request for a spec file (excluding screenshot requests).
 - Changed the output color of debug texts to gray.
 
 ## [2.5.0]
@@ -46,8 +67,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added new CLI Setup Wizard to build your configuration in an interactive way. (see README)
-- The integration will now automatically send the screenshots to TestRail for every failed test. This is all automatically done as soon as the new variable is enabled (see README).
-- Added option to provide optional "suiteId" when creating new runs. If you have a project with suites, this parameter is required.
+- The integration will now automatically send the screenshots to TestRail for every failed test. This is all
+  automatically done as soon as the new variable is enabled (see README).
+- Added option to provide optional "suiteId" when creating new runs. If you have a project with suites, this parameter
+  is required.
 
 ### Changed
 
@@ -57,11 +80,13 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Tests with status "pending" had been sent as "failed" to TestRail. These test results will now be skipped and not sent to TestRail.
+- Tests with status "pending" had been sent as "failed" to TestRail. These test results will now be skipped and not sent
+  to TestRail.
 
 ### Fixed
 
-- Improved error response handling from TestRail API. Some errors led to an "undefined reading 'status'" exception. There should still be no error, but now we should know better what happens.
+- Improved error response handling from TestRail API. Some errors led to an "undefined reading 'status'" exception.
+  There should still be no error, but now we should know better what happens.
 
 ## [2.3.1]
 
@@ -73,7 +98,8 @@ All notable changes to this project will be documented in this file.
 
 - It's now possible to add multiple case ids to a test. Just do it like this "C1 C2 C3: my description of the test".
 - Added new colored console outputs for successful or failed API calls.
-- Improve the output of failed API calls to TestRail. The error message is now extracted and shown in a more convenient way.
+- Improve the output of failed API calls to TestRail. The error message is now extracted and shown in a more convenient
+  way.
 
 ## [2.2.1]
 
@@ -118,7 +144,8 @@ Please see the UPGRADE.md file for more about this topic.
 ### Added
 
 - Add collected data to TestRail result such as Cypress version, browser, baseURL, system and Spec file.
-- Add option to set a custom comment that is passed on to the result in TestRail. You can use this to describe your AUT version, commit hash or more.
+- Add option to set a custom comment that is passed on to the result in TestRail. You can use this to describe your AUT
+  version, commit hash or more.
 
 ### Changed
 
