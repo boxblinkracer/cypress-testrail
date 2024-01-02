@@ -46,7 +46,7 @@ class Reporter {
         this.closeRun = configService.shouldCloseRun();
         this.foundCaseIds = [];
 
-        this.statusConverter = new CypressStatusConverter(configService.getStatusPassed(), configService.getStatusFailed(), configService.getStatusSkipped());
+        this.statusConverter = new CypressStatusConverter(configService.getTestRailStatusPassed(), configService.getTestRailStatusFailed(), configService.getTestRailStatusSkipped());
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
