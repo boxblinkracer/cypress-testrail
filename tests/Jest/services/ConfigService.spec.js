@@ -659,17 +659,17 @@ describe('hasRunID', () => {
 });
 
 
-test('getStatusPassed', () => {
+test('getTestRailStatusPassed', () => {
     const config = new ConfigService(null);
-    expect(config.getStatusPassed()).toBe(1);
+    expect(config.getTestRailStatusPassed()).toBe(1);
 });
 
-test('getStatusSkipped', () => {
+test('getTestRailStatusSkipped', () => {
     const config = new ConfigService(null);
-    expect(config.getStatusSkipped()).toBe(2);
+    expect(config.getTestRailStatusSkipped()).toBe(2);
 });
 
-test('getStatusFailed', () => {
+test('getTestRailStatusFailed', () => {
     const config = new ConfigService(null);
-    expect(config.getStatusFailed()).toBe(5);
+    expect(config.getTestRailStatusFailed()).toBe(5);
 });

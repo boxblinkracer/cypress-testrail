@@ -429,26 +429,32 @@ class ConfigService {
     }
 
     /**
+     * Gets the matching statusID for passed inside TestRail
+     * TODO, make sure to allow a custom configuration.
      *
      * @returns {number}
      */
-    getStatusPassed() {
+    getTestRailStatusPassed() {
         return 1;
     }
 
     /**
+     * Gets the matching statusID for failed inside TestRail
+     * TODO, make sure to allow a custom configuration.
      *
      * @returns {number}
      */
-    getStatusFailed() {
+    getTestRailStatusFailed() {
         return 5;
     }
 
     /**
+     * Gets the matching statusID for skipped inside TestRail
+     * TODO, make sure to allow a custom configuration.
      *
      * @returns {number}
      */
-    getStatusSkipped() {
+    getTestRailStatusSkipped() {
         return 2;
     }
 }

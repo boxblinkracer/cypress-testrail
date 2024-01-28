@@ -63,6 +63,13 @@ test('Duration is correctly summed up from attempts', () => {
     expect(result.getDurationMS()).toBe(15);
 });
 
+test('New Cypress duration is correctly read', () => {
+    const result = new TestData({
+        'duration': 46,
+    });
+    expect(result.getDurationMS()).toBe(46);
+});
+
 test('Missing attempts lead to a duration of 0', () => {
     const result = new TestData({});
     expect(result.getDurationMS()).toBe(0);

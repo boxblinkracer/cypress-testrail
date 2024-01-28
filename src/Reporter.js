@@ -46,7 +46,7 @@ class Reporter {
         this.closeRun = configService.shouldCloseRun();
         this.foundCaseIds = [];
 
-        this.statusConverter = new CypressStatusConverter(configService.getStatusPassed(), configService.getStatusFailed(), configService.getStatusSkipped());
+        this.statusConverter = new CypressStatusConverter(configService.getTestRailStatusPassed(), configService.getTestRailStatusFailed(), configService.getTestRailStatusSkipped());
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
@@ -213,13 +213,14 @@ class Reporter {
 
             // if we have a failed test, then extract the screenshot
             if (convertedTestResult.isFailed()) {
-                screenshotPaths = this._getScreenshotByTestId(cypressTestResult.testId, results.screenshots);
+                screenshotPaths = this._getScreenshotByTestId(cypressTestResult.testId, convertedTestResult.getTitle(), results.screenshots);
+
                 if (screenshotPaths === null) {
                     screenshotPaths = [];
                 }
             }
 
-            let comment = 'Tested by Cypress';
+            let comment = convertedTestResult.getTitle() ? convertedTestResult.getTitle() : 'Tested by Cypress';
 
             // this is already part of the run description
             // if it was created dynamically.
@@ -309,24 +310,37 @@ class Reporter {
      *   width: 1280
      * }
      * @param testId
+     * @param testTitle
      * @param screenshots
      * @returns {null}
      * @private
      */
-    _getScreenshotByTestId(testId, screenshots) {
+    _getScreenshotByTestId(testId, testTitle, screenshots) {
         var highestFoundAttemptId = -1;
         var foundScreenshots = [];
         var highestFoundScreenshot = [];
+
         screenshots.forEach((screenshot) => {
-            // only use images of our current test.
-            // screenshots would include all test images
+            var found = false;
+
             if (screenshot.testId === testId) {
-                // only use images with '(failed)' in it. Other images might be custom
-                // images taken by the developer
+                // only use images of our current test.
+                // screenshots would include all test images
+                found = true;
+            } else if (screenshot.path.includes(testTitle)) {
+                // Cypress 13 does not have a testId anymore?!
+                // let's try to find our test title, a bit risky but should work in most cases
+                found = true;
+            }
+
+            if (found) {
+                // only use images with '(failed)' in it.
+                // Other images might be custom  images taken by the developer
                 if (screenshot.path.includes('(failed')) {
                     foundScreenshots.push(screenshot);
-                    // only use the image of the latest test-attempt for now
-                    const currentAttempt = screenshot.testAttemptIndex;
+                    // only use the image of the latest test-attempt for now.
+                    // testAttemptIndex doesn't always exist
+                    const currentAttempt = screenshot.testAttemptIndex ? screenshot.testAttemptIndex : 0;
 
                     if (currentAttempt > highestFoundAttemptId) {
                         highestFoundScreenshot = [];

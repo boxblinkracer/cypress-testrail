@@ -12,6 +12,7 @@ class TestData {
         this._durationMS = 0;
 
         if (data.duration) {
+            // this is since Cypress v13
             this._durationMS = data.duration;
         } else {
             if (data.attempts !== undefined) {

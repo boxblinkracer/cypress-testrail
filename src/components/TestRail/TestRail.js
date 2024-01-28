@@ -187,8 +187,9 @@ class TestRail {
                 comment: result.getComment().trim(),
             };
 
-            // 0s is not valid
-            if (result.getElapsed() !== '0s') {
+            // only add an elapsed time, if a valid value exists
+            // otherwise TestRail will throw an error
+            if (result.hasElapsedTime()) {
                 resultEntry.elapsed = result.getElapsed();
             }
 
