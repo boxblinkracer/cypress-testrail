@@ -17,9 +17,11 @@ npm i cypress-testrail --save-dev
 ```
 
 #### 1.1 Pre-Requisites
+
 ```
 Node 13
 ```
+
 Note: Versions of Node < Node 13 may work but will require enabling experimental-modules flag.
 
 ### 2. Setup Wizard
@@ -49,6 +51,8 @@ Here is a sample of a JSON from the CLI command.
   }
 }
 ```
+
+Please note that you can use both, the **password** of your TestRail user, or a generated **API key** for the password field.
 
 ### 3. Execution Modes
 
@@ -112,6 +116,7 @@ e2e: {
 ```
 
 #### 4.1 (Optional) Register plugin for using Cypress in Open Mode
+
 Enable ```experimentalInteractiveRunEvents``` in ```cypress.config.js```
 
 ### 5. Map Test Cases
@@ -187,7 +192,7 @@ Examples on how to use it are below the list.
 |----------------------------------|-------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CYPRESS_TESTRAIL_DOMAIN          | testrail.domain         | yes             | TestRail domain                                                                                                                                                                       |
 | CYPRESS_TESTRAIL_USERNAME        | testrail.username       | yes             | TestRail username                                                                                                                                                                     |
-| CYPRESS_TESTRAIL_PASSWORD        | testrail.password       | yes             | TestRail password                                                                                                                                                                     |
+| CYPRESS_TESTRAIL_PASSWORD        | testrail.password       | yes             | TestRail password or TestRail API key.                                                                                                                                                |
 | CYPRESS_TESTRAIL_SCREENSHOTS     | testrail.screenshots    | no              | Send last screenshot of failed test.<br />Values: true/false                                                                                                                          |
 | CYPRESS_TESTRAIL_SCREENSHOTS_ALL | testrail.screenshotsAll | no              | Send all screenshots of failed test. (requires screenshots to be enabled).<br />Values: true/false                                                                                    |
 | CYPRESS_TESTRAIL_RUN_ID          | testrail.runId          | yes (Mode A)    | TestRail RunID to fire against, e.g. R123                                                                                                                                             |
