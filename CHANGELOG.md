@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unreleased]
+
+### Added
+
+- Added description to README how to use an **Api Key** instead of the user password.
+
+### Fixed
+
+- Fixed problem with wrong **elapsed_time**. When skipped tests were detected coming in Cypress v13, it led to a wrong calculation of the elapsed time.
+
 ## [2.9.0]
 
 ### Changed
