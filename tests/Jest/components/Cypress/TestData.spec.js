@@ -49,32 +49,6 @@ test('Default title should exist if not found', () => {
     expect(result.getTitle()).toBe('Title not found');
 });
 
-test('Duration is correctly summed up from attempts', () => {
-    const result = new TestData({
-        'attempts': [
-            {
-                'wallClockDuration': 5,
-            },
-            {
-                'wallClockDuration': 10,
-            }
-        ]
-    });
-    expect(result.getDurationMS()).toBe(15);
-});
-
-test('New Cypress duration is correctly read', () => {
-    const result = new TestData({
-        'duration': 46,
-    });
-    expect(result.getDurationMS()).toBe(46);
-});
-
-test('Missing attempts lead to a duration of 0', () => {
-    const result = new TestData({});
-    expect(result.getDurationMS()).toBe(0);
-});
-
 test('State is correctly read', () => {
     const result = new TestData({
         'state': 'passed',
@@ -108,4 +82,58 @@ test('isSkipped is false with state passed', () => {
         'state': 'passed',
     });
     expect(result.isSkipped()).toBe(false);
+});
+
+describe('Duration', () => {
+
+    describe('Cypress >= v13', () => {
+
+        test('Duration is correctly read', () => {
+            const result = new TestData({
+                'duration': 46,
+            });
+            expect(result.getDurationMS()).toBe(46);
+        });
+
+        test('Duration with 0 is correctly read', () => {
+            const result = new TestData({
+                'duration': 0,
+            });
+            expect(result.getDurationMS()).toBe(0);
+        });
+
+    });
+
+    describe('Cypress < v13', () => {
+
+        test('Duration from attempts is correctly summed up', () => {
+            const result = new TestData({
+                'attempts': [
+                    {
+                        'wallClockDuration': 5,
+                    },
+                    {
+                        'wallClockDuration': 10,
+                    },
+                ],
+            });
+            expect(result.getDurationMS()).toBe(15);
+        });
+
+        test('Missing attempts lead to a duration of 0', () => {
+            const result = new TestData({});
+            expect(result.getDurationMS()).toBe(0);
+        });
+
+        test('Attempts with missing wallClockDuration leads to 0', () => {
+            const result = new TestData({
+                'attempts': [
+                    {},
+                    {},
+                ],
+            });
+            expect(result.getDurationMS()).toBe(0);
+        });
+
+    });
 });

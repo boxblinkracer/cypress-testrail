@@ -1,26 +1,15 @@
 class TestData {
     /**
      *
-     * @param data
+     * @param cypressData
      */
-    constructor(data) {
-        this._title = data.title !== undefined && data.title.length > 0 ? data.title[data.title.length - 1] : 'Title not found';
-        this._state = data.state;
+    constructor(cypressData) {
+        this._cypressData = cypressData;
 
-        this._error = data.displayError !== undefined && data.displayError !== null ? data.displayError : '';
+        this._title = cypressData.title !== undefined && cypressData.title.length > 0 ? cypressData.title[cypressData.title.length - 1] : 'Title not found';
+        this._state = cypressData.state;
 
-        this._durationMS = 0;
-
-        if (data.duration) {
-            // this is since Cypress v13
-            this._durationMS = data.duration;
-        } else {
-            if (data.attempts !== undefined) {
-                data.attempts.forEach((attempt) => {
-                    this._durationMS += attempt.wallClockDuration;
-                });
-            }
-        }
+        this._error = cypressData.displayError !== undefined && cypressData.displayError !== null ? cypressData.displayError : '';
     }
 
     /**
@@ -68,7 +57,27 @@ class TestData {
      * @returns {*}
      */
     getDurationMS() {
-        return this._durationMS;
+        if (this._cypressData.duration !== undefined && this._cypressData.duration !== null) {
+            // this is since Cypress v13
+            return this._cypressData.duration;
+        }
+
+        // if we don't have a .duration and no attempts, we return 0ms
+        if (this._cypressData.attempts === undefined || this._cypressData.attempts === null) {
+            return 0;
+        }
+
+        let durationMS = 0;
+
+        // now sum up all attempts, but only if wallClockDuration is available
+        this._cypressData.attempts.forEach((attempt) => {
+            // check if wallClockDuration is available
+            if (attempt.wallClockDuration !== undefined && attempt.wallClockDuration !== null) {
+                durationMS += attempt.wallClockDuration;
+            }
+        });
+
+        return durationMS;
     }
 
     /**
