@@ -15,21 +15,7 @@ class ConfigService {
      * @returns {*|string|string|string}
      */
     getDomain() {
-        if (this.config === null) {
-            return '';
-        }
-
-        var domain = '';
-
-        if (this.config.TESTRAIL_DOMAIN !== undefined) {
-            domain = this.config.TESTRAIL_DOMAIN;
-        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
-            domain = this.config.testrail.domain;
-        }
-
-        if (domain === undefined || domain === null || domain === '') {
-            return '';
-        }
+        let domain = this._getStringValue('TESTRAIL_DOMAIN', 'domain');
 
         domain = String(domain);
         domain = domain.replace('http://', '');
@@ -44,25 +30,7 @@ class ConfigService {
      * @returns {*|string|string|string}
      */
     getUsername() {
-        if (this.config === null) {
-            return '';
-        }
-
-        if (this.config.TESTRAIL_USERNAME !== undefined && this.config.TESTRAIL_USERNAME !== '') {
-            return this.config.TESTRAIL_USERNAME;
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return '';
-        }
-
-        const value = this.config.testrail.username;
-
-        if (value === undefined || value === null) {
-            return '';
-        }
-
-        return value;
+        return this._getStringValue('TESTRAIL_USERNAME', 'username');
     }
 
     /**
@@ -70,25 +38,7 @@ class ConfigService {
      * @returns {*|string|string|string}
      */
     getPassword() {
-        if (this.config === null) {
-            return '';
-        }
-
-        if (this.config.TESTRAIL_PASSWORD !== undefined && this.config.TESTRAIL_PASSWORD !== '') {
-            return this.config.TESTRAIL_PASSWORD;
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return '';
-        }
-
-        const value = this.config.testrail.password;
-
-        if (value === undefined || value === null) {
-            return '';
-        }
-
-        return value;
+        return this._getStringValue('TESTRAIL_PASSWORD', 'password');
     }
 
     /**
@@ -116,26 +66,7 @@ class ConfigService {
      * @returns {string}
      */
     getProjectId() {
-        if (this.config === null) {
-            return '';
-        }
-
-        let projectId = '';
-
-        // CYPRESS_TESTRAIL_PROJECT_ID
-        if (this.config.TESTRAIL_PROJECT_ID !== undefined && this.config.TESTRAIL_PROJECT_ID !== '') {
-            projectId = this.config.TESTRAIL_PROJECT_ID;
-        } else {
-            if (this.config.testrail === undefined || this.config.testrail === null) {
-                return '';
-            }
-
-            projectId = this.config.testrail.projectId;
-
-            if (projectId === undefined || projectId === null) {
-                return '';
-            }
-        }
+        let projectId = this._getStringValue('TESTRAIL_PROJECT_ID', 'projectId');
 
         projectId = String(projectId);
         projectId = projectId.replace('P', '');
@@ -149,26 +80,7 @@ class ConfigService {
      * @returns {string}
      */
     getMilestoneId() {
-        if (this.config === null) {
-            return '';
-        }
-
-        let milestoneId = '';
-
-        // CYPRESS_TESTRAIL_MILESTONE_ID
-        if (this.config.TESTRAIL_MILESTONE_ID !== undefined && this.config.TESTRAIL_MILESTONE_ID !== '') {
-            milestoneId = this.config.TESTRAIL_MILESTONE_ID;
-        } else {
-            if (this.config.testrail === undefined || this.config.testrail === null) {
-                return '';
-            }
-
-            milestoneId = this.config.testrail.milestoneId;
-
-            if (milestoneId === undefined || milestoneId === null) {
-                return '';
-            }
-        }
+        let milestoneId = this._getStringValue('TESTRAIL_MILESTONE_ID', 'milestoneId');
 
         milestoneId = String(milestoneId);
         milestoneId = milestoneId.replace('M', '');
@@ -182,26 +94,7 @@ class ConfigService {
      * @returns {string}
      */
     getSuiteId() {
-        if (this.config === null) {
-            return '';
-        }
-
-        let suiteId = '';
-
-        // CYPRESS_TESTRAIL_SUITE_ID
-        if (this.config.TESTRAIL_SUITE_ID !== undefined && this.config.TESTRAIL_SUITE_ID !== '') {
-            suiteId = this.config.TESTRAIL_SUITE_ID;
-        } else {
-            if (this.config.testrail === undefined || this.config.testrail === null) {
-                return '';
-            }
-
-            suiteId = this.config.testrail.suiteId;
-
-            if (suiteId === undefined || suiteId === null) {
-                return '';
-            }
-        }
+        let suiteId = this._getStringValue('TESTRAIL_SUITE_ID', 'suiteId');
 
         suiteId = String(suiteId);
         suiteId = suiteId.replace('S', '');
@@ -215,25 +108,7 @@ class ConfigService {
      * @returns {string}
      */
     getRunId() {
-        if (this.config === null) {
-            return '';
-        }
-
-        let runId = '';
-
-        // CYPRESS_TESTRAIL_RUN_ID
-        if (this.config.TESTRAIL_RUN_ID !== undefined && this.config.TESTRAIL_RUN_ID !== '') {
-            runId = this.config.TESTRAIL_RUN_ID;
-        } else {
-            if (this.config.testrail === undefined || this.config.testrail === null) {
-                return '';
-            }
-            runId = this.config.testrail.runId;
-
-            if (runId === undefined || runId === null) {
-                return '';
-            }
-        }
+        let runId = this._getStringValue('TESTRAIL_RUN_ID', 'runId');
 
         runId = String(runId);
         runId = runId.replace('R', '');
@@ -247,34 +122,7 @@ class ConfigService {
      * @returns {array}
      */
     getRunIds() {
-        if (this.config === null) {
-            return [];
-        }
-
-        let runIds = [];
-
-        // CYPRESS_TESTRAIL_RUN_IDS
-        if (this.config.TESTRAIL_RUN_IDS !== undefined && this.config.TESTRAIL_RUN_IDS !== null && this.config.TESTRAIL_RUN_IDS !== '') {
-            const tmpString = this.config.TESTRAIL_RUN_IDS;
-            if (tmpString.toString().indexOf(',') !== -1) {
-                runIds = tmpString.split(',');
-            } else {
-                runIds = [tmpString];
-            }
-        } else {
-            if (this.config.testrail === undefined || this.config.testrail === null) {
-                return [];
-            }
-            runIds = this.config.testrail.runIds;
-
-            if (runIds === undefined || runIds === null) {
-                return [];
-            }
-        }
-
-        if (runIds === undefined || runIds === null) {
-            return [];
-        }
+        const runIds = this._getArrayValue('TESTRAIL_RUN_IDS', 'runIds');
 
         for (let i = 0; i < runIds.length; i++) {
             runIds[i] = String(runIds[i]);
@@ -287,29 +135,18 @@ class ConfigService {
 
     /**
      *
+     * @returns {boolean}
+     */
+    hasRunID() {
+        return this.getRunId() !== '' || this.getRunIds().length > 0;
+    }
+
+    /**
+     *
      * @returns {string}
      */
     getRunName() {
-        if (this.config === null) {
-            return '';
-        }
-
-        // CYPRESS_TESTRAIL_RUN_NAME
-        if (this.config.TESTRAIL_RUN_NAME !== undefined && this.config.TESTRAIL_RUN_NAME !== '') {
-            return this.config.TESTRAIL_RUN_NAME;
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return '';
-        }
-
-        const runName = this.config.testrail.runName;
-
-        if (runName === undefined || runName === null) {
-            return '';
-        }
-
-        return runName;
+        return this._getStringValue('TESTRAIL_RUN_NAME', 'runName');
     }
 
     /**
@@ -317,26 +154,7 @@ class ConfigService {
      * @returns {boolean}
      */
     shouldCloseRun() {
-        if (this.config === null) {
-            return false;
-        }
-
-        // CYPRESS_TESTRAIL_RUN_NAME
-        if (this.config.TESTRAIL_RUN_CLOSE !== undefined && this.config.TESTRAIL_RUN_CLOSE !== '') {
-            return this.config.TESTRAIL_RUN_CLOSE;
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return false;
-        }
-
-        const closeRun = this.config.testrail.closeRun;
-
-        if (closeRun === undefined || closeRun === null) {
-            return false;
-        }
-
-        return closeRun;
+        return this._getBooleanValue('TESTRAIL_RUN_CLOSE', 'closeRun');
     }
 
     /**
@@ -344,26 +162,7 @@ class ConfigService {
      * @returns {boolean}
      */
     isScreenshotsEnabled() {
-        if (this.config === null) {
-            return false;
-        }
-
-        // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.TESTRAIL_SCREENSHOTS !== undefined && this.config.TESTRAIL_SCREENSHOTS !== '') {
-            return Boolean(this.config.TESTRAIL_SCREENSHOTS);
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return false;
-        }
-
-        const screenshots = this.config.testrail.screenshots;
-
-        if (screenshots === undefined || screenshots === null) {
-            return false;
-        }
-
-        return Boolean(screenshots);
+        return this._getBooleanValue('TESTRAIL_SCREENSHOTS', 'screenshots');
     }
 
     /**
@@ -371,26 +170,7 @@ class ConfigService {
      * @returns {boolean}
      */
     includeAllCasesDuringCreation() {
-        if (this.config === null) {
-            return false;
-        }
-
-        // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.TESTRAIL_RUN_INCLUDE_ALL !== undefined && this.config.TESTRAIL_RUN_INCLUDE_ALL !== '') {
-            return Boolean(this.config.TESTRAIL_RUN_INCLUDE_ALL);
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return false;
-        }
-
-        const includeAll = this.config.testrail.runIncludeAll;
-
-        if (includeAll === undefined || includeAll === null) {
-            return false;
-        }
-
-        return Boolean(includeAll);
+        return this._getBooleanValue('TESTRAIL_RUN_INCLUDE_ALL', 'runIncludeAll');
     }
 
     /**
@@ -398,34 +178,7 @@ class ConfigService {
      * @returns {boolean}
      */
     includeAllFailedScreenshots() {
-        if (this.config === null) {
-            return false;
-        }
-
-        // CYPRESS_TESTRAIL_SCREENSHOTS
-        if (this.config.TESTRAIL_SCREENSHOTS_ALL !== undefined && this.config.TESTRAIL_SCREENSHOTS_ALL !== '') {
-            return Boolean(this.config.TESTRAIL_SCREENSHOTS_ALL);
-        }
-
-        if (this.config.testrail === undefined || this.config.testrail === null) {
-            return false;
-        }
-
-        const includeAll = this.config.testrail.screenshotsAll;
-
-        if (includeAll === undefined || includeAll === null) {
-            return false;
-        }
-
-        return Boolean(includeAll);
-    }
-
-    /**
-     *
-     * @returns {boolean}
-     */
-    hasRunID() {
-        return this.getRunId() !== '' || this.getRunIds().length > 0;
+        return this._getBooleanValue('TESTRAIL_SCREENSHOTS_ALL', 'screenshotsAll');
     }
 
     /**
@@ -456,6 +209,96 @@ class ConfigService {
      */
     getTestRailStatusSkipped() {
         return 2;
+    }
+
+    /**
+     *
+     * @param {string} keyCLI
+     * @param {string} keyJSON
+     * @returns {string}
+     * @private
+     */
+    _getStringValue(keyCLI, keyJSON) {
+        if (this.config === null) {
+            return '';
+        }
+
+        var value = '';
+
+        if (this.config[keyCLI] !== undefined) {
+            value = this.config[keyCLI];
+        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
+            value = this.config.testrail[keyJSON];
+        }
+
+        if (value === undefined || value === null || value === '') {
+            return '';
+        }
+
+        return value;
+    }
+
+    /**
+     *
+     * @param {string} keyCLI
+     * @param {string} keyJSON
+     * @returns {*[]}
+     * @private
+     */
+    _getArrayValue(keyCLI, keyJSON) {
+        if (this.config === null) {
+            return [];
+        }
+
+        var value = [];
+
+        if (this.config[keyCLI] !== undefined) {
+            const tmpString = this.config[keyCLI];
+
+            // if we have a value, then try to split it
+            if (tmpString !== undefined && tmpString !== null && tmpString !== '') {
+                if (tmpString.toString().indexOf(',') !== -1) {
+                    value = tmpString.split(',');
+                } else {
+                    value = [tmpString];
+                }
+            }
+        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
+            value = this.config.testrail[keyJSON];
+        }
+
+        if (value === undefined || value === null || value === '') {
+            return [];
+        }
+
+        return value;
+    }
+
+    /**
+     *
+     * @param {string} keyCLI
+     * @param {string} keyJSON
+     * @returns {boolean}
+     * @private
+     */
+    _getBooleanValue(keyCLI, keyJSON) {
+        if (this.config === null) {
+            return false;
+        }
+
+        var value = false;
+
+        if (this.config[keyCLI] !== undefined) {
+            value = this.config[keyCLI];
+        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
+            value = this.config.testrail[keyJSON];
+        }
+
+        if (value === undefined || value === null || value === '') {
+            return false;
+        }
+
+        return Boolean(value);
     }
 }
 
