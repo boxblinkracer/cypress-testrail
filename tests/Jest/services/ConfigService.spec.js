@@ -1,10 +1,7 @@
 import ConfigService from '../../../src/services/ConfigService';
 
-
 describe('TestRail Domain', () => {
-
     describe('.env file', () => {
-
         test('TestRailDomain from .env file with NULL config', () => {
             const config = new ConfigService(null);
             expect(config.getDomain()).toBe('');
@@ -12,8 +9,8 @@ describe('TestRail Domain', () => {
 
         test('TestRailDomain from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'domain': 'my-domain',
+                testrail: {
+                    domain: 'my-domain',
                 },
             });
             expect(config.getDomain()).toBe('my-domain');
@@ -21,51 +18,51 @@ describe('TestRail Domain', () => {
 
         test('TestRailDomain from .env file with NULL domain', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'domain': null,
+                testrail: {
+                    domain: null,
                 },
             });
             expect(config.getDomain()).toBe('');
         });
 
+        test('TestRailDomain from .env file not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getDomain()).toBe('');
+        });
     });
 
     describe('ENV variable', () => {
-
         test('TestRailDomain from ENV', () => {
             const config = new ConfigService({
-                'TESTRAIL_DOMAIN': 'my-domain',
+                TESTRAIL_DOMAIN: 'my-domain',
             });
             expect(config.getDomain()).toBe('my-domain');
         });
-
     });
-
 
     test('Leading http:// is removed from TestRail domain', () => {
         const config = new ConfigService({
-            'TESTRAIL_DOMAIN': 'http://my-domain',
+            TESTRAIL_DOMAIN: 'http://my-domain',
         });
         expect(config.getDomain()).toBe('my-domain');
     });
 
     test('Leading https:// is removed from TestRail domain', () => {
         const config = new ConfigService({
-            'TESTRAIL_DOMAIN': 'https://my-domain',
+            TESTRAIL_DOMAIN: 'https://my-domain',
         });
         expect(config.getDomain()).toBe('my-domain');
     });
-
 });
 
 describe('TestRail Username', () => {
-
     describe('.env file', () => {
-
         test('TestRailUsername from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'username': 'user123',
+                testrail: {
+                    username: 'user123',
                 },
             });
             expect(config.getUsername()).toBe('user123');
@@ -75,28 +72,31 @@ describe('TestRail Username', () => {
             const config = new ConfigService(null);
             expect(config.getUsername()).toBe('');
         });
+
+        test('TestRailUsername from .env file not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getUsername()).toBe('');
+        });
     });
 
     describe('ENV variable', () => {
-
         test('TestRailUsername from ENV', () => {
             const config = new ConfigService({
-                'TESTRAIL_USERNAME': 'user123',
+                TESTRAIL_USERNAME: 'user123',
             });
             expect(config.getUsername()).toBe('user123');
         });
-
     });
 });
 
 describe('TestRail Password', () => {
-
     describe('.env file', () => {
-
         test('TestRailPassword from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'password': 'P123',
+                testrail: {
+                    password: 'P123',
                 },
             });
             expect(config.getPassword()).toBe('P123');
@@ -106,13 +106,19 @@ describe('TestRail Password', () => {
             const config = new ConfigService(null);
             expect(config.getPassword()).toBe('');
         });
+
+        test('TestRailPassword from .env file not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getPassword()).toBe('');
+        });
     });
 
     describe('ENV variable', () => {
-
         test('TestRailPassword from ENV', () => {
             const config = new ConfigService({
-                'TESTRAIL_PASSWORD': 'P123',
+                TESTRAIL_PASSWORD: 'P123',
             });
             expect(config.getPassword()).toBe('P123');
         });
@@ -120,53 +126,55 @@ describe('TestRail Password', () => {
 });
 
 describe('ProjectID', () => {
-
     describe('.env file', () => {
-
         test('ProjectID from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'projectId': '123',
-                }
+                testrail: {
+                    projectId: '123',
+                },
             });
             expect(config.getProjectId()).toBe('123');
         });
 
         test('ProjectID from .env file with leading P', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'projectId': 'P123',
-                }
+                testrail: {
+                    projectId: 'P123',
+                },
             });
             expect(config.getProjectId()).toBe('123');
         });
 
         test('ProjectID from .env file with whitespaces', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'projectId': ' 123 ',
-                }
+                testrail: {
+                    projectId: ' 123 ',
+                },
             });
             expect(config.getProjectId()).toBe('123');
         });
 
         test('ProjectID from .env as INT', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'projectId': 123,
-                }
+                testrail: {
+                    projectId: 123,
+                },
             });
             expect(config.getProjectId()).toBe('123');
         });
 
-
+        test('ProjectID from .env is not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getProjectId()).toBe('');
+        });
     });
 
     describe('ENV variable', () => {
-
         test('ProjectID from ENV variable as INT', () => {
             const config = new ConfigService({
-                'TESTRAIL_PROJECT_ID': 45,
+                TESTRAIL_PROJECT_ID: 45,
             });
             expect(config.getProjectId()).toBe('45');
         });
@@ -174,52 +182,55 @@ describe('ProjectID', () => {
 });
 
 describe('MilestoneID', () => {
-
     describe('.env file', () => {
-
         test('MilestoneID from .env', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'milestoneId': '123',
-                }
+                testrail: {
+                    milestoneId: '123',
+                },
             });
             expect(config.getMilestoneId()).toBe('123');
         });
 
         test('MilestoneID from .env with leading M', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'milestoneId': 'M123',
-                }
+                testrail: {
+                    milestoneId: 'M123',
+                },
             });
             expect(config.getMilestoneId()).toBe('123');
         });
 
         test('MilestoneID from .env with whitespaces', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'milestoneId': ' 123 ',
-                }
+                testrail: {
+                    milestoneId: ' 123 ',
+                },
             });
             expect(config.getMilestoneId()).toBe('123');
         });
 
         test('MilestoneID from .env as INT', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'milestoneId': 123,
-                }
+                testrail: {
+                    milestoneId: 123,
+                },
             });
             expect(config.getMilestoneId()).toBe('123');
         });
 
+        test('MilestoneID from .env not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getMilestoneId()).toBe('');
+        });
     });
 
     describe('ENV variable', () => {
-
         test('MilestoneID from ENV variable as INT', () => {
             const config = new ConfigService({
-                'TESTRAIL_MILESTONE_ID': 45,
+                TESTRAIL_MILESTONE_ID: 45,
             });
             expect(config.getMilestoneId()).toBe('45');
         });
@@ -227,52 +238,55 @@ describe('MilestoneID', () => {
 });
 
 describe('SuiteID', () => {
-
     describe('.env file', () => {
-
         test('SuiteID from .env', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'suiteId': '123',
-                }
+                testrail: {
+                    suiteId: '123',
+                },
             });
             expect(config.getSuiteId()).toBe('123');
         });
 
         test('SuiteID from .env with leading S', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'suiteId': 'S123',
-                }
+                testrail: {
+                    suiteId: 'S123',
+                },
             });
             expect(config.getSuiteId()).toBe('123');
         });
 
         test('SuiteID from .env with whitespaces', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'suiteId': ' 123 ',
-                }
+                testrail: {
+                    suiteId: ' 123 ',
+                },
             });
             expect(config.getSuiteId()).toBe('123');
         });
 
         test('SuiteID from .env as INT', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'suiteId': 123,
-                }
+                testrail: {
+                    suiteId: 123,
+                },
             });
             expect(config.getSuiteId()).toBe('123');
         });
 
+        test('SuiteID from .env not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getSuiteId()).toBe('');
+        });
     });
 
     describe('ENV variable', () => {
-
         test('SuiteID from ENV variable as INT', () => {
             const config = new ConfigService({
-                'TESTRAIL_SUITE_ID': 45,
+                TESTRAIL_SUITE_ID: 45,
             });
             expect(config.getSuiteId()).toBe('45');
         });
@@ -280,66 +294,67 @@ describe('SuiteID', () => {
 });
 
 describe('RunID', () => {
-
     describe('.env file', () => {
-
         test('RunID from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runId': '123',
-                }
+                testrail: {
+                    runId: '123',
+                },
             });
             expect(config.getRunId()).toBe('123');
         });
 
         test('RunID from .env file with leading R', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runId': 'R123',
-                }
+                testrail: {
+                    runId: 'R123',
+                },
             });
             expect(config.getRunId()).toBe('123');
         });
 
         test('RunID from .env file with whitespaces', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runId': ' 123 ',
-                }
+                testrail: {
+                    runId: ' 123 ',
+                },
             });
             expect(config.getRunId()).toBe('123');
         });
 
         test('RunID from .env as INT', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runId': 123,
-                }
+                testrail: {
+                    runId: 123,
+                },
             });
             expect(config.getRunId()).toBe('123');
+        });
+
+        test('RunID from .env not existing', () => {
+            const config = new ConfigService({
+                testrail: {},
+            });
+            expect(config.getRunId()).toBe('');
         });
     });
 
     describe('ENV variable', () => {
-
         test('RunID from ENV variable as INT', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_ID': 455,
+                TESTRAIL_RUN_ID: 455,
             });
             expect(config.getRunId()).toBe('455');
         });
     });
 });
 
-
 describe('RunIDs', () => {
-
     describe('.env file', () => {
-
         test('RunIDs from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIds': ['123', '456'],
+                testrail: {
+                    runIds: ['123', '456'],
                 },
             });
             expect(config.getRunIds().length).toBe(2);
@@ -349,8 +364,8 @@ describe('RunIDs', () => {
 
         test('RunIDs from .env file with leading R', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIds': ['R123', 'R456'],
+                testrail: {
+                    runIds: ['R123', 'R456'],
                 },
             });
             expect(config.getRunIds().length).toBe(2);
@@ -360,8 +375,8 @@ describe('RunIDs', () => {
 
         test('RunIDs from .env file with whitespaces', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIds': [' 123 ', ' 456 '],
+                testrail: {
+                    runIds: [' 123 ', ' 456 '],
                 },
             });
             expect(config.getRunIds().length).toBe(2);
@@ -371,8 +386,8 @@ describe('RunIDs', () => {
 
         test('RunIDs from .env as INT', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIds': [123, 456],
+                testrail: {
+                    runIds: [123, 456],
                 },
             });
             expect(config.getRunIds().length).toBe(2);
@@ -382,8 +397,8 @@ describe('RunIDs', () => {
 
         test('RunIDs from .env if NULL', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIds': null,
+                testrail: {
+                    runIds: null,
                 },
             });
             expect(config.getRunIds().length).toBe(0);
@@ -391,17 +406,16 @@ describe('RunIDs', () => {
 
         test('RunIDs from .env if missing', () => {
             const config = new ConfigService({
-                'testrail': {},
+                testrail: {},
             });
             expect(config.getRunIds().length).toBe(0);
         });
     });
 
     describe('ENV variable', () => {
-
         test('RunIDs from ENV variable as STRING', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_IDS': '123,456',
+                TESTRAIL_RUN_IDS: '123,456',
             });
             expect(config.getRunIds().length).toBe(2);
             expect(config.getRunIds()[0]).toBe('123');
@@ -410,7 +424,7 @@ describe('RunIDs', () => {
 
         test('RunIDs from ENV variable as STRING with single entry', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_IDS': '123',
+                TESTRAIL_RUN_IDS: '123',
             });
             expect(config.getRunIds().length).toBe(1);
             expect(config.getRunIds()[0]).toBe('123');
@@ -418,7 +432,7 @@ describe('RunIDs', () => {
 
         test('RunIDs from ENV variable with NULL', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_IDS': null,
+                TESTRAIL_RUN_IDS: null,
             });
             expect(config.getRunIds().length).toBe(0);
         });
@@ -430,26 +444,22 @@ describe('RunIDs', () => {
     });
 });
 
-
 describe('RunName', () => {
-
     describe('.env file', () => {
-
         test('RunName from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runName': 'P123',
-                }
+                testrail: {
+                    runName: 'P123',
+                },
             });
             expect(config.getRunName()).toBe('P123');
         });
     });
 
     describe('ENV variable', () => {
-
         test('RunName from ENV', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_NAME': 'P123',
+                TESTRAIL_RUN_NAME: 'P123',
             });
             expect(config.getRunName()).toBe('P123');
         });
@@ -457,13 +467,11 @@ describe('RunName', () => {
 });
 
 describe('RunIncludeAll', () => {
-
     describe('.env file', () => {
-
         test('RunIncludeAll from .env ON', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIncludeAll': true,
+                testrail: {
+                    runIncludeAll: true,
                 },
             });
             expect(config.includeAllCasesDuringCreation()).toBe(true);
@@ -471,8 +479,8 @@ describe('RunIncludeAll', () => {
 
         test('RunIncludeAll from .env OFF', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'runIncludeAll': false,
+                testrail: {
+                    runIncludeAll: false,
                 },
             });
             expect(config.includeAllCasesDuringCreation()).toBe(false);
@@ -480,18 +488,16 @@ describe('RunIncludeAll', () => {
 
         test('RunIncludeAll from .env default is OFF', () => {
             const config = new ConfigService({
-                'testrail': {},
+                testrail: {},
             });
             expect(config.includeAllCasesDuringCreation()).toBe(false);
         });
-
     });
 
     describe('ENV variable', () => {
-
         test('RunIncludeAll from ENV variable', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_INCLUDE_ALL': true,
+                TESTRAIL_RUN_INCLUDE_ALL: true,
             });
             expect(config.includeAllCasesDuringCreation()).toBe(true);
         });
@@ -499,24 +505,21 @@ describe('RunIncludeAll', () => {
 });
 
 describe('CloseRun', () => {
-
     describe('.env file', () => {
-
         test('CloseRun from .env file', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'closeRun': true,
-                }
+                testrail: {
+                    closeRun: true,
+                },
             });
             expect(config.shouldCloseRun()).toBe(true);
         });
     });
 
     describe('ENV variable', () => {
-
         test('CloseRun from ENV', () => {
             const config = new ConfigService({
-                'TESTRAIL_RUN_CLOSE': true,
+                TESTRAIL_RUN_CLOSE: true,
             });
             expect(config.shouldCloseRun()).toBe(true);
         });
@@ -529,13 +532,11 @@ describe('CloseRun', () => {
 });
 
 describe('Screenshots', () => {
-
     describe('.env file', () => {
-
         test('Screenshots from .env ON', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'screenshots': true,
+                testrail: {
+                    screenshots: true,
                 },
             });
             expect(config.isScreenshotsEnabled()).toBe(true);
@@ -543,8 +544,8 @@ describe('Screenshots', () => {
 
         test('Screenshots from .env OFF', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'screenshots': false,
+                testrail: {
+                    screenshots: false,
                 },
             });
             expect(config.isScreenshotsEnabled()).toBe(false);
@@ -552,33 +553,28 @@ describe('Screenshots', () => {
 
         test('Screenshots from .env default is OFF', () => {
             const config = new ConfigService({
-                'testrail': {},
+                testrail: {},
             });
             expect(config.isScreenshotsEnabled()).toBe(false);
         });
-
     });
 
     describe('ENV variable', () => {
-
         test('Screenshots from ENV variable', () => {
             const config = new ConfigService({
-                'TESTRAIL_SCREENSHOTS': true,
+                TESTRAIL_SCREENSHOTS: true,
             });
             expect(config.isScreenshotsEnabled()).toBe(true);
         });
     });
 });
 
-
 describe('Screenshots All', () => {
-
     describe('.env file', () => {
-
         test('ScreenshotsAll from .env ON', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'screenshotsAll': true,
+                testrail: {
+                    screenshotsAll: true,
                 },
             });
             expect(config.includeAllFailedScreenshots()).toBe(true);
@@ -586,8 +582,8 @@ describe('Screenshots All', () => {
 
         test('ScreenshotsAll from .env OFF', () => {
             const config = new ConfigService({
-                'testrail': {
-                    'screenshotsAll': false,
+                testrail: {
+                    screenshotsAll: false,
                 },
             });
             expect(config.includeAllFailedScreenshots()).toBe(false);
@@ -595,18 +591,16 @@ describe('Screenshots All', () => {
 
         test('ScreenshotsAll from .env default is OFF', () => {
             const config = new ConfigService({
-                'testrail': {},
+                testrail: {},
             });
             expect(config.includeAllFailedScreenshots()).toBe(false);
         });
-
     });
 
     describe('ENV variable', () => {
-
         test('ScreenshotsAll from ENV variable', () => {
             const config = new ConfigService({
-                'TESTRAIL_SCREENSHOTS_ALL': true,
+                TESTRAIL_SCREENSHOTS_ALL: true,
             });
             expect(config.includeAllFailedScreenshots()).toBe(true);
         });
@@ -614,7 +608,6 @@ describe('Screenshots All', () => {
 });
 
 describe('Invalid Configurations', () => {
-
     test('undefined config returns default values', () => {
         const config = new ConfigService(undefined);
         expect(config.getRunId()).toBe('');
@@ -632,11 +625,10 @@ describe('Invalid Configurations', () => {
 });
 
 describe('hasRunID', () => {
-
     test('hasRunID is true on single runs', () => {
         const config = new ConfigService({
-            'testrail': {
-                'runId': '123',
+            testrail: {
+                runId: '123',
             },
         });
         expect(config.hasRunID()).toBe(true);
@@ -644,8 +636,8 @@ describe('hasRunID', () => {
 
     test('hasRunID is true on multiple runs', () => {
         const config = new ConfigService({
-            'testrail': {
-                'runIds': ['123', '456']
+            testrail: {
+                runIds: ['123', '456'],
             },
         });
         expect(config.hasRunID()).toBe(true);
@@ -655,9 +647,7 @@ describe('hasRunID', () => {
         const config = new ConfigService(null);
         expect(config.hasRunID()).toBe(false);
     });
-
 });
-
 
 test('getTestRailStatusPassed', () => {
     const config = new ConfigService(null);

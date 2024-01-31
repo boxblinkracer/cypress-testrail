@@ -21,4 +21,3 @@ test('Status UNKNOWN leads to negative number', () => {
     const statusID = converter.convertToTestRail('abc');
     expect(statusID).toBe(-1);
 });
-

@@ -1,8 +1,6 @@
 import ApiError from '../../../../src/components/TestRail/ApiError';
 
-
 describe('empty errors', () => {
-
     test('ApiError data for NULL error', () => {
         const error = new ApiError(null);
 
@@ -20,7 +18,7 @@ describe('empty errors', () => {
     });
 
     test('ApiError data for NULL error', () => {
-        const data = {response: null};
+        const data = { response: null };
         const error = new ApiError(data);
 
         expect(error.getStatusCode()).toBe(0);
@@ -29,17 +27,16 @@ describe('empty errors', () => {
     });
 
     test('ApiError data for undefined error', () => {
-        const data = {response: undefined};
+        const data = { response: undefined };
         const error = new ApiError(data);
 
         expect(error.getStatusCode()).toBe(0);
         expect(error.getStatusText()).toBe('No response from TestRail');
         expect(error.getErrorText()).toBe('No response from TestRail');
     });
-})
+});
 
 describe('existing errors', () => {
-
     test('ApiError with correct data', () => {
         const data = {
             response: {
@@ -69,5 +66,4 @@ describe('existing errors', () => {
         expect(error.getStatusText()).toBe('Missing Status Text');
         expect(error.getErrorText()).toBe('Missing Error');
     });
-
-})
+});

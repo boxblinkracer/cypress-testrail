@@ -1,6 +1,5 @@
 import Result from '../../../../src/components/TestRail/Result';
 
-
 test('caseId is correctly assigned', () => {
     const result = new Result('C123', 1, 'this is a test');
     expect(result.getCaseId()).toBe('C123');
@@ -17,7 +16,6 @@ test('comment is correctly assigned', () => {
 });
 
 describe('Elapsed Time', () => {
-
     test('Elapsed time is correctly converted from MS to S', () => {
         const result = new Result('C123', 1, 'this is a test', 15000);
 
@@ -52,9 +50,7 @@ describe('Elapsed Time', () => {
         expect(result.hasElapsedTime()).toBe(false);
         expect(result.getElapsed()).toBe('0s');
     });
-
 });
-
 
 test('Screenshots are empty if not assigned', () => {
     const result = new Result('C123', 1, 'this is a test', 15000);
@@ -68,4 +64,3 @@ test('Screenshots are correctly assigned', () => {
     expect(result.getScreenshotPaths()[0]).toBe('path1');
     expect(result.getScreenshotPaths()[1]).toBe('path2');
 });
-

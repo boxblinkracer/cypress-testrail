@@ -30,6 +30,7 @@ clean: ##1 Cleans all dependencies
 
 pr: ##2 Prepares a pull request
 	./node_modules/.bin/prettier --write "src/**/*.js"
+	./node_modules/.bin/prettier --write "tests/Jest/**/*.js"
 	make eslint -B
 	make jest -B
 
