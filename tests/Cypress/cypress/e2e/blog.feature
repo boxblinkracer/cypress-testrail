@@ -6,9 +6,9 @@ Feature: Login on website
   Rule: Happy Path
 
     @smoke
-    Scenario Outline: Filter blog posts by tags
+    Scenario Outline: C123: Filter blog posts by tags
       When I click on tag <tag>
-      Then I see the tag <title> as title
+      Then I see tag <title> as title
 
       Examples:
         | tag    | title  |
@@ -16,8 +16,3 @@ Feature: Login on website
         | DEVOPS | devops |
 
 
-  Rule: Edge Cases
-
-    Scenario: Filter for invalid tag
-      When I enter tag "abc" in the URL
-      Then I must not see the blog

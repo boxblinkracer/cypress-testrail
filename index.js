@@ -1,4 +1,4 @@
-const Reporter = require("./src/Reporter");
+const Reporter = require('./src/Reporter');
 
 module.exports = Reporter;
 

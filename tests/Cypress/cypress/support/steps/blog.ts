@@ -13,7 +13,7 @@ When(/^I click on tag (.*)$/, (tagName) => {
     cy.get('.article-tags__box > [href="/tags/?tag=' + tagName.toLowerCase() + '"]').first().click();
 });
 
-Then(/^I see the tag (.*) as title$/, (tagName) => {
+Then(/^I see tag (.*) as title$/, (tagName) => {
     cy.contains('h2', tagName);
 });
 

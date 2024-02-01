@@ -1,12 +1,12 @@
-import TestRailReporter from '../../index.js';
+const createBundler = require('@bahmutov/cypress-esbuild-preprocessor');
+const {addCucumberPreprocessorPlugin} = require('@badeball/cypress-cucumber-preprocessor');
+const {createEsbuildPlugin} = require('@badeball/cypress-cucumber-preprocessor/esbuild');
 
-import createBundler from '@bahmutov/cypress-esbuild-preprocessor';
-import {addCucumberPreprocessorPlugin} from '@badeball/cypress-cucumber-preprocessor';
-import {createEsbuildPlugin} from '@badeball/cypress-cucumber-preprocessor/esbuild';
-import {defineConfig} from 'cypress';
+const {defineConfig} = require('cypress');
 
+const TestRailReporter = require('../../src/../index');
 
-export default defineConfig({
+module.exports = defineConfig({
 
     watchForFileChanges: false,
 
@@ -18,15 +18,17 @@ export default defineConfig({
 
         specPattern: ['cypress/e2e/**/*.feature', 'cypress/e2e/**/*.js'],
 
-        async setupNodeEvents(on, config) {
+        async setupNodeEvents(cypressOn, config) {
 
-            new TestRailReporter(on, config).register();
+            const on = require('cypress-on-fix')(cypressOn)
 
             await addCucumberPreprocessorPlugin(on, config);
 
             on('file:preprocessor', createBundler({
                 plugins: [createEsbuildPlugin(config)],
             }));
+
+            new TestRailReporter(on, config).register();
 
             return config
         },
