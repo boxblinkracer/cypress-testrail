@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added description to README how to use an **Api Key** instead of the user password.
+- Added documentation on how to use **Cucumber** and **Gherkin documents** with the integration.
 
 ### Fixed
 
