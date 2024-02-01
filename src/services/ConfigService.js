@@ -229,6 +229,8 @@ class ConfigService {
             value = this.config[keyCLI];
         } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
             value = this.config.testrail[keyJSON];
+        } else if (process.env !== undefined && process.env !== null) {
+            value = process.env[keyCLI];
         }
 
         if (value === undefined || value === null || value === '') {
@@ -265,6 +267,17 @@ class ConfigService {
             }
         } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
             value = this.config.testrail[keyJSON];
+        } else if (process.env !== undefined && process.env !== null) {
+            const tmpString = process.env[keyCLI];
+
+            // if we have a value, then try to split it
+            if (tmpString !== undefined && tmpString !== null && tmpString !== '') {
+                if (tmpString.toString().indexOf(',') !== -1) {
+                    value = tmpString.split(',');
+                } else {
+                    value = [tmpString];
+                }
+            }
         }
 
         if (value === undefined || value === null || value === '') {
@@ -292,6 +305,8 @@ class ConfigService {
             value = this.config[keyCLI];
         } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
             value = this.config.testrail[keyJSON];
+        } else if (process.env !== undefined && process.env !== null) {
+            value = process.env[keyCLI];
         }
 
         if (value === undefined || value === null || value === '') {

@@ -11,21 +11,23 @@ This integration helps you to automatically send test results to TestRail. And y
 Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
 <!-- TOC -->
-  * [1. Installation](#1-installation)
-  * [2. Setup Wizard](#2-setup-wizard)
-  * [3. Execution Modes](#3-execution-modes)
+
+* [1. Installation](#1-installation)
+* [2. Setup Wizard](#2-setup-wizard)
+* [3. Execution Modes](#3-execution-modes)
     * [3.1 Mode A: Send results to one or more runs in TestRail](#31-mode-a-send-results-to-one-or-more-runs-in-testrail)
     * [3.2 Mode B: Create new Run in TestRail for every Cypress run](#32-mode-b-create-new-run-in-testrail-for-every-cypress-run)
-  * [4. Register Plugin](#4-register-plugin)
-  * [5. Map Test Cases](#5-map-test-cases)
-  * [6. Advanced Features](#6-advanced-features)
+* [4. Register Plugin](#4-register-plugin)
+* [5. Map Test Cases](#5-map-test-cases)
+* [6. Advanced Features](#6-advanced-features)
     * [6.1 Sending Screenshots on failures](#61-sending-screenshots-on-failures)
     * [6.2 Using multiple Cypress plugins](#62-using-multiple-cypress-plugins)
     * [6.3 Cucumber Gherkin Support](#63-cucumber-gherkin-support)
-  * [7. Variables](#7-variables)
+* [7. Variables](#7-variables)
     * [7.1 Use on CLI](#71-use-on-cli)
     * [7.2 Use in cypress.env.json](#72-use-in-cypressenvjson)
-  * [8. Copying / License](#8-copying--license)
+* [8. Copying / License](#8-copying--license)
+
 <!-- TOC -->
 
 ### 1. Installation
@@ -50,7 +52,7 @@ Run it with this command and enter your data:
 
 Please copy the displayed JSON structure of that command to your `cypress.env.json` file.
 
-You can of course also build such a JSON manually. In addition to this, you can also use ENV variables. Please see the section on variables below for more.
+You can of course also build such a JSON manually. In addition to this, you can also use ENV variables or process.env variables. Please see the section on variables below for more.
 
 Here is a sample of a JSON from the CLI command.
 
@@ -192,7 +194,6 @@ This will send all failed screenshots of all attempts in Cypress to TestRail.
 }
 ```
 
-
 #### 6.2 Using multiple Cypress plugins
 
 Let's start with the most important thing: The problem with the Cypress event listeners.
@@ -262,7 +263,6 @@ module.exports = defineConfig({
 
 That's it! When you now run tests based on Gherkin documents, the TestRail integration will automatically send the results to TestRail.
 
-
 ### 7. Variables
 
 This is a list of all available variables and their explanation.
@@ -272,7 +272,7 @@ You can use all variables in both scopes.
 
 Examples on how to use it are below the list.
 
-| ENV                              | JSON                    | Required        | Description                                                                                                                                                                           |
+| ENV / process.env                | JSON                    | Required        | Description                                                                                                                                                                           |
 |----------------------------------|-------------------------|-----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | CYPRESS_TESTRAIL_DOMAIN          | testrail.domain         | yes             | TestRail domain                                                                                                                                                                       |
 | CYPRESS_TESTRAIL_USERNAME        | testrail.username       | yes             | TestRail username                                                                                                                                                                     |
