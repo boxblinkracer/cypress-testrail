@@ -6,3 +6,4 @@
 node_modules
 /tests/Cypress/cypress/videos
 /tests/Cypress/cypress/screenshots
+/tests/Cypress/cucumber-report.html
