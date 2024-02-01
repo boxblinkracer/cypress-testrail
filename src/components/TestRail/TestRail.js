@@ -119,8 +119,7 @@ class TestRail {
             ],
         };
 
-        // 0s is not valid
-        if (result.getElapsed() !== '0s') {
+        if (result.hasElapsedTime()) {
             postData.results[0].elapsed = result.getElapsed();
         }
 
