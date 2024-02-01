@@ -18,7 +18,7 @@ Then(/^I see the tag (.*) as title$/, (tagName) => {
 });
 
 Then('I enter tag {string} in the URL', (tagName) => {
-    cy.visit('/tags/?tag=' + tagName);
+    cy.visit('/tags/?tag=' + tagName, {failOnStatusCode: false});
 });
 
 Then('I must not see the blog', () => {

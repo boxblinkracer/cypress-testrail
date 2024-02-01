@@ -18,6 +18,6 @@ Feature: Login on website
 
   Rule: Edge Cases
 
-    Scenario : Filter for invalid tag
-      When I enter tag "unknown" in the URL
+    Scenario: Filter for invalid tag
+      When I enter tag "abc" in the URL
       Then I must not see the blog
