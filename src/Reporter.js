@@ -7,6 +7,7 @@ const ColorConsole = require('./services/ColorConsole');
 const CypressStatusConverter = require('./services/CypressStatusConverter');
 
 const packageData = require('../package.json');
+const FileWriter = require('./services/FileWriter');
 
 class Reporter {
     /**
@@ -19,6 +20,7 @@ class Reporter {
         this.on = on;
 
         this.testCaseParser = new TestCaseParser();
+        this.fileWriter = new FileWriter();
 
         /* eslint-disable no-undef */
         const configService = new ConfigService(config.env);
@@ -288,11 +290,27 @@ class Reporter {
             description += '\n' + this.customComment;
         }
 
+        const me = this;
+
         await this.testrail.createRun(this.projectId, this.milestoneId, this.suiteId, runName, description, this.includeAllCasesDuringCreation, (runId) => {
             // run created
             this.runIds = [runId];
             /* eslint-disable no-console */
             ColorConsole.debug('  New TestRail Run: R' + runId);
+
+            // we need to write the runId to a file
+            // this allows developers to immediately fetch the new runID and
+            // use it for their own purposes
+            const data = {
+                id: runId,
+                name: runName,
+                description: description,
+                projectId: me.projectId,
+                milestoneId: me.milestoneId,
+                suiteId: me.suiteId,
+            };
+
+            me.fileWriter.write('created_run.json', JSON.stringify(data, null, 2));
         });
     }
 

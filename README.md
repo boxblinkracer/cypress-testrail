@@ -23,6 +23,7 @@ Add your TestRail credentials in Cypress, decide which test results should be se
     * [6.1 Sending Screenshots on failures](#61-sending-screenshots-on-failures)
     * [6.2 Using multiple Cypress plugins](#62-using-multiple-cypress-plugins)
     * [6.3 Cucumber Gherkin Support](#63-cucumber-gherkin-support)
+    * [6.4 Get data of new TestRail runs](#64-get-data-of-new-testrail-runs)
 * [7. Variables](#7-variables)
     * [7.1 Use on CLI](#71-use-on-cli)
     * [7.2 Use in cypress.env.json](#72-use-in-cypressenvjson)
@@ -262,6 +263,13 @@ module.exports = defineConfig({
 ```
 
 That's it! When you now run tests based on Gherkin documents, the TestRail integration will automatically send the results to TestRail.
+
+#### 6.4 Get data of new TestRail runs
+
+When using the "Create Run Mode", the integration will now create a new file called **created_run.json**.
+This is immediately created after the run was created in TestRail and contains data such as the ID, name and more.
+
+You can use this file to immediately read and use data of the created run in other steps of your CI pipeline, while Cypress is running.
 
 ### 7. Variables
 

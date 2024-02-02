@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Added documentation on how to use **Cucumber** and **Gherkin documents** with the integration.
 - Added support for **process.env** variables. All configuration settings will now also consider entries in process.env.
 - Added new option to **ignore pending tests**. If ignored, these tests will not be sent to TestRail. Please see README for more.
+- Added new **created_run.json** file that is created in "Create Run Mode". This allows to immediately read and use data of the created run in other steps of your CI pipeline, while Cypress is running.
 
 ### Fixed
 
