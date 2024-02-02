@@ -5,10 +5,10 @@ class ConfigService {
      *
      */
     constructor(configArray) {
-        this.config = configArray;
+        this._config = configArray;
 
-        if (this.config === undefined) {
-            this.config = null;
+        if (this._config === undefined) {
+            this._config = null;
         }
 
         this._comparer = new ObjectCompare();
@@ -288,8 +288,8 @@ class ConfigService {
         // ------------------------------------------------------------------------------------------------------------------------
         // search in ENV variables
 
-        if (!this._comparer.isUndefinedOrNull(this.config)) {
-            value = this.config[keyCLI];
+        if (!this._comparer.isUndefinedOrNull(this._config)) {
+            value = this._config[keyCLI];
         }
 
         if (!this._comparer.isEmpty(value)) {
@@ -310,8 +310,8 @@ class ConfigService {
         // ------------------------------------------------------------------------------------------------------------------------
         // search in config JSON
 
-        if (!this._comparer.isUndefinedOrNull(this.config) && !this._comparer.isUndefinedOrNull(this.config.testrail)) {
-            value = this.config.testrail[keyJSON];
+        if (!this._comparer.isUndefinedOrNull(this._config) && !this._comparer.isUndefinedOrNull(this._config.testrail)) {
+            value = this._config.testrail[keyJSON];
         }
 
         if (!this._comparer.isEmpty(value)) {
