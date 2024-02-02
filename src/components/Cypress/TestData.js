@@ -5,11 +5,14 @@ class TestData {
      */
     constructor(cypressData) {
         this._cypressData = cypressData;
+    }
 
-        this._title = cypressData.title !== undefined && cypressData.title.length > 0 ? cypressData.title[cypressData.title.length - 1] : 'Title not found';
-        this._state = cypressData.state;
-
-        this._error = cypressData.displayError !== undefined && cypressData.displayError !== null ? cypressData.displayError : '';
+    /**
+     *
+     * @returns {*}
+     */
+    getId() {
+        return this._cypressData.testId;
     }
 
     /**
@@ -17,7 +20,11 @@ class TestData {
      * @returns {*}
      */
     getTitle() {
-        return this._title;
+        if (this._cypressData.title !== undefined && this._cypressData.title.length > 0) {
+            return this._cypressData.title[this._cypressData.title.length - 1];
+        }
+
+        return 'Title not found';
     }
 
     /**
@@ -25,7 +32,7 @@ class TestData {
      * @returns {*}
      */
     getState() {
-        return this._state;
+        return this._cypressData.state;
     }
 
     /**
@@ -33,7 +40,7 @@ class TestData {
      * @returns {boolean}
      */
     isPassed() {
-        return this._error === '';
+        return this.getError() === '';
     }
 
     /**
@@ -41,15 +48,15 @@ class TestData {
      * @returns {boolean}
      */
     isFailed() {
-        return this._state === 'failed';
+        return this.getState() === 'failed';
     }
 
     /**
      *
      * @returns {boolean}
      */
-    isSkipped() {
-        return this._state === 'pending';
+    isPending() {
+        return this.getState() === 'pending';
     }
 
     /**
@@ -85,7 +92,11 @@ class TestData {
      * @returns {string}
      */
     getError() {
-        return this._error;
+        if (this._cypressData.displayError !== undefined && this._cypressData.displayError !== null) {
+            return this._cypressData.displayError;
+        }
+
+        return '';
     }
 }
 

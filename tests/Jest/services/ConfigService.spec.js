@@ -1,4 +1,4 @@
-import ConfigService from '../../../src/services/ConfigService';
+const ConfigService = require('../../../src/services/Config/ConfigService');
 
 describe('ConfigService', () => {
     beforeEach(() => {
@@ -757,6 +757,95 @@ describe('ConfigService', () => {
         test('hasRunID is false if no runs provided', () => {
             const config = new ConfigService(null);
             expect(config.hasRunID()).toBe(false);
+        });
+    });
+
+    describe('ignorePendingTests', () => {
+        describe('.env file', () => {
+            test('ignorePendingTests from .env ON', () => {
+                const config = new ConfigService({
+                    testrail: {
+                        ignorePending: true,
+                    },
+                });
+                expect(config.ignorePendingCypressTests()).toBe(true);
+            });
+
+            test('ignorePendingTests from .env OFF', () => {
+                const config = new ConfigService({
+                    testrail: {
+                        ignorePending: false,
+                    },
+                });
+                expect(config.ignorePendingCypressTests()).toBe(false);
+            });
+
+            test('ignorePendingTests from .env default is ON', () => {
+                const config = new ConfigService({
+                    testrail: {},
+                });
+                expect(config.ignorePendingCypressTests()).toBe(true);
+            });
+        });
+
+        describe('ENV variable', () => {
+            test('ignorePendingTests from ENV variable', () => {
+                const config = new ConfigService({
+                    TESTRAIL_IGNORE_PENDING: true,
+                });
+                expect(config.ignorePendingCypressTests()).toBe(true);
+            });
+        });
+
+        describe('process.env', () => {
+            test('ignorePendingTests from process.env', () => {
+                process.env.TESTRAIL_IGNORE_PENDING = true;
+                const config = new ConfigService({});
+                expect(config.ignorePendingCypressTests()).toBe(true);
+            });
+        });
+    });
+
+    describe('isApiValid', () => {
+        test('isApiValid is TRUE', () => {
+            const config = new ConfigService({
+                testrail: {
+                    domain: 'my-domain',
+                    username: 'user123',
+                    password: 'P123',
+                },
+            });
+            expect(config.isApiValid()).toBe(true);
+        });
+
+        test('isApiValid is false because of missing password', () => {
+            const config = new ConfigService({
+                testrail: {
+                    domain: 'my-domain',
+                    username: 'user123',
+                },
+            });
+            expect(config.isApiValid()).toBe(false);
+        });
+
+        test('isApiValid is false because of missing username', () => {
+            const config = new ConfigService({
+                testrail: {
+                    domain: 'my-domain',
+                    password: 'P123',
+                },
+            });
+            expect(config.isApiValid()).toBe(false);
+        });
+
+        test('isApiValid is false because of missing domain', () => {
+            const config = new ConfigService({
+                testrail: {
+                    username: 'user123',
+                    password: 'P123',
+                },
+            });
+            expect(config.isApiValid()).toBe(false);
         });
     });
 

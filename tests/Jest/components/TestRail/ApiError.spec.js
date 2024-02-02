@@ -1,4 +1,4 @@
-import ApiError from '../../../../src/components/TestRail/ApiError';
+const ApiError = require('../../../../src/components/TestRail/ApiError');
 
 describe('empty errors', () => {
     test('ApiError data for NULL error', () => {

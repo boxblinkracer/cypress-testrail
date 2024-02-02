@@ -1,4 +1,4 @@
-import TestCaseParser from '../../../src/services/TestCaseParser';
+const TestCaseParser = require('../../../src/services/TestCaseParser');
 
 const parser = new TestCaseParser();
 

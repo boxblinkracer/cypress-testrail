@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Added description to README how to use an **Api Key** instead of the user password.
 - Added documentation on how to use **Cucumber** and **Gherkin documents** with the integration.
 - Added support for **process.env** variables. All configuration settings will now also consider entries in process.env.
+- Added new option to **ignore pending tests**. If ignored, these tests will not be sent to TestRail. Please see README for more.
 
 ### Fixed
 

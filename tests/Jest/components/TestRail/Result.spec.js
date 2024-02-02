@@ -1,4 +1,4 @@
-import Result from '../../../../src/components/TestRail/Result';
+const Result = require('../../../../src/components/TestRail/Result');
 
 test('caseId is correctly assigned', () => {
     const result = new Result('C123', 1, 'this is a test');

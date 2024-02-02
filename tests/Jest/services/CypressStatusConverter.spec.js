@@ -1,4 +1,4 @@
-import CypressStatusConverter from '../../../src/services/CypressStatusConverter';
+const CypressStatusConverter = require('../../../src/services/CypressStatusConverter');
 
 const converter = new CypressStatusConverter(1, 5, 2);
 

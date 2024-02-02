@@ -1,4 +1,11 @@
-import TestData from '../../../../src/components/Cypress/TestData';
+const TestData = require('../../../../src/components/Cypress/TestData');
+
+test('Test ID is read', () => {
+    const result = new TestData({
+        testId: 45,
+    });
+    expect(result.getId()).toBe(45);
+});
 
 test('Test is passing if no error exists', () => {
     const result = new TestData({});
@@ -68,14 +75,14 @@ test('isSkipped is true with state pending', () => {
     const result = new TestData({
         state: 'pending',
     });
-    expect(result.isSkipped()).toBe(true);
+    expect(result.isPending()).toBe(true);
 });
 
 test('isSkipped is false with state passed', () => {
     const result = new TestData({
         state: 'passed',
     });
-    expect(result.isSkipped()).toBe(false);
+    expect(result.isPending()).toBe(false);
 });
 
 describe('Duration', () => {

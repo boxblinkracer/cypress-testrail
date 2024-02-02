@@ -287,6 +287,7 @@ Examples on how to use it are below the list.
 | CYPRESS_TESTRAIL_RUN_NAME        | testrail.runName        | no (Mode B)     | Template for the names of created runs. You can provide a fixed text but also use dynamic variables.<br /><br />Variables: (\_\_datetime\_\_) => generates e.g. "01/04/2022 12:45:00" |
 | CYPRESS_TESTRAIL_RUN_INCLUDE_ALL | testrail.runIncludeAll  | no              | Include all test cases in test run creation.<br />Values: true/false                                                                                                                  |
 | CYPRESS_TESTRAIL_RUN_CLOSE       | testrail.closeRun       | no (Mode B)     | Automatically close test runs.<br />Values: true/false                                                                                                                                |
+| CYPRESS_TESTRAIL_IGNORE_PENDING  | testrail.ignorePending  | no              | If enabled, pending Cypress tests will not be sent to TestRail.<br />Values: true/false                                                                                               |
 
 #### 7.1 Use on CLI
 

@@ -32,6 +32,7 @@ pr: ##2 Prepares a pull request
 	./node_modules/.bin/prettier --write "src/**/*.js"
 	./node_modules/.bin/prettier --write "tests/Jest/**/*.js"
 	make eslint -B
+	make eslint -B
 	make jest -B
 
 # ---------------------------------------------------------------------------------------------
@@ -39,11 +40,13 @@ pr: ##2 Prepares a pull request
 jest: ##3 Runs JS Unit Tests
 	@./node_modules/.bin/jest --config=./.jest.config.js --runInBand --detectOpenHandles --forceExit --coverage
 
-eslint: ##3 Starts the ESLinter
-	./node_modules/.bin/eslint --config ./.eslintrc.json ./src
-
 prettier: ##3 Starts Prettier
 	./node_modules/.bin/prettier --check "src/**/*.js"
+	./node_modules/.bin/prettier --check "tests/Jest/**/*.js"
+
+eslint: ##3 Starts the ESLinter
+	npx eslint ./src
+	npx eslint ./tests/Jest
 
 # ---------------------------------------------------------------------------------------------
 

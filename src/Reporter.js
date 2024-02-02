@@ -1,7 +1,7 @@
 const TestRail = require('./components/TestRail/TestRail');
 const TestCaseParser = require('./services/TestCaseParser');
 const Result = require('./components/TestRail/Result');
-const ConfigService = require('./services/ConfigService');
+const ConfigService = require('./services/Config/ConfigService');
 const TestData = require('./components/Cypress/TestData');
 const ColorConsole = require('./services/ColorConsole');
 const CypressStatusConverter = require('./services/CypressStatusConverter');
@@ -41,6 +41,7 @@ class Reporter {
         this.screenshotsEnabled = configService.isScreenshotsEnabled();
         this.includeAllCasesDuringCreation = configService.includeAllCasesDuringCreation();
         this.includeAllFailedScreenshots = configService.includeAllFailedScreenshots();
+        this.ignorePendingTests = configService.ignorePendingCypressTests();
 
         this.modeCreateRun = !configService.hasRunID();
         this.closeRun = configService.shouldCloseRun();
@@ -113,6 +114,7 @@ class Reporter {
             ColorConsole.info('  TestRail Run ID(s): ' + this.runIds.map((id) => 'R' + id));
         }
 
+        ColorConsole.info('  Ignore pending tests: ' + this.ignorePendingTests);
         ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
         ColorConsole.info('  Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
 
@@ -129,9 +131,9 @@ class Reporter {
      * @private
      */
     async _afterSpec(spec, results) {
-        // if we are in the mode to dynamically create runs
-        // then we also need to add the newly found runs to our created test run
-        // but only if we don't want to associate all cases during creation
+        // usually all test cases are assigned to runs that are created,
+        // but it's possible to turn off this feature, and only add
+        // test cases that have actually been executed by Cypress.
         if (this.modeCreateRun && !this.includeAllCasesDuringCreation) {
             for (let i = 0; i < results.tests.length; i++) {
                 const test = results.tests[i];
@@ -196,31 +198,27 @@ class Reporter {
         const allResults = [];
 
         for (let i = 0; i < results.tests.length; i++) {
-            const cypressTestResult = results.tests[i];
+            const cyTest = new TestData(results.tests[i]);
 
-            const convertedTestResult = new TestData(cypressTestResult);
-
-            // if we have a skipped test, then do NOT send it in create-mode
-            // only if we have an existing test run in TestRail
-            if (convertedTestResult.isSkipped() && this.modeCreateRun) {
-                ColorConsole.debug('  Skipping test: ' + convertedTestResult.getTitle());
+            if (cyTest.isPending() && this.ignorePendingTests) {
+                ColorConsole.debug('  Ignoring pending test: ' + cyTest.getTitle());
                 continue;
             }
 
-            const testRailStatusID = this.statusConverter.convertToTestRail(convertedTestResult.getState());
+            const testRailStatusID = this.statusConverter.convertToTestRail(cyTest.getState());
 
             let screenshotPaths = [];
 
             // if we have a failed test, then extract the screenshot
-            if (convertedTestResult.isFailed()) {
-                screenshotPaths = this._getScreenshotByTestId(cypressTestResult.testId, convertedTestResult.getTitle(), results.screenshots);
+            if (cyTest.isFailed()) {
+                screenshotPaths = this._getScreenshotByTestId(cyTest.getId(), cyTest.getTitle(), results.screenshots);
 
                 if (screenshotPaths === null) {
                     screenshotPaths = [];
                 }
             }
 
-            let comment = convertedTestResult.getTitle() ? convertedTestResult.getTitle() : 'Tested by Cypress';
+            let comment = cyTest.getTitle() ? cyTest.getTitle() : 'Tested by Cypress';
 
             // this is already part of the run description
             // if it was created dynamically.
@@ -237,18 +235,18 @@ class Reporter {
                 }
             }
 
-            if (convertedTestResult.getError() !== '') {
-                comment += '\nError: ' + convertedTestResult.getError();
+            if (cyTest.getError() !== '') {
+                comment += '\nError: ' + cyTest.getError();
             }
 
-            const foundCaseIDs = this.testCaseParser.searchCaseId(convertedTestResult.getTitle());
+            const foundCaseIDs = this.testCaseParser.searchCaseId(cyTest.getTitle());
 
             // now build a separate result entry
             // for each found case id for TestRail later on
             for (let i = 0; i < foundCaseIDs.length; i++) {
                 const caseId = foundCaseIDs[i];
 
-                const result = new Result(caseId, testRailStatusID, comment, convertedTestResult.getDurationMS(), screenshotPaths);
+                const result = new Result(caseId, testRailStatusID, comment, cyTest.getDurationMS(), screenshotPaths);
 
                 allResults.push(result);
             }
