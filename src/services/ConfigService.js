@@ -1,3 +1,5 @@
+const ObjectCompare = require('./ObjectCompare');
+
 class ConfigService {
     /**
      *
@@ -8,6 +10,8 @@ class ConfigService {
         if (this.config === undefined) {
             this.config = null;
         }
+
+        this._comparer = new ObjectCompare();
     }
 
     /**
@@ -219,25 +223,13 @@ class ConfigService {
      * @private
      */
     _getStringValue(keyCLI, keyJSON) {
-        if (this.config === null) {
+        const value = this._getValue(keyCLI, keyJSON);
+
+        if (value === null) {
             return '';
         }
 
-        var value = '';
-
-        if (this.config[keyCLI] !== undefined) {
-            value = this.config[keyCLI];
-        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
-            value = this.config.testrail[keyJSON];
-        } else if (process.env !== undefined && process.env !== null) {
-            value = process.env[keyCLI];
-        }
-
-        if (value === undefined || value === null || value === '') {
-            return '';
-        }
-
-        return value;
+        return value.toString();
     }
 
     /**
@@ -248,43 +240,21 @@ class ConfigService {
      * @private
      */
     _getArrayValue(keyCLI, keyJSON) {
-        if (this.config === null) {
+        const value = this._getValue(keyCLI, keyJSON);
+
+        if (value === null) {
             return [];
         }
 
-        var value = [];
-
-        if (this.config[keyCLI] !== undefined) {
-            const tmpString = this.config[keyCLI];
-
-            // if we have a value, then try to split it
-            if (tmpString !== undefined && tmpString !== null && tmpString !== '') {
-                if (tmpString.toString().indexOf(',') !== -1) {
-                    value = tmpString.split(',');
-                } else {
-                    value = [tmpString];
-                }
-            }
-        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
-            value = this.config.testrail[keyJSON];
-        } else if (process.env !== undefined && process.env !== null) {
-            const tmpString = process.env[keyCLI];
-
-            // if we have a value, then try to split it
-            if (tmpString !== undefined && tmpString !== null && tmpString !== '') {
-                if (tmpString.toString().indexOf(',') !== -1) {
-                    value = tmpString.split(',');
-                } else {
-                    value = [tmpString];
-                }
-            }
+        if (Array.isArray(value)) {
+            return value;
         }
 
-        if (value === undefined || value === null || value === '') {
-            return [];
+        if (value.toString().indexOf(',') !== -1) {
+            return value.split(',');
         }
 
-        return value;
+        return [value];
     }
 
     /**
@@ -295,25 +265,60 @@ class ConfigService {
      * @private
      */
     _getBooleanValue(keyCLI, keyJSON) {
-        if (this.config === null) {
-            return false;
-        }
+        const value = this._getValue(keyCLI, keyJSON);
 
-        var value = false;
-
-        if (this.config[keyCLI] !== undefined) {
-            value = this.config[keyCLI];
-        } else if (this.config.testrail !== undefined && this.config.testrail !== null) {
-            value = this.config.testrail[keyJSON];
-        } else if (process.env !== undefined && process.env !== null) {
-            value = process.env[keyCLI];
-        }
-
-        if (value === undefined || value === null || value === '') {
+        if (value === null) {
             return false;
         }
 
         return Boolean(value);
+    }
+
+    /**
+     * Gets either a mixed value or NULL.
+     *
+     * @param keyCLI
+     * @param keyJSON
+     * @returns {*|null|string}
+     * @private
+     */
+    _getValue(keyCLI, keyJSON) {
+        let value = null;
+
+        // ------------------------------------------------------------------------------------------------------------------------
+        // search in ENV variables
+
+        if (!this._comparer.isUndefinedOrNull(this.config)) {
+            value = this.config[keyCLI];
+        }
+
+        if (!this._comparer.isEmpty(value)) {
+            return value;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------------
+        // search in process.env variables
+
+        if (!this._comparer.isUndefinedOrNull(process.env)) {
+            value = process.env[keyCLI];
+        }
+
+        if (!this._comparer.isEmpty(value)) {
+            return value;
+        }
+
+        // ------------------------------------------------------------------------------------------------------------------------
+        // search in config JSON
+
+        if (!this._comparer.isUndefinedOrNull(this.config) && !this._comparer.isUndefinedOrNull(this.config.testrail)) {
+            value = this.config.testrail[keyJSON];
+        }
+
+        if (!this._comparer.isEmpty(value)) {
+            return value;
+        }
+
+        return null;
     }
 }
 
