@@ -65,10 +65,10 @@ class Reporter {
         if (!this.enabled) {
             ColorConsole.info('');
             ColorConsole.info('');
-            ColorConsole.warn('  TestRail Integration v' + packageData.version);
-            ColorConsole.warn('  ....................................................');
-            ColorConsole.warn('  Integration is not correctly configured.');
-            ColorConsole.warn('  If you expect this to work, please check your configuration.');
+            ColorConsole.warn('TestRail Integration v' + packageData.version);
+            ColorConsole.warn('....................................................');
+            ColorConsole.warn('Integration is not correctly configured.');
+            ColorConsole.warn('If you expect this to work, please check your configuration.');
             return;
         }
 
@@ -96,29 +96,29 @@ class Reporter {
         this.system = details.system.osName + ' (' + details.system.osVersion + ')';
         this.baseURL = details.config.baseUrl;
 
-        ColorConsole.success('  Starting TestRail Integration v' + packageData.version);
-        ColorConsole.info('  ....................................................');
-        ColorConsole.info('  Cypress: ' + this.cypressVersion);
-        ColorConsole.info('  Browser: ' + this.browser);
-        ColorConsole.info('  System: ' + this.system);
-        ColorConsole.info('  Base URL: ' + this.baseURL);
-        ColorConsole.info('  TestRail Domain: ' + this.domain);
+        ColorConsole.success('Starting TestRail Integration v' + packageData.version);
+        ColorConsole.info('....................................................');
+        ColorConsole.info('Cypress: ' + this.cypressVersion);
+        ColorConsole.info('Browser: ' + this.browser);
+        ColorConsole.info('System: ' + this.system);
+        ColorConsole.info('Base URL: ' + this.baseURL);
+        ColorConsole.info('TestRail Domain: ' + this.domain);
 
         if (this.modeCreateRun) {
-            ColorConsole.info('  TestRail Mode: Create Run');
-            ColorConsole.info('  TestRail Project ID: ' + this.projectId);
-            ColorConsole.info('  TestRail Milestone ID: ' + this.milestoneId);
-            ColorConsole.info('  TestRail Suite ID: ' + this.suiteId);
-            ColorConsole.info('  TestRail Run Name: ' + this.runName);
-            ColorConsole.info('  TestRail Include All Cases: ' + this.includeAllCasesDuringCreation);
+            ColorConsole.info('TestRail Mode: Create Run');
+            ColorConsole.info('TestRail Project ID: ' + this.projectId);
+            ColorConsole.info('TestRail Milestone ID: ' + this.milestoneId);
+            ColorConsole.info('TestRail Suite ID: ' + this.suiteId);
+            ColorConsole.info('TestRail Run Name: ' + this.runName);
+            ColorConsole.info('TestRail Include All Cases: ' + this.includeAllCasesDuringCreation);
         } else {
-            ColorConsole.info('  TestRail Mode: Use existing Run(s)');
-            ColorConsole.info('  TestRail Run ID(s): ' + this.runIds.map((id) => 'R' + id));
+            ColorConsole.info('TestRail Mode: Use existing Run(s)');
+            ColorConsole.info('TestRail Run ID(s): ' + this.runIds.map((id) => 'R' + id));
         }
 
-        ColorConsole.info('  Ignore pending tests: ' + this.ignorePendingTests);
-        ColorConsole.info('  Screenshots: ' + this.screenshotsEnabled);
-        ColorConsole.info('  Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
+        ColorConsole.info('Ignore pending tests: ' + this.ignorePendingTests);
+        ColorConsole.info('Screenshots: ' + this.screenshotsEnabled);
+        ColorConsole.info('Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
 
         // if we don't have a runID, then we need to create one
         if (this.modeCreateRun) {
@@ -203,7 +203,7 @@ class Reporter {
             const cyTest = new TestData(results.tests[i]);
 
             if (cyTest.isPending() && this.ignorePendingTests) {
-                ColorConsole.debug('  Ignoring pending test: ' + cyTest.getTitle());
+                ColorConsole.debug('Ignoring pending test: ' + cyTest.getTitle());
                 continue;
             }
 
@@ -296,7 +296,7 @@ class Reporter {
             // run created
             this.runIds = [runId];
             /* eslint-disable no-console */
-            ColorConsole.debug('  New TestRail Run: R' + runId);
+            ColorConsole.debug('New TestRail Run: R' + runId);
 
             // we need to write the runId to a file
             // this allows developers to immediately fetch the new runID and

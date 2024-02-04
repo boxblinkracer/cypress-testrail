@@ -11,24 +11,22 @@ This integration helps you to automatically send test results to TestRail. And y
 Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
 
 <!-- TOC -->
-
-* [1. Installation](#1-installation)
-* [2. Setup Wizard](#2-setup-wizard)
-* [3. Execution Modes](#3-execution-modes)
+  * [1. Installation](#1-installation)
+  * [2. Setup Wizard](#2-setup-wizard)
+  * [3. Execution Modes](#3-execution-modes)
     * [3.1 Mode A: Send results to one or more runs in TestRail](#31-mode-a-send-results-to-one-or-more-runs-in-testrail)
     * [3.2 Mode B: Create new Run in TestRail for every Cypress run](#32-mode-b-create-new-run-in-testrail-for-every-cypress-run)
-* [4. Register Plugin](#4-register-plugin)
-* [5. Map Test Cases](#5-map-test-cases)
-* [6. Advanced Features](#6-advanced-features)
-    * [6.1 Sending Screenshots on failures](#61-sending-screenshots-on-failures)
+  * [4. Register Plugin](#4-register-plugin)
+  * [5. Map Test Cases](#5-map-test-cases)
+  * [6. Advanced Features](#6-advanced-features)
+    * [6.1 Sending Screenshots to TestRail](#61-sending-screenshots-to-testrail)
     * [6.2 Using multiple Cypress plugins](#62-using-multiple-cypress-plugins)
     * [6.3 Cucumber Gherkin Support](#63-cucumber-gherkin-support)
     * [6.4 Get data of new TestRail runs](#64-get-data-of-new-testrail-runs)
-* [7. Variables](#7-variables)
+  * [7. Variables](#7-variables)
     * [7.1 Use on CLI](#71-use-on-cli)
     * [7.2 Use in cypress.env.json](#72-use-in-cypressenvjson)
-* [8. Copying / License](#8-copying--license)
-
+  * [8. Copying / License](#8-copying--license)
 <!-- TOC -->
 
 ### 1. Installation
@@ -169,7 +167,7 @@ You can now start Cypress (restart after config changes), and all your results s
 
 ### 6. Advanced Features
 
-#### 6.1 Sending Screenshots on failures
+#### 6.1 Sending Screenshots to TestRail
 
 You can automatically send the latest failure screenshot of Cypress to TestRail.
 This is not enabled by default. Just enable it, and it will automatically work.

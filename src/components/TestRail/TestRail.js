@@ -48,12 +48,12 @@ class TestRail {
             '/add_run/' + projectId,
             postData,
             (response) => {
-                ColorConsole.success('  TestRun created in TestRail: ' + name);
+                ColorConsole.success('TestRun created in TestRail: ' + name);
                 // notify our callback
                 return callback(response.data.id);
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not create TestRail run for project P' + projectId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.error('Could not create TestRail run for project P' + projectId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );
@@ -71,14 +71,16 @@ class TestRail {
             case_ids: caseIds,
         };
 
+        ColorConsole.debug('Updating TestRail run R' + runId + '. Adding test cases: ' + caseIds.join(', '));
+
         return this.client.sendData(
             '/update_run/' + runId,
             postData,
             () => {
-                ColorConsole.success('  TestRun updated in TestRail: ' + runId);
+                ColorConsole.success('TestRun updated in TestRail: ' + runId);
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not add TestRail test cases to run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.error('Could not add TestRail test cases to run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );
@@ -97,7 +99,7 @@ class TestRail {
                 return onSuccess();
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not close TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.error('Could not close TestRail run R' + runId + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );
@@ -129,12 +131,12 @@ class TestRail {
             (response) => {
                 const resultId = response.data[0].id;
 
-                ColorConsole.success('  TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
+                ColorConsole.success('TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
 
                 const screenshotPaths = result.getScreenshotPaths();
 
                 if (this.isScreenshotsEnabled && screenshotPaths.length) {
-                    ColorConsole.debug('    sending screenshots to TestRail for TestCase C' + result.getCaseId());
+                    ColorConsole.debug('sending screenshots to TestRail for TestCase C' + result.getCaseId());
 
                     const allRequests = [];
 
@@ -143,10 +145,10 @@ class TestRail {
                             resultId,
                             screenshot.path,
                             () => {
-                                ColorConsole.success('    created screenshot');
+                                ColorConsole.success('created screenshot');
                             },
                             (error) => {
-                                ColorConsole.error(`    could not create screenshot: ${error}`);
+                                ColorConsole.error(`could not create screenshot: ${error}`);
                                 ColorConsole.debug('');
                             }
                         );
@@ -158,7 +160,7 @@ class TestRail {
                 }
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error('  Could not send TestRail result for case C' + result.getCaseId() + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.error('Could not send TestRail result for case C' + result.getCaseId() + ': ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );
@@ -177,7 +179,7 @@ class TestRail {
             results: [],
         };
 
-        ColorConsole.debug(' TestRail >> Sending case results to run R' + runID + ': ' + testResults.map((r) => 'C' + r.getCaseId()));
+        ColorConsole.debug('TestRail >> Sending case results to run R' + runID + ': ' + testResults.map((r) => 'C' + r.getCaseId()));
 
         testResults.forEach((result) => {
             var resultEntry = {
@@ -199,7 +201,7 @@ class TestRail {
             url,
             postData,
             (response) => {
-                ColorConsole.success(' Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
+                ColorConsole.success('Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];
@@ -213,16 +215,16 @@ class TestRail {
                             const matchingResultId = response.data[i].id;
 
                             screenshotPaths.forEach((screenshot) => {
-                                ColorConsole.debug('    sending screenshot to TestRail for TestCase C' + result.getCaseId());
+                                ColorConsole.debug('sending screenshot to TestRail for TestCase C' + result.getCaseId());
 
                                 const addScreenShotRequest = this.client.sendScreenshot(
                                     matchingResultId,
                                     screenshot.path,
                                     () => {
-                                        ColorConsole.success('    created screenshot');
+                                        ColorConsole.success('created screenshot');
                                     },
                                     (error) => {
-                                        ColorConsole.error(`    could not create screenshot: ${error}`);
+                                        ColorConsole.error(`could not create screenshot: ${error}`);
                                         ColorConsole.debug('');
                                     }
                                 );
@@ -236,7 +238,7 @@ class TestRail {
                 }
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error(' Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                ColorConsole.error('Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
             }
         );

@@ -6,7 +6,7 @@ Feature: Login on website
   Rule: Happy Path
 
     @smoke
-    Scenario Outline: C123: Filter blog posts by tags
+    Scenario Outline: C6872: Filter blog posts by tags
       When I click on tag <tag>
       Then I see tag <title> as title
 
