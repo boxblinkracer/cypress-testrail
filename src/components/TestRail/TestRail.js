@@ -201,7 +201,7 @@ class TestRail {
             url,
             postData,
             (response) => {
-                ColorConsole.success('Results sent to TestRail for: ' + testResults.map((r) => 'C' + r.getCaseId()));
+                ColorConsole.success('Results sent to TestRail R' + runID + ' for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];
