@@ -64,6 +64,10 @@ module.exports = async () => {
         message: 'Send screenshots to TestRail for failed tests?',
     });
 
+    const sendVideos = await toggle({
+        message: 'Send videos to TestRail?',
+    });
+
     const config = {
         testrail: {
             domain: testrailDomain,
@@ -83,6 +87,7 @@ module.exports = async () => {
     }
 
     config.testrail.screenshots = sendScreenshots;
+    config.testrail.videos = sendVideos;
 
     /* eslint-disable no-console */
     console.log();

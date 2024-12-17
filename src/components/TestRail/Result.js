@@ -6,16 +6,18 @@ class Result {
      * @param comment
      * @param duration
      * @param screenshotPaths
+     * @param videoPath
      */
-    constructor(caseId, statusId, comment, duration, screenshotPaths) {
+    constructor(caseId, statusId, comment, duration, screenshotPaths, videoPath) {
         this._caseId = caseId;
         this._statusId = statusId;
         this._comment = comment;
         this._durationMS = duration;
         this._screenshotPaths = screenshotPaths;
+        this._videoPath = videoPath;
 
-        if (this._screenshotPaths === undefined) {
-            this._screenshotPaths = [];
+        if (this._attachmentPaths === undefined) {
+            this._attachmentPaths = [];
         }
     }
 

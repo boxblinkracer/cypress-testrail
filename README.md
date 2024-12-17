@@ -285,6 +285,7 @@ Examples on how to use it are below the list.
 | CYPRESS_TESTRAIL_PASSWORD        | testrail.password       | yes             | TestRail password or TestRail API key.                                                                                                                                                |
 | CYPRESS_TESTRAIL_SCREENSHOTS     | testrail.screenshots    | no              | Send last screenshot of failed test.<br />Values: true/false                                                                                                                          |
 | CYPRESS_TESTRAIL_SCREENSHOTS_ALL | testrail.screenshotsAll | no              | Send all screenshots of failed test. (requires screenshots to be enabled).<br />Values: true/false                                                                                    |
+| CYPRESS_TESTRAIL_VIDEOS          | testrail.videos         | no              | Send videos for all tests.<br />Values: true/false                                                                                    |
 | CYPRESS_TESTRAIL_RUN_ID          | testrail.runId          | yes (Mode A)    | TestRail RunID to fire against, e.g. R123                                                                                                                                             |
 | CYPRESS_TESTRAIL_RUN_IDS         | testrail.runIds         | yes (Mode A)    | TestRail RunIDs to fire against, e.g. ["R123", "R456"]. Either provide single runID or this list. Send comma separated as ENV variable from CLI (xxx="R1,R2"                          |
 | CYPRESS_TESTRAIL_PROJECT_ID      | testrail.projectId      | yes (Mode B)    | TestRail ProjectID, e.g. P45                                                                                                                                                          |
@@ -320,7 +321,8 @@ You can also provide the variables in a JSON structure like this inside your **c
         "runName": "",
         "runIncludeAll": false,
         "closeRun": false,
-        "screenshots": false
+        "screenshots": false,
+        "videos": false
     }
 }
 ```
