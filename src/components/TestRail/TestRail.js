@@ -8,10 +8,12 @@ class TestRail {
      * @param username
      * @param password
      * @param isScreenshotsEnabled
+     * @param isVideosEnabled
      */
-    constructor(domain, username, password, isScreenshotsEnabled) {
+    constructor(domain, username, password, isScreenshotsEnabled, isVideosEnabled) {
         this.client = new ApiClient(domain, username, password);
         this.isScreenshotsEnabled = isScreenshotsEnabled;
+        this.isVideosEnabled = isVideosEnabled;
     }
 
     /**
@@ -133,22 +135,18 @@ class TestRail {
 
                 ColorConsole.success('TestRail result ' + resultId + ' sent for TestCase C' + result.getCaseId());
 
-                const screenshotPaths = result.getScreenshotPaths();
-
-                if (this.isScreenshotsEnabled && screenshotPaths.length) {
-                    ColorConsole.debug('sending screenshots to TestRail for TestCase C' + result.getCaseId());
-
-                    const allRequests = [];
-
-                    screenshotPaths.forEach((screenshot) => {
-                        const request = this.client.sendScreenshot(
+                const allRequests = [];
+                const attachmentPaths = result.getAttachementPaths();
+                if (attachmentPaths.length) {
+                    attachmentPaths.forEach((attachment) => {
+                        const request = this.client.sendAttachmentToResult(
                             resultId,
-                            screenshot.path,
+                            attachment.path,
                             () => {
-                                ColorConsole.success('created screenshot');
+                                ColorConsole.success('created attachment');
                             },
                             (error) => {
-                                ColorConsole.error(`could not create screenshot: ${error}`);
+                                ColorConsole.error(`could not create attachment: ${error}`);
                                 ColorConsole.debug('');
                             }
                         );
@@ -203,43 +201,90 @@ class TestRail {
             (response) => {
                 ColorConsole.success('Results sent to TestRail R' + runID + ' for: ' + testResults.map((r) => 'C' + r.getCaseId()));
 
-                if (this.isScreenshotsEnabled) {
-                    const allRequests = [];
+                const allRequests = [];
+                if (testResults.video) {
 
-                    testResults.forEach((result, i) => {
-                        const screenshotPaths = result.getScreenshotPaths();
-
-                        if (screenshotPaths.length) {
-                            // there is no identifier, to match both, but
-                            // we usually get the same order back as we sent it to TestRail
-                            const matchingResultId = response.data[i].id;
-
-                            screenshotPaths.forEach((screenshot) => {
-                                ColorConsole.debug('sending screenshot to TestRail for TestCase C' + result.getCaseId());
-
-                                const addScreenShotRequest = this.client.sendScreenshot(
-                                    matchingResultId,
-                                    screenshot.path,
-                                    () => {
-                                        ColorConsole.success('created screenshot');
-                                    },
-                                    (error) => {
-                                        ColorConsole.error(`could not create screenshot: ${error}`);
-                                        ColorConsole.debug('');
-                                    }
-                                );
-
-                                allRequests.push(addScreenShotRequest);
-                            });
-                        }
-                    });
-
-                    return Promise.all(allRequests);
                 }
+                testResults.forEach((result, i) => {
+                    const screenshotPaths = result.getScreenshotPaths();
+                    if (screenshotPaths?.length) {
+                        // there is no identifier, to match both, but
+                        // we usually get the same order back as we sent it to TestRail
+                        const matchingResultId = response.data[i].id;
+
+                        screenshotPaths.forEach((attachment) => {
+                            ColorConsole.debug('sending screenshots to TestRail for TestCase C' + result.getCaseId());
+
+                            const addAttachmentRequest = this.client.sendAttachmentToResult(
+                                matchingResultId,
+                                attachment.path,
+                                () => {
+                                    ColorConsole.success('created screenshot');
+                                },
+                                (error) => {
+                                    ColorConsole.error(`could not create screenshot: ${error}`);
+                                    ColorConsole.debug('');
+                                }
+                            );
+
+                            allRequests.push(addAttachmentRequest);
+                        });
+
+                        return Promise.all(allRequests);
+                    }
+                });
             },
             (statusCode, statusText, errorText) => {
                 ColorConsole.error('Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
                 ColorConsole.debug('');
+            }
+        );
+    }
+
+    /**
+     *
+     * @param {string} runID
+     * @param {string} path
+     * @returns {Promise<AxiosResponse<*>>}
+     */
+    async sendAttachmentToRun(runId, path) {
+        await new Promise((resolve, reject) => {
+            this.client.getAttachmentsForRun(
+                runId,
+                (attachments) => {
+                    if (attachments?.length) {
+                        const prevAttachementId = attachments.find((x) => path.endsWith(x.name))?.id;
+                        if (prevAttachementId) {
+                            this.client.deleteAttachment(prevAttachementId)
+                            .then(() => {
+                                resolve('Attachment already exists, it will be overwritten')
+                            })
+                            .catch(() => {
+                                reject('Attachment already exists and cannot be overwritten')
+                            })
+                        } else {
+                            resolve('New attachment');
+                        }
+                    } else {
+                        resolve('No attachment yet');
+                    }
+                },
+                () => {
+                    reject("Cannot get attachments")
+                }
+            );
+        }).then((message) => {
+            ColorConsole.debug(message);
+        }).catch((err) => {
+            ColorConsole.error(err);
+        });
+
+        return this.client.sendAttachmentToRun(runId, path,
+            () => {
+                ColorConsole.success('Created attachment');
+            },
+            (statusCode, statusText, errorText) => {
+                ColorConsole.error(`Could not create attachment: ${statusCode}, ${statusText}, ${errorText}`);
             }
         );
     }

@@ -173,6 +173,14 @@ class ConfigService {
      *
      * @returns {boolean}
      */
+    isVideosEnabled() {
+        return this._valueLoader.getBooleanValue('TESTRAIL_VIDEOS', 'videos', false);
+    }
+
+    /**
+     *
+     * @returns {boolean}
+     */
     includeAllCasesDuringCreation() {
         return this._valueLoader.getBooleanValue('TESTRAIL_RUN_INCLUDE_ALL', 'runIncludeAll', false);
     }

@@ -43,6 +43,7 @@ class Reporter {
         this.screenshotsEnabled = configService.isScreenshotsEnabled();
         this.includeAllCasesDuringCreation = configService.includeAllCasesDuringCreation();
         this.includeAllFailedScreenshots = configService.includeAllFailedScreenshots();
+        this.videosEnabled = configService.isVideosEnabled();
         this.ignorePendingTests = configService.ignorePendingCypressTests();
 
         this.modeCreateRun = !configService.hasRunID();
@@ -53,7 +54,7 @@ class Reporter {
 
         this.customComment = customComment !== undefined && customComment !== null ? customComment : '';
 
-        this.testrail = new TestRail(configService.getDomain(), configService.getUsername(), configService.getPassword(), configService.isScreenshotsEnabled());
+        this.testrail = new TestRail(configService.getDomain(), configService.getUsername(), configService.getPassword(), configService.isScreenshotsEnabled(), configService.isVideosEnabled());
     }
 
     /**
@@ -119,6 +120,7 @@ class Reporter {
         ColorConsole.info('Ignore pending tests: ' + this.ignorePendingTests);
         ColorConsole.info('Screenshots: ' + this.screenshotsEnabled);
         ColorConsole.info('Include All Failed Screenshots: ' + this.includeAllFailedScreenshots);
+        ColorConsole.info('Videos: ' + this.videosEnabled);
 
         // if we don't have a runID, then we need to create one
         if (this.modeCreateRun) {
@@ -209,15 +211,10 @@ class Reporter {
 
             const testRailStatusID = this.statusConverter.convertToTestRail(cyTest.getState());
 
-            let screenshotPaths = [];
-
+            let screenshotPaths;
             // if we have a failed test, then extract the screenshot
-            if (cyTest.isFailed()) {
+            if (this.screenshotsEnabled && cyTest.isFailed()) {
                 screenshotPaths = this._getScreenshotByTestId(cyTest.getId(), cyTest.getTitle(), results.screenshots);
-
-                if (screenshotPaths === null) {
-                    screenshotPaths = [];
-                }
             }
 
             let comment = cyTest.getTitle() ? cyTest.getTitle() : 'Tested by Cypress';
@@ -258,6 +255,17 @@ class Reporter {
             for (let i = 0; i < this.runIds.length; i += 1) {
                 const request = this.testrail.sendBatchResults(this.runIds[i], allResults);
                 allRequests.push(request);
+            }
+
+            if (this.videosEnabled && results.video) {
+                for (let i = 0; i < this.runIds.length; i++) {
+                    allRequests.push(
+                        this.testrail.sendAttachmentToRun(
+                            this.runIds[i],
+                            results.video)
+                    );
+                }
+
             }
 
             await Promise.all(allRequests);
