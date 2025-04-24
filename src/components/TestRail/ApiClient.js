@@ -2,6 +2,7 @@ const axios = require('axios');
 const ApiError = require('./ApiError');
 const FormData = require('form-data');
 const fs = require('fs');
+// const ColorConsole = require('../../services/ColorConsole');
 
 class ApiClient {
     /**
@@ -14,6 +15,35 @@ class ApiClient {
         this.password = password;
         this.baseUrl = `https://${domain}/index.php?/api/v2`;
     }
+
+/**
+ *
+ * @param slug
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+getData(slug, params={}) {
+    const fullUrl = this.baseUrl + slug;
+    return axios({
+        method: 'get',
+        url: fullUrl,
+        auth: {
+            username: this.username,
+            password: this.password,
+        },
+        params,
+    })
+        .then((response) => {
+            // ColorConsole.debug('>> getData response: ' + JSON.stringify(response.data));
+            return response;
+        })
+        .catch((error) => {
+            // Extract and handle the error
+            const apiError = new ApiError(error);
+            throw new Error(
+                `Error fetching data: ${apiError.getStatusCode()} ${apiError.getStatusText()} >> ${apiError.getErrorText()}`
+            );
+        });
+}
 
     /**
      *
