@@ -44,6 +44,7 @@ class Reporter {
         this.includeAllCasesDuringCreation = configService.includeAllCasesDuringCreation();
         this.includeAllFailedScreenshots = configService.includeAllFailedScreenshots();
         this.ignorePendingTests = configService.ignorePendingCypressTests();
+        this.ignoreMissingCaseIDs = configService.ignoreMissingCaseIds();
 
         this.modeCreateRun = !configService.hasRunID();
         this.closeRun = configService.shouldCloseRun();
@@ -256,7 +257,11 @@ class Reporter {
 
         if (allResults.length > 0) {
             for (let i = 0; i < this.runIds.length; i += 1) {
-                const request = this.testrail.sendBatchResults(this.runIds[i], allResults);
+                const request = this.testrail.sendBatchResults(
+                    this.runIds[i], 
+                    allResults, 
+                    this.ignoreMissingCaseIDs,
+                    );
                 allRequests.push(request);
             }
 

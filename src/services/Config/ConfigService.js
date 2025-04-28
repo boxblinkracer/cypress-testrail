@@ -177,6 +177,14 @@ class ConfigService {
         return this._valueLoader.getBooleanValue('TESTRAIL_RUN_INCLUDE_ALL', 'runIncludeAll', false);
     }
 
+  /**
+     *
+     * @returns {boolean}
+     */
+  ignoreMissingCaseIds() {
+        return this._valueLoader.getBooleanValue('TESTRAIL_IGNORE_MISSING_CASE_IDS', 'ignoreMissingCaseIds', false);
+    }
+
     /**
      *
      * @returns {boolean}
