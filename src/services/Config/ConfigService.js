@@ -181,6 +181,14 @@ class ConfigService {
      *
      * @returns {boolean}
      */
+    ignoreMissingCaseIds() {
+        return this._valueLoader.getBooleanValue('TESTRAIL_IGNORE_MISSING_CASE_IDS', 'ignoreMissingCaseIds', false);
+    }
+    
+    /**
+     *
+     * @returns {boolean}
+     */
     includeAllFailedScreenshots() {
         return this._valueLoader.getBooleanValue('TESTRAIL_SCREENSHOTS_ALL', 'screenshotsAll', false);
     }
