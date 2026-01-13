@@ -48,6 +48,7 @@ class Reporter {
         this.modeCreateRun = !configService.hasRunID();
         this.closeRun = configService.shouldCloseRun();
         this.foundCaseIds = [];
+        this.failedSubmissions = [];
 
         this.statusConverter = new CypressStatusConverter(configService.getTestRailStatusPassed(), configService.getTestRailStatusFailed(), configService.getTestRailStatusSkipped());
 
@@ -179,6 +180,29 @@ class Reporter {
                 console.log('  Skipping closing of Test Run');
             }
         }
+
+        // Display failed submissions summary
+        if (this.failedSubmissions.length > 0) {
+            ColorConsole.info('');
+            ColorConsole.info('');
+            ColorConsole.error('='.repeat(60));
+            ColorConsole.error('FAILED TO SEND TEST RESULTS TO TESTRAIL');
+            ColorConsole.error('='.repeat(60));
+
+            this.failedSubmissions.forEach((failure, index) => {
+                ColorConsole.error('');
+                ColorConsole.error(`Failure #${index + 1}:`);
+                ColorConsole.error(`  Run ID: R${failure.runId}`);
+                ColorConsole.error(`  Case IDs: ${failure.caseIds.map((id) => 'C' + id).join(', ')}`);
+                ColorConsole.error(`  Error: ${failure.error}`);
+            });
+
+            ColorConsole.error('');
+            ColorConsole.error('='.repeat(60));
+            ColorConsole.error(`Total Failed Submissions: ${this.failedSubmissions.length}`);
+            ColorConsole.error('='.repeat(60));
+            ColorConsole.info('');
+        }
     }
 
     /**
@@ -260,7 +284,18 @@ class Reporter {
                 allRequests.push(request);
             }
 
-            await Promise.all(allRequests);
+            const responses = await Promise.all(allRequests);
+
+            // Collect failed submissions
+            responses.forEach((response) => {
+                if (response && !response.success) {
+                    this.failedSubmissions.push({
+                        runId: response.runId,
+                        caseIds: response.caseIds,
+                        error: response.error,
+                    });
+                }
+            });
         }
     }
 

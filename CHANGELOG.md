@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [unrelased]
+
+### Added
+
+- Added **failed submission tracking and reporting**. When test results fail to send to TestRail, all failures are now collected and displayed in a comprehensive summary at the end of the test run.
+
 ## [2.10.0]
 
 ### Added

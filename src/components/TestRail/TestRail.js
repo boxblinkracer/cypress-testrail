@@ -170,7 +170,7 @@ class TestRail {
      *
      * @param {string} runID
      * @param {Result[]} testResults
-     * @returns {Promise<AxiosResponse<*>>}
+     * @returns {Promise<{success: boolean, runId: string, caseIds: string[], error?: string}>}
      */
     sendBatchResults(runID, testResults) {
         const url = '/add_results_for_cases/' + runID;
@@ -179,7 +179,9 @@ class TestRail {
             results: [],
         };
 
-        ColorConsole.debug('TestRail >> Sending case results to run R' + runID + ': ' + testResults.map((r) => 'C' + r.getCaseId()));
+        const caseIds = testResults.map((r) => r.getCaseId());
+
+        ColorConsole.debug('TestRail >> Sending case results to run R' + runID + ': ' + caseIds.map((id) => 'C' + id));
 
         testResults.forEach((result) => {
             var resultEntry = {
@@ -201,7 +203,7 @@ class TestRail {
             url,
             postData,
             (response) => {
-                ColorConsole.success('Results sent to TestRail R' + runID + ' for: ' + testResults.map((r) => 'C' + r.getCaseId()));
+                ColorConsole.success('Results sent to TestRail R' + runID + ' for: ' + caseIds.map((id) => 'C' + id));
 
                 if (this.isScreenshotsEnabled) {
                     const allRequests = [];
@@ -234,12 +236,18 @@ class TestRail {
                         }
                     });
 
-                    return Promise.all(allRequests);
+                    return Promise.all(allRequests).then(() => {
+                        return { success: true, runId: runID, caseIds: caseIds };
+                    });
                 }
+
+                return { success: true, runId: runID, caseIds: caseIds };
             },
             (statusCode, statusText, errorText) => {
-                ColorConsole.error('Could not send list of TestRail results: ' + statusCode + ' ' + statusText + ' >> ' + errorText);
+                const errorMessage = statusCode + ' ' + statusText + ' >> ' + errorText;
+                ColorConsole.error('Could not send list of TestRail results: ' + errorMessage);
                 ColorConsole.debug('');
+                return { success: false, runId: runID, caseIds: caseIds, error: errorMessage };
             }
         );
     }
