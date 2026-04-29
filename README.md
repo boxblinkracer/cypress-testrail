@@ -1,33 +1,386 @@
 <p align="center">
    <img width="200px" src="/assets/cypress.jpg">
 </p>
-<h1 align="center">(Super Easy) Cypress TestRail Integration</h1>
+<h1 align="center">Cypress TestRail Integration — VoltServer Fork</h1>
 
+![NPM License](https://img.shields.io/npm/l/cypress-testrail)
 
-![Build Status](https://github.com/boxblinkracer/cypress-testrail/actions/workflows/ci_pipe.yml/badge.svg) ![NPM Downloads](https://badgen.net/npm/dt/cypress-testrail) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/boxblinkracer/cypress-testrail) ![NPM License](https://img.shields.io/npm/l/cypress-testrail)
+This is the **VoltServer fork** of [cypress-testrail](https://www.npmjs.com/package/cypress-testrail) (v2.10.0), installed from [github.com/VoltServer/cypress-testrail-greenwich](https://github.com/VoltServer/cypress-testrail-greenwich).
 
-This integration helps you to automatically send test results to TestRail. And yes, super easy and simple!
+This fork adds:
+- **`ResultsAggregator`** — deduplicates results across spec files (fail trumps pass, pass trumps skip).
+- **`TestCaseParser`** — extracts `C<id>` tags from Cypress test titles.
+- **`ignoreMissingCaseIds`** — suppress errors when case IDs are not in the target run.
+- Full **Cypress 15** compatibility (`--env` / `--expose` split).
 
-Add your TestRail credentials in Cypress, decide which test results should be sent to TestRail and you're done!
+**Quick reference:** [CY-TO-TR-QUICK-USAGE-GUIDE.md](CY-TO-TR-QUICK-USAGE-GUIDE.md) — day-to-day usage guide.
+**Architecture reference:** [TESTRAIL-INTEGRATION-README.md](TESTRAIL-INTEGRATION-README.md) — internals, config lookup, Cypress 15 migration details.
 
 <!-- TOC -->
   * [1. Installation](#1-installation)
-  * [2. Setup Wizard](#2-setup-wizard)
-  * [3. Execution Modes](#3-execution-modes)
-    * [3.1 Mode A: Send results to one or more runs in TestRail](#31-mode-a-send-results-to-one-or-more-runs-in-testrail)
-    * [3.2 Mode B: Create new Run in TestRail for every Cypress run](#32-mode-b-create-new-run-in-testrail-for-every-cypress-run)
-  * [4. Register Plugin](#4-register-plugin)
-  * [5. Map Test Cases](#5-map-test-cases)
-  * [6. Advanced Features](#6-advanced-features)
-    * [6.1 Sending Screenshots to TestRail](#61-sending-screenshots-to-testrail)
-    * [6.2 Using multiple Cypress plugins](#62-using-multiple-cypress-plugins)
-    * [6.3 Cucumber Gherkin Support](#63-cucumber-gherkin-support)
-    * [6.4 Get data of new TestRail runs](#64-get-data-of-new-testrail-runs)
-  * [7. Variables](#7-variables)
-    * [7.1 Use on CLI](#71-use-on-cli)
-    * [7.2 Use in cypress.env.json](#72-use-in-cypressenvjson)
-  * [8. Copying / License](#8-copying--license)
+  * [2. Credentials Setup](#2-credentials-setup)
+  * [3. Register the Plugin](#3-register-the-plugin)
+  * [4. Map Test Cases](#4-map-test-cases)
+  * [5. Execution Modes](#5-execution-modes)
+    * [5.1 Mode A: Report to an existing TestRail run](#51-mode-a-report-to-an-existing-testrail-run)
+    * [5.2 Mode B: Create a new TestRail run for every Cypress run](#52-mode-b-create-a-new-testrail-run-for-every-cypress-run)
+  * [6. Running Tests with TestRail Reporting](#6-running-tests-with-testrail-reporting)
+  * [7. `--env` vs `--expose` — Getting It Right (Cypress 15)](#7---env-vs---expose--getting-it-right-cypress-15)
+  * [8. Result Aggregation](#8-result-aggregation)
+  * [9. Screenshots](#9-screenshots)
+  * [10. All Configuration Variables](#10-all-configuration-variables)
+  * [11. Advanced Features](#11-advanced-features)
+    * [11.1 Multiple Cypress Plugins](#111-multiple-cypress-plugins)
+    * [11.2 Cucumber / Gherkin Support](#112-cucumber--gherkin-support)
+    * [11.3 Created Run File](#113-created-run-file)
+  * [12. Architecture](#12-architecture)
+  * [13. Cypress Migration Notes](#13-cypress-migration-notes)
+    * [13.1 Cypress 10+: plugins/index.js → setupNodeEvents](#131-cypress-10-pluginsindexjs--setupnodeevents)
+    * [13.2 Cypress 15: --env / --expose split](#132-cypress-15---env----expose-split)
+  * [14. License](#14-license)
 <!-- TOC -->
+
+---
+
+## 1. Installation
+
+Install from the VoltServer GitHub fork:
+
+```bash
+npm install github:VoltServer/cypress-testrail-greenwich --save-dev
+```
+
+Requires Node.js ≥ 13.
+
+---
+
+## 2. Credentials Setup
+
+Set credentials as OS environment variables — **never** hard-code them in `cypress.config.js`:
+
+```bash
+# In ~/.zprofile or your CI environment:
+export CYPRESS_TESTRAIL_USERNAME="name@yourcompany.com"
+export CYPRESS_TESTRAIL_PASSWORD="your-testrail-api-key"
+```
+
+You can use either your TestRail account password or a generated **API key** in the password field.
+
+The static, non-secret config (domain, feature flags) lives in `cypress.config.js`:
+
+```js
+env: {
+  testrail: {
+    domain: 'yourcompany.testrail.com',
+    screenshots: true,
+    ignorePending: true,
+    ignoreMissingCaseIds: true,
+  },
+},
+```
+
+---
+
+## 3. Register the Plugin
+
+In `cypress.config.js`, register the reporter inside `setupNodeEvents`. Enable it conditionally so it only activates when `TESTRAIL_RUN_ID` is provided:
+
+```js
+const TestRailReporter = require('cypress-testrail');
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      if (config.env.TESTRAIL_RUN_ID) {
+        new TestRailReporter(on, config).register();
+      }
+      return config;
+    },
+  },
+});
+```
+
+You can also pass a custom comment:
+
+```js
+new TestRailReporter(on, config, 'AUT v' + process.env.APP_VERSION).register();
+```
+
+---
+
+## 4. Map Test Cases
+
+Tag test titles with `C<id>` **before the colon**. The parser extracts IDs from the portion of the title before the first `:`.
+
+```js
+it('C12345: should do the thing', { tags: ['@testRail', '%C12345'] }, () => { … });
+
+// Multiple case IDs in one test:
+it('C12345 C67890: covers two cases', { tags: ['@testRail', '%C12345', '%C67890'] }, () => { … });
+```
+
+The `{ tags: … }` metadata enables filtering with `@cypress/grep`. Only tests with `C<id>` tags are reported to TestRail.
+
+---
+
+## 5. Execution Modes
+
+### 5.1 Mode A: Report to an existing TestRail run
+
+Provide `TESTRAIL_RUN_ID` (or a comma-separated list via `TESTRAIL_RUN_IDS`). The run must be open.
+
+Results are only recorded if the sent case ID exists in that run.
+
+### 5.2 Mode B: Create a new TestRail run for every Cypress run
+
+Omit `TESTRAIL_RUN_ID` and instead provide `TESTRAIL_PROJECT_ID` (and optionally `TESTRAIL_MILESTONE_ID` / `TESTRAIL_SUITE_ID`). The reporter creates a new run, sends results to it, and optionally closes it after the suite finishes.
+
+Use `TESTRAIL_RUN_NAME` to control the name of the created run. The placeholder `__datetime__` is replaced at runtime.
+
+---
+
+## 6. Running Tests with TestRail Reporting
+
+Pass `TESTRAIL_RUN_ID` via `--env`. All other TestRail flags also go via `--env`.
+
+```bash
+# Smoke test (small subset first):
+npx cypress run \
+  --spec "cypress/e2e/4-inline-comms/*.cy.js" \
+  --env TESTRAIL_RUN_ID=R29785 \
+  --expose DEVICE_ID=voltserv-05dd
+
+# Single spec:
+npx cypress run \
+  --spec "cypress/e2e/1-general/history_page.cy.js" \
+  --env TESTRAIL_RUN_ID=R24219 \
+  --expose DEVICE_ID=voltserv-896e
+
+# All specs:
+npx cypress run \
+  --spec "cypress/e2e/**/*.cy.js" \
+  --env TESTRAIL_RUN_ID=R24219 \
+  --expose DEVICE_ID=voltserv-05dd
+```
+
+---
+
+## 7. `--env` vs `--expose` — Getting It Right (Cypress 15)
+
+Cypress 15 introduced a strict split between `--env` (Node-side / secrets) and `--expose` (browser + Node / public values). Mixing them up silently breaks TestRail reporting.
+
+| Flag | Where it lands | Use for |
+|---|---|---|
+| `--env KEY=val` | `config.env` (Node-side) | `TESTRAIL_RUN_ID`, credentials, all TestRail flags |
+| `--expose KEY=val` | `config.expose` (browser + Node) | `DEVICE_ID`, `grepTags`, other public values |
+
+The reporter reads `config.env.TESTRAIL_RUN_ID`. If you pass it via `--expose`, it lands in `config.expose` and **the reporter will not activate** — with no error message.
+
+```bash
+# CORRECT:
+npx cypress run \
+  --env TESTRAIL_RUN_ID=R24219 \
+  --expose DEVICE_ID=voltserv-896e
+
+# WRONG — reporter will NOT activate:
+npx cypress run \
+  --expose TESTRAIL_RUN_ID=R24219,DEVICE_ID=voltserv-896e
+```
+
+**Rule of thumb:** TestRail values → always `--env`. Device/test-filtering values → always `--expose`.
+
+---
+
+## 8. Result Aggregation
+
+When the same `C<id>` appears across multiple tests or spec files, results are automatically collapsed by the `ResultsAggregator`:
+
+- **Fail trumps all** — first failure's comment and screenshot are reported.
+- **Pass trumps skip** — if nothing failed, a pass wins over a skip.
+- Aggregated comments are prefixed with `Summarization of {n} Cypress tests`.
+- One result per case ID is sent to TestRail.
+
+---
+
+## 9. Screenshots
+
+Attach failure screenshots to TestRail results by enabling `screenshots`:
+
+```js
+// cypress.config.js
+env: {
+  testrail: {
+    screenshots: true,
+  },
+},
+```
+
+To attach **all** failed attempt screenshots (not just the last):
+
+```js
+env: {
+  testrail: {
+    screenshots: true,
+    screenshotsAll: true,
+  },
+},
+```
+
+---
+
+## 10. All Configuration Variables
+
+Config is resolved from three sources in priority order:
+1. `config.env[CLI_KEY]` — set via `--env` on the CLI (highest priority)
+2. `process.env[CLI_KEY]` — OS environment variables
+3. `config.env.testrail[jsonKey]` — the `testrail` object in `cypress.config.js`
+
+| CLI key (`--env`) | JSON key (`testrail.…`) | Required | Description |
+|---|---|---|---|
+| `TESTRAIL_DOMAIN` | `domain` | Yes | TestRail hostname (no `https://`) |
+| `TESTRAIL_USERNAME` | `username` | Yes | TestRail user email |
+| `TESTRAIL_PASSWORD` | `password` | Yes | TestRail API key or password |
+| `TESTRAIL_RUN_ID` | `runId` | Yes (Mode A) | Existing run to report into (prefix `R` stripped) |
+| `TESTRAIL_RUN_IDS` | `runIds` | Alt. to `RUN_ID` | Comma-separated list of run IDs |
+| `TESTRAIL_PROJECT_ID` | `projectId` | Yes (Mode B) | Project (prefix `P` stripped) |
+| `TESTRAIL_MILESTONE_ID` | `milestoneId` | Optional | Milestone (prefix `M` stripped) |
+| `TESTRAIL_SUITE_ID` | `suiteId` | Optional | Suite (prefix `S` stripped) |
+| `TESTRAIL_RUN_NAME` | `runName` | Optional (Mode B) | Name template; `__datetime__` replaced at runtime |
+| `TESTRAIL_RUN_CLOSE` | `closeRun` | Optional | Auto-close run after suite (default `false`) |
+| `TESTRAIL_RUN_INCLUDE_ALL` | `runIncludeAll` | Optional | Include all suite cases when creating a run (default `false`) |
+| `TESTRAIL_SCREENSHOTS` | `screenshots` | Optional | Upload last failure screenshot (default `false`) |
+| `TESTRAIL_SCREENSHOTS_ALL` | `screenshotsAll` | Optional | Upload all failed screenshots, not just the last (default `false`) |
+| `TESTRAIL_IGNORE_PENDING` | `ignorePending` | Optional | Skip pending tests — don't send to TestRail (default `true`) |
+| `TESTRAIL_IGNORE_MISSING_CASE_IDS` | `ignoreMissingCaseIds` | Optional | Suppress errors when case IDs aren't in the run (default `false`) |
+
+---
+
+## 11. Advanced Features
+
+### 11.1 Multiple Cypress Plugins
+
+Cypress does not natively support multiple plugins subscribing to the same event — later registrations overwrite earlier ones. Use [`cypress-on-fix`](https://github.com/bahmutov/cypress-on-fix) to resolve this:
+
+```bash
+npm install cypress-on-fix --save-dev
+```
+
+```js
+async setupNodeEvents(cypressOn, config) {
+  const on = require('cypress-on-fix')(cypressOn);
+  // register other plugins first...
+  new TestRailReporter(on, config).register();
+  return config;
+}
+```
+
+### 11.2 Cucumber / Gherkin Support
+
+The integration works with [cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor). Tag the **Scenario** title the same way as a plain `it()`:
+
+```gherkin
+Feature: Blog Page Features
+
+Scenario: C12345: Filter blog posts by tags
+  Given I am on the blog page
+  When I click on tag "testing"
+  Then I see tag "testing" as title of the page
+```
+
+Sample `setupNodeEvents` with Cucumber, TestRail, and `cypress-on-fix`:
+
+```js
+const createBundler = require('@bahmutov/cypress-esbuild-preprocessor');
+const { addCucumberPreprocessorPlugin } = require('@badeball/cypress-cucumber-preprocessor');
+const { createEsbuildPlugin } = require('@badeball/cypress-cucumber-preprocessor/esbuild');
+const { defineConfig } = require('cypress');
+const TestRailReporter = require('cypress-testrail');
+
+module.exports = defineConfig({
+  e2e: {
+    specPattern: ['cypress/e2e/**/*.feature', 'cypress/e2e/**/*.js'],
+    async setupNodeEvents(cypressOn, config) {
+      const on = require('cypress-on-fix')(cypressOn);
+      await addCucumberPreprocessorPlugin(on, config);
+      on('file:preprocessor', createBundler({ plugins: [createEsbuildPlugin(config)] }));
+      new TestRailReporter(on, config).register();
+      return config;
+    },
+  },
+});
+```
+
+### 11.3 Created Run File
+
+When using Mode B, the reporter writes `created_run.json` immediately after creating the run. You can read this file from other CI pipeline steps while Cypress is still running.
+
+```json
+{
+  "id": 24300,
+  "name": "Cypress Run 4/29/2026, 10:00:00 AM",
+  "description": "Tested by Cypress\nCypress: 15.11.0\n…",
+  "projectId": "1",
+  "milestoneId": "",
+  "suiteId": "2"
+}
+```
+
+---
+
+## 12. Architecture
+
+The reporter runs **entirely in Node.js** inside `setupNodeEvents` — it is not browser-side code.
+
+```
+cypress.config.js
+  └─ setupNodeEvents(on, config)
+       └─ new TestRailReporter(on, config).register()
+              │
+              ├── on('before:run')   → log config; optionally create TestRail run
+              ├── on('after:spec')   → parse C<id> tags → aggregate → POST to TestRail
+              └── on('after:run')    → optionally close the run
+```
+
+| Class | Role |
+|---|---|
+| `Reporter` | Main orchestrator; registers Cypress node-event hooks |
+| `ConfigService` / `ConfigValueExtractor` | Resolves config from CLI, process.env, and cypress.config.js |
+| `TestCaseParser` | Extracts `C<id>` case IDs from test titles (before the `:`) |
+| `ResultsAggregator` | Merges duplicate results: fail > pass > skip |
+| `TestRail` / `ApiClient` | HTTP client for the TestRail API (via `axios`) |
+| `CypressStatusConverter` | Maps Cypress states → TestRail status IDs (1=pass, 5=fail, 2=skip) |
+
+---
+
+## 13. Cypress Migration Notes
+
+### 13.1 Cypress 10+: `plugins/index.js` → `setupNodeEvents`
+
+Cypress 10 removed the classic `plugins/index.js` entrypoint. Register the reporter directly in `cypress.config.js` via `setupNodeEvents` (see [Section 3](#3-register-the-plugin)).
+
+### 13.2 Cypress 15: `--env` / `--expose` split
+
+Cypress 15 introduced a formal split between public config (`expose`) and secret/Node-only config (`env`):
+
+| Concept | Cypress ≤14 | Cypress 15+ |
+|---|---|---|
+| Public config values | `env` + `Cypress.env()` | `expose` + `Cypress.expose()` |
+| Sensitive / Node-only values | `env` + `Cypress.env()` | `env` + `cy.env()` (async) |
+| Disable legacy sync API | n/a | `allowCypressEnv: false` |
+
+**The TestRailReporter is unaffected** by `allowCypressEnv: false` because it runs in Node.js and reads `config.env` directly — it never calls the browser-side `Cypress.env()` API.
+
+What to watch for:
+- Always pass `TESTRAIL_RUN_ID` via `--env`, not `--expose` (see [Section 7](#7---env-vs---expose--getting-it-right-cypress-15)).
+- Credentials in OS environment (`CYPRESS_TESTRAIL_USERNAME`, `CYPRESS_TESTRAIL_PASSWORD`) are read via `process.env` in Node — unaffected by any Cypress 15 changes.
+
+See [TESTRAIL-INTEGRATION-README.md](TESTRAIL-INTEGRATION-README.md) for full details on the Cypress 15 migration.
+
+---
+
+## 14. License
+
+Distributed under the MIT License. See [LICENSE.md](LICENSE.md).
 
 ### 1. Installation
 
