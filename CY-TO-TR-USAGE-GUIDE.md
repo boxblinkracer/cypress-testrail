@@ -48,6 +48,18 @@ npx cypress run \
 
 The static TestRail config (`domain`, `screenshots`, etc.) is already set in `cypress.config.js` under `env.testrail` — no need to touch it.
 
+### Create a new TestRail run (Mode B)
+
+If you want Cypress to create a fresh TestRail run, omit `TESTRAIL_RUN_ID` and provide project-level IDs:
+
+```bash
+npx cypress run \
+  --spec "cypress/e2e/**/*.cy.js" \
+  --env TESTRAIL_PROJECT_ID=P1,TESTRAIL_SUITE_ID=S2,TESTRAIL_MILESTONE_ID=M3,TESTRAIL_RUN_NAME="Cypress __datetime__"
+```
+
+In this mode, the reporter writes `created_run.json` immediately after run creation so CI steps can consume the created run ID.
+
 ---
 
 ## `--env` vs `--expose` — Getting It Right
